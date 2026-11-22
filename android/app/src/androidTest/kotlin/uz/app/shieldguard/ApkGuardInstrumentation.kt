@@ -43,6 +43,10 @@ class ApkGuardInstrumentation : Instrumentation() {
             InstallProtectionCoordinator.setEnabled(ctx, true)
             ctx.options().edit().putBoolean("apkStrict", false).putBoolean("apkAlerts", false).commit()
             if (!notificationsOnly) {
+                // `am instrument` force-stops the target package, which drops any transient URI grant
+                // a sender gave earlier. The signature-checked fixture provider re-grants its own files.
+                for (name in listOf("fixture.apk", "photo.jpg.apk", "tampered.apk", "missing.pdf"))
+                    ctx.contentResolver.call(base, "grant", name, null)
                 verify(ctx.checkUriPermission(Uri.withAppendedPath(base, "fixture.apk"), android.os.Process.myPid(),
                     android.os.Process.myUid(), Intent.FLAG_GRANT_READ_URI_PERMISSION) == PackageManager.PERMISSION_GRANTED, "Owner URI grant required")
                 ctx.contentResolver.call(base, "prepare", null, null)
