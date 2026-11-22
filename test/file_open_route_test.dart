@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -87,6 +86,51 @@ void main() {
       expect(find.byType(RouteRecoveryPage), findsNothing);
       expect(find.text('Tekshiruv natijasi'), findsOneWidget);
       expect(find.textContaining('GoException'), findsNothing);
+      expect(calls.where((c) => c == 'apkForward'), isEmpty);
+    },
+  );
+  testWidgets(
+    'returning home from recovery keeps the native incoming handler alive',
+    (tester) async {
+      await launch(tester);
+      final router = ProviderScope.containerOf(
+        tester.element(find.byType(ShieldApp)),
+      ).read(routerProvider);
+      router.go('content://synthetic.documents/OTHER_PRIVATE.apk');
+      await tester.pumpAndSettle();
+      expect(find.byType(RouteRecoveryPage), findsOneWidget);
+      await tester.tap(find.text('Bosh sahifa'));
+      await tester.pumpAndSettle();
+      expect(find.byType(RouteRecoveryPage), findsNothing);
+      pending.addAll([
+        {'kind': 'fileProgress', 'busy': true},
+        {
+          'batch': [
+            {
+              'kind': 'file',
+              'format': 'APK',
+              'complete': false,
+              'findings': {'filePermission': 0},
+            },
+          ],
+        },
+        {'kind': 'fileProgress', 'busy': false},
+      ]);
+      tester.binding.channelBuffers.push(
+        ShieldPlatform.channel.name,
+        const StandardMethodCodec().encodeMethodCall(
+          const MethodCall('incoming'),
+        ),
+        (_) {},
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Tekshiruv natijasi'), findsOneWidget);
+      expect(pending, isEmpty);
+      expect(find.textContaining('OTHER_PRIVATE'), findsNothing);
+      expect(
+        find.textContaining('Ma’lum xavf belgisi topilmadi'),
+        findsNothing,
+      );
       expect(calls.where((c) => c == 'apkForward'), isEmpty);
     },
   );

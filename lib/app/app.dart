@@ -83,8 +83,48 @@ class ShieldApp extends ConsumerWidget {
   );
 }
 
-class RouteRecoveryPage extends StatelessWidget {
+/// Single owner of the native method-channel handler. During page
+/// transitions the next page's initState runs before the previous page's
+/// dispose, so a plain `setMethodCallHandler(null)` would drop the new owner.
+Object? _channelOwner;
+
+void claimShieldChannel(
+  Object owner,
+  Future<dynamic> Function(MethodCall call) handler,
+) {
+  _channelOwner = owner;
+  ShieldPlatform.channel.setMethodCallHandler(handler);
+}
+
+void releaseShieldChannel(Object owner) {
+  if (!identical(_channelOwner, owner)) return;
+  _channelOwner = null;
+  ShieldPlatform.channel.setMethodCallHandler(null);
+}
+
+class RouteRecoveryPage extends StatefulWidget {
   const RouteRecoveryPage({super.key});
+
+  @override
+  State<RouteRecoveryPage> createState() => _RouteRecoveryPageState();
+}
+
+class _RouteRecoveryPageState extends State<RouteRecoveryPage> {
+  @override
+  void initState() {
+    super.initState();
+    // Native results stay queued in `pending`; returning home remounts the
+    // Workspace, which drains them. Nothing is marked scanned or safe here.
+    claimShieldChannel(this, (call) async {
+      if (call.method == 'incoming' && mounted) context.go('/');
+    });
+  }
+
+  @override
+  void dispose() {
+    releaseShieldChannel(this);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -150,7 +190,8 @@ class _WorkspaceState extends ConsumerState<Workspace>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    ShieldPlatform.channel.setMethodCallHandler((call) async {
+    claimShieldChannel(this, (call) async {
+      if (!mounted) return;
       if (call.method == 'incoming') await drain();
       if (call.method == 'statusChanged') await act(refresh);
     });
@@ -167,7 +208,7 @@ class _WorkspaceState extends ConsumerState<Workspace>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    ShieldPlatform.channel.setMethodCallHandler(null);
+    releaseShieldChannel(this);
     input.dispose();
     gateway.dispose();
     gatewayToken.dispose();
