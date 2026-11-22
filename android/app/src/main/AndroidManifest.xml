@@ -8,6 +8,10 @@
         android:usesCleartextTraffic="false"
         android:name=".ShieldGuardApplication"
         android:icon="@drawable/shield_launcher">
+        <provider android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.apkforward" android:exported="false" android:grantUriPermissions="true">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/apk_forward_paths" />
+        </provider>
         <service android:name=".PdfParserService" android:exported="false"
             android:isolatedProcess="true" android:process=":pdf_parser" />
         <service android:name=".InstalledAppJobService" android:exported="false"

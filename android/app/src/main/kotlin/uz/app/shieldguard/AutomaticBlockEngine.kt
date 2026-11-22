@@ -4,6 +4,11 @@ internal data class GateDecision(val blocked: Boolean, val outcome: String) {
     fun asMap() = mapOf("blocked" to blocked, "outcome" to outcome)
 }
 
+internal object ApkAlertPolicy {
+    fun allowed(enabled: Boolean, consent: Boolean, permission: Boolean, channel: Boolean, risk: String) =
+        enabled && consent && permission && channel && risk in setOf("strongSuspicion", "confirmedHighConfidenceThreat")
+}
+
 internal object AutomaticBlockEngine {
     fun decide(assessment: ApkAssessment, actualApk: Boolean, enabled: Boolean, strict: Boolean): GateDecision = when {
         !actualApk -> GateDecision(true, "scanIncomplete")

@@ -13,6 +13,8 @@ import '../core/platform.dart';
 import 'labels.dart';
 import 'l10n/strings.dart';
 
+part 'apk_guard_ui.dart';
+
 final platformProvider = Provider((ref) => ShieldPlatform());
 final engineProvider = Provider((ref) => ThreatEngine());
 final darkProvider = NotifierProvider<ThemeSetting, bool>(ThemeSetting.new);
@@ -98,6 +100,9 @@ class _WorkspaceState extends ConsumerState<Workspace>
   final checklist = <String>{};
   Map<String, dynamic> status = {};
   List<Map<String, dynamic>> entries = [];
+  List<Map<String, dynamic>> apkEntries = [];
+  final apkDialogs = <String>{};
+  Map<String, dynamic>? deferredApkDialog;
   List<ScanResult> results = [];
   String mode = 'link';
   String filter = 'all';
@@ -143,12 +148,16 @@ class _WorkspaceState extends ConsumerState<Workspace>
     if (state == AppLifecycleState.resumed) {
       act(refresh);
       drain();
+      final pending = deferredApkDialog;
+      deferredApkDialog = null;
+      if (pending != null) showApkGate(pending);
     }
   }
 
   Future<void> refresh() async {
     final next = await platform.status();
     final rows = await platform.history();
+    final apkRows = await platform.apkHistory();
     if (mounted && next['dark'] is bool) {
       ref.read(darkProvider.notifier).set(next['dark'] as bool);
     }
@@ -156,6 +165,7 @@ class _WorkspaceState extends ConsumerState<Workspace>
       setState(() {
         status = next;
         entries = rows;
+        apkEntries = apkRows;
       });
     }
   }
@@ -289,6 +299,11 @@ class _WorkspaceState extends ConsumerState<Workspace>
       notice = null;
     });
     context.go('/scan');
+    for (final result in next) {
+      if (result.details['apkGate'] is Map) {
+        await showApkGate(result.details);
+      }
+    }
     if (record && status['history'] == true) {
       for (final result in next) {
         await platform.record(result);
@@ -519,6 +534,7 @@ class _WorkspaceState extends ConsumerState<Workspace>
   }
 
   Widget resultCard(ScanResult result) => card([
+    ...apkResult(result),
     heading(
       result.complete || result.score > 0 ? result.level.name : 'partial',
     ),
@@ -567,7 +583,15 @@ class _WorkspaceState extends ConsumerState<Workspace>
     ),
     heading(result.verdict),
     if (result.signatureUnchecked) Text(l('signatureUnchecked')),
-    for (final entry in result.details.entries)
+    for (final entry in result.details.entries.where(
+      (entry) => ![
+          'apkToken',
+          'apkHistoryId',
+        'apkAssessment',
+        'apkGate',
+        'apkActualFormat',
+      ].contains(entry.key),
+    ))
       Text(
         [
           l(entry.key),
@@ -664,6 +688,7 @@ class _WorkspaceState extends ConsumerState<Workspace>
     ]),
 
     ...folderProtection(),
+    ...apkProtection(),
     heading('guide'),
     button(
       'testAlert',

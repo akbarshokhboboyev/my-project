@@ -7,12 +7,14 @@ import java.util.UUID
 
 // Only the explicit, foreground file-open/share scanner stages snapshots. Folder scans never do.
 internal object InstallProtectionCoordinator {
-    private data class Snapshot(val file: File, val report: Map<String, Any>, val hash: String,
+    private data class Snapshot(val file: File, var report: Map<String, Any>, val hash: String,
         val expires: Long, val generation: Long, var validated: Boolean = false)
     private val lock = Any()
     private val pending = linkedMapOf<String, Snapshot>()
     private var generation = 0L
     private const val ttl = 10 * 60 * 1000L
+    fun epoch() = synchronized(lock) { generation }
+    fun withCurrent(epoch: Long, action: () -> Unit) = synchronized(lock) { if (generation == epoch) action() }
     private fun directory(context: Context) = File(context.cacheDir, "apk-forward").apply { mkdirs() }
     fun enabled(context: Context) = context.options().getBoolean("apkAutoBlock", true)
     fun strict(context: Context) = context.options().getBoolean("apkStrict", false)
@@ -45,13 +47,38 @@ internal object InstallProtectionCoordinator {
                 prune(context)
                 while (pending.size >= 8) { val first = pending.keys.first(); pending.remove(first)?.file?.delete() }
                 check(file.setReadOnly())
-                pending[token] = Snapshot(file, report, hash, System.currentTimeMillis() + ttl, epoch)
+                pending[token] = Snapshot(file, report, hash, android.os.SystemClock.elapsedRealtime() + ttl, epoch)
                 return report + mapOf("details" to ((report["details"] as? Map<*, *>).orEmpty() +
                     mapOf("apkToken" to token, "apkGate" to decision(context, report).asMap())))
             }
         } finally {
             synchronized(lock) { if (pending[token]?.file != file) file.delete() }
         }
+    }
+
+    // SharedFileScanner may downgrade completeness after its cooperative batch deadline.
+    // The native gate must use that final verdict, not the earlier single-file verdict.
+    fun finalizeBatch(context: Context, batch: Map<String, Any>): Map<String, Any> = synchronized(lock) {
+        val rows = (batch["batch"] as? List<*>).orEmpty().map { value ->
+            @Suppress("UNCHECKED_CAST")
+            val row = value as? Map<String, Any> ?: return@map value
+            val details = row["details"] as? Map<*, *> ?: return@map row
+            val token = details["apkToken"] as? String ?: return@map row
+            val qualified = ApkDiscoveryCoordinator.decorate(row, "")
+            val snapshot = pending[token]
+            val findings = (row["findings"] as? Map<*, *>).orEmpty()
+            if (snapshot == null || "scanCancelled" in findings) {
+                pending.remove(token)?.file?.delete()
+                return@map qualified + mapOf("details" to ((qualified["details"] as? Map<*, *>).orEmpty() - "apkToken"))
+            }
+            snapshot.report = qualified
+            snapshot.validated = false
+            val result = decision(context, qualified)
+            val id = BlockedThreatHistory.record(context, qualified, result.outcome).orEmpty()
+            qualified + mapOf("details" to ((qualified["details"] as? Map<*, *>).orEmpty() +
+                mapOf("apkGate" to result.asMap(), "apkHistoryId" to id)))
+        }
+        batch + mapOf("batch" to rows)
     }
 
     // Rehash the immutable private snapshot, never re-open the sender's potentially changed URI.
@@ -77,7 +104,7 @@ internal object InstallProtectionCoordinator {
     // Called immediately before launch, on the UI thread, with current preferences.
     fun forward(context: Context, token: String, approved: Boolean, launch: (File) -> Unit): GateDecision = synchronized(lock) {
         val snapshot = pending[token] ?: throw IllegalStateException("apkExpired")
-        check(snapshot.expires > System.currentTimeMillis() && snapshot.generation == generation)
+        check(snapshot.expires > android.os.SystemClock.elapsedRealtime() && snapshot.generation == generation)
         val result = decision(context, snapshot.report)
         check(result.blocked || snapshot.validated) { "apkChanged" }
         if (AutomaticBlockEngine.forward(result, approved) { launch(snapshot.file) }) pending.remove(token)
@@ -90,7 +117,7 @@ internal object InstallProtectionCoordinator {
     }
     private fun prune(context: Context) {
         val now = System.currentTimeMillis()
-        pending.filterValues { it.expires <= now }.keys.toList().forEach { pending.remove(it)?.file?.delete() }
+        pending.filterValues { it.expires <= android.os.SystemClock.elapsedRealtime() }.keys.toList().forEach { pending.remove(it)?.file?.delete() }
         directory(context).listFiles()?.filter { Regex("[a-f0-9-]{36}\\.apk").matches(it.name) &&
             now - it.lastModified() > ttl }?.forEach { it.delete() }
     }

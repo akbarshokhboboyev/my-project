@@ -12,3 +12,5 @@ Faol seanslar, ikki bosqichli himoya va begona qurilmalarni uzish bo‘yicha mav
 # PHASE 4A APK discovery
 
 Telegram’da faylni ShieldGuard’ga Share/Open qilish yoki oldindan ruxsat berilgan SAF papkaga saqlash mavjud scanner’ni ishlatadi. APK risk/confidence alohida baholanadi. Private Telegram storage va ShieldGuard chetlab o‘tilgan installer universal kuzatilmaydi. Davriy folder monitoring real-time emas; o‘qilmagan fayl xavfsiz deyilmaydi. Tafsilot: AUTO_BLOCK_PROTECTION.md.
+
+4C: ShieldGuard boshqaradigan oqimda strong gate block modal ko‘rsatiladi; qat’iy rejim default o‘chiq va unknown/incomplete’ni ehtiyot chorasi sifatida ushlab turadi. Telegram uchun Install unknown apps ruxsatini foydalanuvchi Android sozlamasida o‘zi o‘chiradi; ShieldGuard uning holatini tekshirgan deb da’vo qilmaydi. APK yuklab olish yoki tashqi installer universal bloklanmaydi. Bildirishnoma matni faylning haqiqatan Telegram’dan kelganini tasdiqlamaydi.

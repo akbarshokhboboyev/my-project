@@ -23,6 +23,19 @@ class ShieldPlatform {
   Future<void> scanFolders() => channel.invokeMethod<void>('folderScan');
   Future<void> cancelFolders() => channel.invokeMethod<void>('folderCancel');
 
+  Future<List<Map<String, dynamic>>> apkHistory() async =>
+      (await channel.invokeListMethod<Map>('apkHistory') ?? [])
+          .map(Map<String, dynamic>.from)
+          .toList();
+  Future<void> clearApkHistory() =>
+      channel.invokeMethod<void>('apkHistoryClear');
+  Future<void> installSourceSettings() =>
+      channel.invokeMethod<void>('installSourceSettings');
+  Future<Map<String, dynamic>?> apkReport(String id) =>
+      channel.invokeMapMethod<String, dynamic>('apkReport', {'id': id});
+  Future<Map<String, dynamic>?> forwardApk(String token) =>
+      channel.invokeMapMethod<String, dynamic>('apkForward', {'token': token});
+
   Future<void> openAccess() => channel.invokeMethod<void>('access');
   Future<void> allowAlerts() => channel.invokeMethod<void>('alerts');
 

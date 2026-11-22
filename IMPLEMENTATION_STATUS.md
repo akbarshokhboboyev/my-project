@@ -1,6 +1,6 @@
 # ShieldGuard V3.1 — PHASE 4 (davom etmoqda)
 
-4A–4B: `ApkDiscoveryCoordinator` / `ApkRiskPolicy` mavjud share va authorized folder scanner’iga ulandi. `AutomaticBlockEngine` va private snapshot/hash/generation gate qo‘shildi. Native 231 + 387 malformed o‘tdi; debug kompilyatsiya muvaffaqiyatli. 4C–4D hali yakunlanmagan. Tafsilot: AUTO_BLOCK_PROTECTION.md.
+4A–4C: APK discovery/risk policy, immutable snapshot/hash/generation forwarding gate, Uzbek modal/strict opt-in, lokal bounded tarix, rozilikka bog‘liq background notification va unknown-source settings navigatsiyasi implementatsiya qilindi. FileProvider faqat private APK snapshot root’ini read grant bilan beradi; installer/global storage/overlay ruxsati qo‘shilmadi. Flutter 205/205, native 238 + 387 malformed, Python 13/13; analyze toza, coverage 80,32%. 4D real device tekshiruvi hali yakunlanmagan. Tafsilot: AUTO_BLOCK_PROTECTION.md.
 
 # ShieldGuard V3.1 — PHASE 3B
 

@@ -16,8 +16,8 @@ internal object ApkRiskPolicy {
         val evidence = findings.entries.filter { (it.value as? Int ?: 0) > 0 }
             .mapNotNull { it.key as? String }.take(64)
         val details = (report["details"] as? Map<*, *>).orEmpty()
-        val verified = report["signatureChecked"] == true && details["signatureStatus"] == "signatureVerified"
-        val complete = report["complete"] == true && verified
+        val checked = report["signatureChecked"] == true && details["signatureStatus"] in setOf("signatureVerified", "signatureFailed")
+        val complete = report["complete"] == true && checked
         val score = findings.values.sumOf { (it as? Int ?: 0).coerceIn(0, 100) }.coerceAtMost(100)
         val integrity = report["signatureChecked"] == true && details["signatureStatus"] == "signatureFailed"
         val sensitiveCombo = "apkAccess" in evidence && "apkInstall" in evidence &&

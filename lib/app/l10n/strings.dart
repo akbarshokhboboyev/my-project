@@ -1580,6 +1580,252 @@ abstract class Strings {
   /// In uz, this message translates to:
   /// **'Oldingi yurish uzilgan; qamrov aniqlanmagan.'**
   String get folderStateinterrupted;
+
+  /// No description provided for @apkTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'APK o‘rnatish himoyasi'**
+  String get apkTitle;
+
+  /// No description provided for @apkBoundary.
+  ///
+  /// In uz, this message translates to:
+  /// **'ShieldGuard faqat o‘zi boshqaradigan ochish/uzatish oqimini to‘xtata oladi. Telegram yoki fayl menejeridan bevosita Android installer orqali o‘rnatish bu gate’dan o‘tmaydi. Yuklab olish to‘xtatilmaydi. Yopiq Telegram papkasidagi faylni Share/Open orqali ShieldGuard’ga yuboring yoki ruxsatli SAF papka tanlang.'**
+  String get apkBoundary;
+
+  /// No description provided for @apkAutoBlock.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kuchli xavfda ShieldGuard orqali uzatishni bloklash'**
+  String get apkAutoBlock;
+
+  /// No description provided for @apkStrict.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qat’iy APK himoyasi'**
+  String get apkStrict;
+
+  /// No description provided for @apkStrictHelp.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qat’iy rejim noma’lum yoki incomplete APK’ni ham uzatmaydi. Bu ehtiyot chorasi, virus tasdig‘i emas. Default o‘chiq.'**
+  String get apkStrictHelp;
+
+  /// No description provided for @apkAlerts.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ruxsatli papkadagi shubhali APK haqida bildirishnoma'**
+  String get apkAlerts;
+
+  /// No description provided for @apkAlertsHelp.
+  ///
+  /// In uz, this message translates to:
+  /// **'Alohida rozilik. Davriy papka monitoringi yoqilgan va notification ruxsati bor bo‘lishi kerak. Heads-up ko‘rinishi Android sozlamalariga bog‘liq. Boshqa ilova ustiga modal chiqarilmaydi.'**
+  String get apkAlertsHelp;
+
+  /// No description provided for @apkSources.
+  ///
+  /// In uz, this message translates to:
+  /// **'Telegram orqali noma’lum APK o‘rnatilishini Android sozlamalarida taqiqlang. Telegram va boshqa o‘rnatish manbalari uchun Allow from this source ruxsatini o‘zingiz o‘chiring. ShieldGuard bu holatni yashirin o‘zgartirmaydi va tekshirildi deb da’vo qilmaydi.'**
+  String get apkSources;
+
+  /// No description provided for @apkSettings.
+  ///
+  /// In uz, this message translates to:
+  /// **'O‘rnatish ruxsatlarini tekshirish'**
+  String get apkSettings;
+
+  /// No description provided for @apkHistory.
+  ///
+  /// In uz, this message translates to:
+  /// **'APK himoyasi tarixi'**
+  String get apkHistory;
+
+  /// No description provided for @apkHistoryEmpty.
+  ///
+  /// In uz, this message translates to:
+  /// **'APK himoyasi hodisalari yo‘q.'**
+  String get apkHistoryEmpty;
+
+  /// No description provided for @apkClear.
+  ///
+  /// In uz, this message translates to:
+  /// **'APK tarixini tozalash'**
+  String get apkClear;
+
+  /// No description provided for @apkOffHelp.
+  ///
+  /// In uz, this message translates to:
+  /// **'Avto-bloklashni o‘chirish qat’iy rejim, APK bildirishnomalari, lokal hisobot va kutilayotgan uzatish nusxalarini ham tozalaydi. Telegram, installed-app va papka scanner’i mustaqil qoladi.'**
+  String get apkOffHelp;
+
+  /// No description provided for @apkBlockedTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'APK BLOKLANDI'**
+  String get apkBlockedTitle;
+
+  /// No description provided for @apkIncompleteTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'APK uzatish to‘xtatildi'**
+  String get apkIncompleteTitle;
+
+  /// No description provided for @apkBlockedBody.
+  ///
+  /// In uz, this message translates to:
+  /// **'ShieldGuard orqali ochish/o‘rnatishga uzatish to‘xtatildi. Bu fayl Android’ning boshqa yo‘lidan hali ham o‘rnatilishi mumkin.'**
+  String get apkBlockedBody;
+
+  /// No description provided for @apkAdvice.
+  ///
+  /// In uz, this message translates to:
+  /// **'Shubhali APK’ni o‘rnatmang. Manbasini va imzosini tekshiring. Kerak bo‘lsa noma’lum manbadan o‘rnatish ruxsatini Android sozlamalarida o‘chiring. Noma’lum natija xavfsizlik kafolati emas.'**
+  String get apkAdvice;
+
+  /// No description provided for @apkDetails.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xavf tafsilotlari'**
+  String get apkDetails;
+
+  /// No description provided for @apkAdviceButton.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xavfsizlik tavsiyalari'**
+  String get apkAdviceButton;
+
+  /// No description provided for @apkOpen.
+  ///
+  /// In uz, this message translates to:
+  /// **'APK nusxasini boshqa ilovada ochish'**
+  String get apkOpen;
+
+  /// No description provided for @apkForwardConfirm.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tashqi ilovaga uzatish'**
+  String get apkForwardConfirm;
+
+  /// No description provided for @apkForwardHelp.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bu alohida harakatingiz bilan skanerlangan lokal APK nusxasini Android tanlov oynasiga uzatadi. Fayl avtomatik o‘rnatilmaydi. Natija zararsizlik kafolati emas. Android o‘rnatishni rad etishi mumkin; ShieldGuard installer huquqini so‘ramaydi.'**
+  String get apkForwardHelp;
+
+  /// No description provided for @apkProceed.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ogohlantirishni tushundim, uzatish'**
+  String get apkProceed;
+
+  /// No description provided for @apkRiskconfirmedHighConfidenceThreat.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tasdiqlangan kuchli xavf dalili'**
+  String get apkRiskconfirmedHighConfidenceThreat;
+
+  /// No description provided for @apkRiskstrongSuspicion.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kuchli shubha: yaxlitlik yoki sezgir imkoniyatlar kombinatsiyasi'**
+  String get apkRiskstrongSuspicion;
+
+  /// No description provided for @apkRiskheuristicWarning.
+  ///
+  /// In uz, this message translates to:
+  /// **'Evristik ogohlantirish; malware tasdig‘i emas'**
+  String get apkRiskheuristicWarning;
+
+  /// No description provided for @apkRiskunknown.
+  ///
+  /// In uz, this message translates to:
+  /// **'Noma’lum yoki tugallanmagan tekshiruv'**
+  String get apkRiskunknown;
+
+  /// No description provided for @apkRisknoFindings.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mavjud tekshiruvda xavf dalili topilmadi; kafolat emas'**
+  String get apkRisknoFindings;
+
+  /// No description provided for @apkOutcomeBlocked.
+  ///
+  /// In uz, this message translates to:
+  /// **'ShieldGuard uzatishni blokladi'**
+  String get apkOutcomeBlocked;
+
+  /// No description provided for @apkOutcomeblockedByShieldGuard.
+  ///
+  /// In uz, this message translates to:
+  /// **'ShieldGuard uzatishni blokladi'**
+  String get apkOutcomeblockedByShieldGuard;
+
+  /// No description provided for @apkOutcomeblockedByAndroid.
+  ///
+  /// In uz, this message translates to:
+  /// **'Android uzatish so‘rovini xavfsizlik xatosi bilan rad etdi'**
+  String get apkOutcomeblockedByAndroid;
+
+  /// No description provided for @apkOutcomewarningOnly.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ogohlantirish; o‘rnatish bloklangani tasdiqlanmadi'**
+  String get apkOutcomewarningOnly;
+
+  /// No description provided for @apkOutcomescanIncomplete.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tekshiruv tugallanmagani sabab uzatish to‘xtatildi'**
+  String get apkOutcomescanIncomplete;
+
+  /// No description provided for @apkOutcomenotIntercepted.
+  ///
+  /// In uz, this message translates to:
+  /// **'ShieldGuard bu oqimni kuzatmagan'**
+  String get apkOutcomenotIntercepted;
+
+  /// No description provided for @apkConfidencehigh.
+  ///
+  /// In uz, this message translates to:
+  /// **'Dalilga ishonch: yuqori; malware tasdig‘iga teng emas'**
+  String get apkConfidencehigh;
+
+  /// No description provided for @apkConfidencemedium.
+  ///
+  /// In uz, this message translates to:
+  /// **'Dalilga ishonch: o‘rta'**
+  String get apkConfidencemedium;
+
+  /// No description provided for @apkConfidencelimited.
+  ///
+  /// In uz, this message translates to:
+  /// **'Dalilga ishonch: cheklangan'**
+  String get apkConfidencelimited;
+
+  /// No description provided for @apkConfidenceundetermined.
+  ///
+  /// In uz, this message translates to:
+  /// **'Dalilga ishonch: aniqlanmagan'**
+  String get apkConfidenceundetermined;
+
+  /// No description provided for @apkExpired.
+  ///
+  /// In uz, this message translates to:
+  /// **'APK nusxasi eskirgan yoki bekor qilingan. Faylni qayta tekshiring.'**
+  String get apkExpired;
+
+  /// No description provided for @apkAndroidDenied.
+  ///
+  /// In uz, this message translates to:
+  /// **'Android ochish so‘rovini rad etdi. Tizim cheklovi chetlab o‘tilmaydi.'**
+  String get apkAndroidDenied;
+
+  /// No description provided for @apkDisabled.
+  ///
+  /// In uz, this message translates to:
+  /// **'Avval APK uzatish himoyasini yoqing.'**
+  String get apkDisabled;
 }
 
 class _StringsDelegate extends LocalizationsDelegate<Strings> {

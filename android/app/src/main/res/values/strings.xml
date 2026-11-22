@@ -12,4 +12,8 @@
     <string name="installed_reason_signature">APK imzo tekshiruvi muvaffaqiyatsiz.</string>
     <string name="installed_reason_static">APK tarkibida bir nechta shubhali statik belgi bor.</string>
     <string name="installed_alert_body">%1$s: %2$s Ilovani ochishga shoshilmang, manbasini va ruxsatlarini tekshiring. Bu malware tasdig‘i emas.</string>
+    <string name="apk_channel">APK xavfsizlik ogohlantirishlari</string>
+    <string name="apk_alert_title">ShieldGuard: shubhali APK aniqlandi</string>
+    <string name="apk_alert_body">O‘rnatishdan oldin xavfsizlik natijasini tekshiring.</string>
+    <string name="apk_open_chooser">APK nusxasini ochish uchun ilovani tanlang</string>
 </resources>

@@ -25,6 +25,7 @@ class FolderScanJobService : JobService() {
             AuthorizedFolderMonitor.store(this).edit().putString("state", "running").apply()
         }
         val stop = AtomicBoolean(false)
+        val apkEpoch = InstallProtectionCoordinator.epoch()
         stops[params.jobId] = stop
         epochs[params.jobId] = generation
         val cancelled = { stop.get() || generation != AuthorizedFolderMonitor.epoch(this) }
@@ -49,7 +50,9 @@ class FolderScanJobService : JobService() {
                             val batch = FileOpenScanHandler.scanner(this).scan(
                                 SharedFileRequest(listOf(document.uri), true), stopped)["batch"] as List<*>
                             @Suppress("UNCHECKED_CAST")
-                            (batch.first() as Map<String, Any>)
+                            (batch.first() as Map<String, Any>).also { report ->
+                                if (!stopped()) TelegramApkGuard.observe(this, report, apkEpoch)
+                            }
                         })
                     val result = scanner.scan(documents, old, cancelled = cancelled)
                     synchronized(AuthorizedFolderMonitor.lock) {

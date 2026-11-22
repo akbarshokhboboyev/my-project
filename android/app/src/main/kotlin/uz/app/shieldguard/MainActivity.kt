@@ -25,6 +25,7 @@ class MainActivity : FlutterActivity() {
     private var folderPickerEpoch = 0L
     private var fileCancellation = java.util.concurrent.atomic.AtomicBoolean(false)
     private var nextRebindAt = 0L
+    private var foreground = false
     private val inbox = ArrayDeque<Map<String, Any>>()
     private val worker = ThreadPoolExecutor(1, 1, 0L, TimeUnit.SECONDS, ArrayBlockingQueue(4))
 
@@ -51,6 +52,9 @@ class MainActivity : FlutterActivity() {
                         "access" to access, "connected" to TelegramThreatListener.connected,
                         "enabled" to enabled,
                         "folderSecurity" to AuthorizedFolderMonitor.status(this),
+                        "apkAutoBlock" to InstallProtectionCoordinator.enabled(this),
+                        "apkStrict" to InstallProtectionCoordinator.strict(this),
+                        "apkAlerts" to options().getBoolean("apkAlerts", false),
                         "appMonitoring" to InstalledAppMonitor.enabled(this),
                         "appScheduled" to ScanScheduler.scheduled(this),
                         "appLastState" to InstalledAppMonitor.store(this).getString("state", "none"),
@@ -68,9 +72,20 @@ class MainActivity : FlutterActivity() {
                 "option" -> {
                     val key = call.argument<String>("key")
                     val value = call.argument<Boolean>("value")
-                    if (key == null || key !in setOf("enabled", "history", "intro", "dark", "onlineConsent", "appMonitoring") || value == null) {
+                    if (key == null || key !in setOf("enabled", "history", "intro", "dark", "onlineConsent", "appMonitoring", "apkAutoBlock", "apkStrict", "apkAlerts") || value == null) {
                         reply.error("invalid", null, null)
                     } else {
+                        if (key == "apkAutoBlock" && !value) {
+                            options().edit().putBoolean(key, false).putBoolean("apkStrict", false).putBoolean("apkAlerts", false).commit()
+                            InstallProtectionCoordinator.clear(this)
+                            BlockedThreatHistory.clear(this)
+                            reply.success(null)
+                            return@setMethodCallHandler
+                        }
+                        if (key in setOf("apkStrict", "apkAlerts") && value && !InstallProtectionCoordinator.enabled(this)) {
+                            reply.error("apkDisabled", null, null)
+                            return@setMethodCallHandler
+                        }
                         if (key == "appMonitoring") {
                             InstalledAppMonitor.setEnabled(this, value)
                             reply.success(null)
@@ -86,6 +101,15 @@ class MainActivity : FlutterActivity() {
                 }
                 "access" -> {
                     settings(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS), reply)
+                }
+                "apkHistory" -> reply.success(BlockedThreatHistory.entries(this))
+                "apkHistoryClear" -> { BlockedThreatHistory.clear(this); reply.success(null) }
+                "apkReport" -> reply.success(BlockedThreatHistory.report(this, call.argument<String>("id") ?: ""))
+                "apkForward" -> forwardApk(call.argument<String>("token") ?: "", reply)
+                "installSourceSettings" -> {
+                    try { startActivity(Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES)); reply.success(null) }
+                    catch (_: android.content.ActivityNotFoundException) { settings(Intent(Settings.ACTION_SECURITY_SETTINGS), reply) }
+                    catch (_: SecurityException) { reply.error("unavailable", null, null) }
                 }
                 "alerts" -> {
                     val canPrompt = Build.VERSION.SDK_INT >= 33 &&
@@ -260,6 +284,10 @@ class MainActivity : FlutterActivity() {
                     if (intent.getStringExtra("proof") != alertProof(this)) return
                     installedReport(this, alert = true)?.let { enqueue(it) }
                 }
+                SHOW_APK -> {
+                    if (intent.getStringExtra("proof") != alertProof(this)) return
+                    BlockedThreatHistory.report(this, intent.getStringExtra("entry").orEmpty())?.let { enqueue(it) }
+                }
                 SHOW_ALERT -> {
                     if (intent.getStringExtra("proof") != alertProof(this)) return
                     val codes = intent.getStringArrayExtra("indicators").orEmpty().take(8)
@@ -324,11 +352,18 @@ class MainActivity : FlutterActivity() {
         try {
             worker.execute {
                 val report = try {
-                    FileOpenScanHandler.scanner(applicationContext, stageForward = true).scan(request) { cancellation.get() }
+                    InstallProtectionCoordinator.finalizeBatch(this,
+                        FileOpenScanHandler.scanner(applicationContext, stageForward = true).scan(request) { cancellation.get() })
                 } catch (_: Exception) { mapOf("batch" to listOf(SharedFileScanner.error("failed"))) }
                 runOnUiThread {
                     fileJobActive = false
                     if (!isDestroyed) {
+                        if (!foreground) {
+                            (report["batch"] as? List<*>)?.filterIsInstance<Map<*, *>>()?.forEach { row ->
+                                val details = row["details"] as? Map<*, *>
+                                (details?.get("apkHistoryId") as? String)?.takeIf { it.isNotEmpty() }?.let { TelegramApkGuard.show(this, it) }
+                            }
+                        }
                         if (reply != null) reply.success(report)
                         else {
                             enqueue(report)
@@ -356,9 +391,40 @@ class MainActivity : FlutterActivity() {
         super.onDestroy()
     }
 
+    private fun forwardApk(token: String, reply: MethodChannel.Result) {
+        if (fileJobActive || !foreground) { reply.error("busy", null, null); return }
+        try { worker.execute {
+            val report = try { InstallProtectionCoordinator.validate(this, token) }
+            catch (_: Exception) { runOnUiThread { reply.error("apkExpired", null, null) }; return@execute }
+            runOnUiThread {
+                if (isDestroyed || !foreground) { reply.error("busy", null, null); return@runOnUiThread }
+                try {
+                    val result = InstallProtectionCoordinator.forward(this, token, true) { file ->
+                        val uri = androidx.core.content.FileProvider.getUriForFile(this, "$packageName.apkforward", file)
+                        val view = Intent(Intent.ACTION_VIEW).setDataAndType(uri, "application/vnd.android.package-archive")
+                            .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            .apply { clipData = android.content.ClipData.newRawUri("APK", uri) }
+                        val chooser = Intent.createChooser(view, getString(R.string.apk_open_chooser))
+                            .putExtra(Intent.EXTRA_EXCLUDE_COMPONENTS, arrayOf(ComponentName(this, MainActivity::class.java)))
+                        startActivity(chooser)
+                    }
+                    BlockedThreatHistory.record(this, report, result.outcome)
+                    reply.success(result.asMap() + mapOf("handoffRequested" to !result.blocked))
+                } catch (_: SecurityException) {
+                    BlockedThreatHistory.record(this, report, "blockedByAndroid")
+                    reply.error("apkAndroidDenied", null, null)
+                } catch (_: android.content.ActivityNotFoundException) { reply.error("unavailable", null, null) }
+                  catch (_: Exception) { reply.error("apkExpired", null, null) }
+            }
+        } } catch (_: java.util.concurrent.RejectedExecutionException) { reply.error("busy", null, null) }
+    }
+    override fun onResume() { super.onResume(); foreground = true }
+    override fun onPause() { foreground = false; super.onPause() }
+
     companion object {
         internal const val SHOW_INSTALLED = "uz.app.shieldguard.SHOW_INSTALLED"
         internal const val SHOW_ALERT = "uz.app.shieldguard.SHOW_ALERT"
+        internal const val SHOW_APK = "uz.app.shieldguard.SHOW_APK"
     }
 }
 

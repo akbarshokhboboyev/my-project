@@ -838,4 +838,147 @@ class StringsUz extends Strings {
   @override
   String get folderStateinterrupted =>
       'Oldingi yurish uzilgan; qamrov aniqlanmagan.';
+
+  @override
+  String get apkTitle => 'APK o‘rnatish himoyasi';
+
+  @override
+  String get apkBoundary =>
+      'ShieldGuard faqat o‘zi boshqaradigan ochish/uzatish oqimini to‘xtata oladi. Telegram yoki fayl menejeridan bevosita Android installer orqali o‘rnatish bu gate’dan o‘tmaydi. Yuklab olish to‘xtatilmaydi. Yopiq Telegram papkasidagi faylni Share/Open orqali ShieldGuard’ga yuboring yoki ruxsatli SAF papka tanlang.';
+
+  @override
+  String get apkAutoBlock =>
+      'Kuchli xavfda ShieldGuard orqali uzatishni bloklash';
+
+  @override
+  String get apkStrict => 'Qat’iy APK himoyasi';
+
+  @override
+  String get apkStrictHelp =>
+      'Qat’iy rejim noma’lum yoki incomplete APK’ni ham uzatmaydi. Bu ehtiyot chorasi, virus tasdig‘i emas. Default o‘chiq.';
+
+  @override
+  String get apkAlerts =>
+      'Ruxsatli papkadagi shubhali APK haqida bildirishnoma';
+
+  @override
+  String get apkAlertsHelp =>
+      'Alohida rozilik. Davriy papka monitoringi yoqilgan va notification ruxsati bor bo‘lishi kerak. Heads-up ko‘rinishi Android sozlamalariga bog‘liq. Boshqa ilova ustiga modal chiqarilmaydi.';
+
+  @override
+  String get apkSources =>
+      'Telegram orqali noma’lum APK o‘rnatilishini Android sozlamalarida taqiqlang. Telegram va boshqa o‘rnatish manbalari uchun Allow from this source ruxsatini o‘zingiz o‘chiring. ShieldGuard bu holatni yashirin o‘zgartirmaydi va tekshirildi deb da’vo qilmaydi.';
+
+  @override
+  String get apkSettings => 'O‘rnatish ruxsatlarini tekshirish';
+
+  @override
+  String get apkHistory => 'APK himoyasi tarixi';
+
+  @override
+  String get apkHistoryEmpty => 'APK himoyasi hodisalari yo‘q.';
+
+  @override
+  String get apkClear => 'APK tarixini tozalash';
+
+  @override
+  String get apkOffHelp =>
+      'Avto-bloklashni o‘chirish qat’iy rejim, APK bildirishnomalari, lokal hisobot va kutilayotgan uzatish nusxalarini ham tozalaydi. Telegram, installed-app va papka scanner’i mustaqil qoladi.';
+
+  @override
+  String get apkBlockedTitle => 'APK BLOKLANDI';
+
+  @override
+  String get apkIncompleteTitle => 'APK uzatish to‘xtatildi';
+
+  @override
+  String get apkBlockedBody =>
+      'ShieldGuard orqali ochish/o‘rnatishga uzatish to‘xtatildi. Bu fayl Android’ning boshqa yo‘lidan hali ham o‘rnatilishi mumkin.';
+
+  @override
+  String get apkAdvice =>
+      'Shubhali APK’ni o‘rnatmang. Manbasini va imzosini tekshiring. Kerak bo‘lsa noma’lum manbadan o‘rnatish ruxsatini Android sozlamalarida o‘chiring. Noma’lum natija xavfsizlik kafolati emas.';
+
+  @override
+  String get apkDetails => 'Xavf tafsilotlari';
+
+  @override
+  String get apkAdviceButton => 'Xavfsizlik tavsiyalari';
+
+  @override
+  String get apkOpen => 'APK nusxasini boshqa ilovada ochish';
+
+  @override
+  String get apkForwardConfirm => 'Tashqi ilovaga uzatish';
+
+  @override
+  String get apkForwardHelp =>
+      'Bu alohida harakatingiz bilan skanerlangan lokal APK nusxasini Android tanlov oynasiga uzatadi. Fayl avtomatik o‘rnatilmaydi. Natija zararsizlik kafolati emas. Android o‘rnatishni rad etishi mumkin; ShieldGuard installer huquqini so‘ramaydi.';
+
+  @override
+  String get apkProceed => 'Ogohlantirishni tushundim, uzatish';
+
+  @override
+  String get apkRiskconfirmedHighConfidenceThreat =>
+      'Tasdiqlangan kuchli xavf dalili';
+
+  @override
+  String get apkRiskstrongSuspicion =>
+      'Kuchli shubha: yaxlitlik yoki sezgir imkoniyatlar kombinatsiyasi';
+
+  @override
+  String get apkRiskheuristicWarning =>
+      'Evristik ogohlantirish; malware tasdig‘i emas';
+
+  @override
+  String get apkRiskunknown => 'Noma’lum yoki tugallanmagan tekshiruv';
+
+  @override
+  String get apkRisknoFindings =>
+      'Mavjud tekshiruvda xavf dalili topilmadi; kafolat emas';
+
+  @override
+  String get apkOutcomeBlocked => 'ShieldGuard uzatishni blokladi';
+
+  @override
+  String get apkOutcomeblockedByShieldGuard => 'ShieldGuard uzatishni blokladi';
+
+  @override
+  String get apkOutcomeblockedByAndroid =>
+      'Android uzatish so‘rovini xavfsizlik xatosi bilan rad etdi';
+
+  @override
+  String get apkOutcomewarningOnly =>
+      'Ogohlantirish; o‘rnatish bloklangani tasdiqlanmadi';
+
+  @override
+  String get apkOutcomescanIncomplete =>
+      'Tekshiruv tugallanmagani sabab uzatish to‘xtatildi';
+
+  @override
+  String get apkOutcomenotIntercepted => 'ShieldGuard bu oqimni kuzatmagan';
+
+  @override
+  String get apkConfidencehigh =>
+      'Dalilga ishonch: yuqori; malware tasdig‘iga teng emas';
+
+  @override
+  String get apkConfidencemedium => 'Dalilga ishonch: o‘rta';
+
+  @override
+  String get apkConfidencelimited => 'Dalilga ishonch: cheklangan';
+
+  @override
+  String get apkConfidenceundetermined => 'Dalilga ishonch: aniqlanmagan';
+
+  @override
+  String get apkExpired =>
+      'APK nusxasi eskirgan yoki bekor qilingan. Faylni qayta tekshiring.';
+
+  @override
+  String get apkAndroidDenied =>
+      'Android ochish so‘rovini rad etdi. Tizim cheklovi chetlab o‘tilmaydi.';
+
+  @override
+  String get apkDisabled => 'Avval APK uzatish himoyasini yoqing.';
 }
