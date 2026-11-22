@@ -298,5 +298,7 @@
   "apkConfidenceundetermined": "Dalilga ishonch: aniqlanmagan",
   "apkExpired": "APK nusxasi eskirgan yoki bekor qilingan. Faylni qayta tekshiring.",
   "apkAndroidDenied": "Android ochish so‘rovini rad etdi. Tizim cheklovi chetlab o‘tilmaydi.",
-  "apkDisabled": "Avval APK uzatish himoyasini yoqing."
+  "apkDisabled": "Avval APK uzatish himoyasini yoqing.",
+  "routeErrorTitle": "ShieldGuard’ga qaytish",
+  "routeErrorBody": "Bu manzil ilova sahifasi emas. APK yoki boshqa faylni tekshirish uchun uni ShieldGuard’ga qayta ulashing yoki bosh sahifadan faylni tanlang. Fayl tekshirilgan yoki xavfsiz deb hisoblanmaydi."
 }

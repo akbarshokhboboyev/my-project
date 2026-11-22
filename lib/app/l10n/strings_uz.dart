@@ -981,4 +981,11 @@ class StringsUz extends Strings {
 
   @override
   String get apkDisabled => 'Avval APK uzatish himoyasini yoqing.';
+
+  @override
+  String get routeErrorTitle => 'ShieldGuard’ga qaytish';
+
+  @override
+  String get routeErrorBody =>
+      'Bu manzil ilova sahifasi emas. APK yoki boshqa faylni tekshirish uchun uni ShieldGuard’ga qayta ulashing yoki bosh sahifadan faylni tanlang. Fayl tekshirilgan yoki xavfsiz deb hisoblanmaydi.';
 }

@@ -1826,6 +1826,18 @@ abstract class Strings {
   /// In uz, this message translates to:
   /// **'Avval APK uzatish himoyasini yoqing.'**
   String get apkDisabled;
+
+  /// No description provided for @routeErrorTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'ShieldGuard’ga qaytish'**
+  String get routeErrorTitle;
+
+  /// No description provided for @routeErrorBody.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bu manzil ilova sahifasi emas. APK yoki boshqa faylni tekshirish uchun uni ShieldGuard’ga qayta ulashing yoki bosh sahifadan faylni tanlang. Fayl tekshirilgan yoki xavfsiz deb hisoblanmaydi.'**
+  String get routeErrorBody;
 }
 
 class _StringsDelegate extends LocalizationsDelegate<Strings> {

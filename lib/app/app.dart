@@ -38,6 +38,7 @@ String route(String key) => key == 'home' ? '/' : '/$key';
 
 final routerProvider = Provider((ref) {
   final router = GoRouter(
+    errorBuilder: (context, state) => const RouteRecoveryPage(),
     routes: [
       ShellRoute(
         builder: (context, state, child) => Workspace(path: state.uri.path),
@@ -78,6 +79,36 @@ class ShieldApp extends ConsumerWidget {
     cardTheme: CardThemeData(
       elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+    ),
+  );
+}
+
+class RouteRecoveryPage extends StatelessWidget {
+  const RouteRecoveryPage({super.key});
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(title: Text(context.l.routeErrorTitle)),
+    body: Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 480),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.info_outline, size: 48),
+              const SizedBox(height: 16),
+              Text(context.l.routeErrorBody),
+              const SizedBox(height: 24),
+              FilledButton(
+                onPressed: () => context.go('/'),
+                child: Text(context.l.home),
+              ),
+            ],
+          ),
+        ),
+      ),
     ),
   );
 }
@@ -585,8 +616,8 @@ class _WorkspaceState extends ConsumerState<Workspace>
     if (result.signatureUnchecked) Text(l('signatureUnchecked')),
     for (final entry in result.details.entries.where(
       (entry) => ![
-          'apkToken',
-          'apkHistoryId',
+        'apkToken',
+        'apkHistoryId',
         'apkAssessment',
         'apkGate',
         'apkActualFormat',
