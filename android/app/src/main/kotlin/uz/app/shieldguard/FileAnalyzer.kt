@@ -20,6 +20,7 @@ internal class FileAnalyzer(
     private val directory: File,
     private val limits: ScanLimits = ScanLimits(),
     private val cancelled: () -> Boolean = { false },
+    private val inspectPdf: ((File) -> Pair<Map<String, Int>, Boolean>)? = null,
     private val readApk: (File) -> ApkMetadata?
 ) {
     fun inspect(displayName: String, open: () -> InputStream): Map<String, Any> {
@@ -80,9 +81,19 @@ internal class FileAnalyzer(
                     return bytes
                 }
                 when {
+                    starts(77, 73, 68) -> {
+                        complete = false
+                        findings["unknownContainer"] = 0
+                        "MID"
+                    }
                     starts(0x25, 0x50, 0x44, 0x46, 0x2d) -> {
                         findings.putAll(pdfFindings)
                         if (!String(tail(2048), Charsets.ISO_8859_1).contains("%%EOF")) findings["structure"] = 30
+                        inspectPdf?.invoke(temp)?.let { (parsed, parsedComplete) ->
+                            findings.putAll(parsed)
+                            if (!parsedComplete) complete = false
+                        }
+                        checkpoint()
                         "PDF"
                     }
                     starts(0xff, 0xd8, 0xff) -> {
@@ -119,13 +130,15 @@ internal class FileAnalyzer(
                             }
                         }
                         if (entries < 0) findings["structure"] = 30
-                        if (entries > limits.maxEntries) findings["archiveLimit"] = 55
+                        if (entries > limits.maxEntries) findings["archiveLimit"] = 0
                         if (entries !in 0..limits.maxEntries || size > limits.maxArchiveBytes) {
-                            if (size > limits.maxArchiveBytes) findings["archiveLimit"] = 55
+                            if (size > limits.maxArchiveBytes) findings["archiveLimit"] = 0
                             complete = false
                             "ZIP"
                         } else try {
                             ZipFile(temp).use { zip ->
+                                ApkContentInspector.inspect(zip, findings, ::checkpoint)
+                                findings.putAll(SplitApkAnalyzer.inspect(zip, directory, readApk, ::checkpoint))
                                 val enumeration = zip.entries()
                                 var total = 0L
                                 var count = 0
@@ -145,7 +158,7 @@ internal class FileAnalyzer(
                                     if (count > limits.maxEntries || entry.size !in 0..limits.maxExpandedBytes ||
                                         entry.size > limits.maxExpandedBytes - total ||
                                         (entry.size > 1024 * 1024 && entry.size / maxOf(1, entry.compressedSize) > 200)) {
-                                        findings["archiveLimit"] = 55
+                                        findings["archiveLimit"] = 0
                                         complete = false
                                         break
                                     }
@@ -173,12 +186,13 @@ internal class FileAnalyzer(
             val suffix = extension.substringAfterLast('.', "")
             if (format.isNotEmpty() && expected[suffix]?.let { it != format } == true) findings["mismatch"] = 55
             if (extension.any { it in '\u202a'..'\u202e' || it in '\u2066'..'\u2069' } ||
-                Regex("""\.(pdf|jpg|jpeg|png|docx|xlsx|zip)\.(apk|exe|scr|bat|cmd|js)$""").containsMatchIn(extension)) {
+                Regex("""\.(pdf|jpg|jpeg|png|mp4|mp3|docx|xlsx|zip)\.(apk|exe|scr|bat|cmd|js)$""").containsMatchIn(extension)) {
                 findings["doubleExtension"] = 45
             }
             var packageName: String? = null
+            if ("contentLimit" in findings || "dexMalformed" in findings || "elfMalformed" in findings) complete = false
             var signerHashes = emptyList<String>()
-            if (format == "APK" && complete) {
+            if (format == "APK" && "structure" !in findings && "archiveLimit" !in findings) {
                 val info = readApk(temp)
                 if (info == null) {
                     findings["apkUnreadable"] = 30
@@ -187,6 +201,7 @@ internal class FileAnalyzer(
                     packageName = info.packageName
                     signerHashes = info.signers
                     details = info.details
+                    if (details["signatureStatus"] == "signatureFailed") findings["signatureFailed"] = 30
                     if (info.unprotectedExports) findings["apkExported"] = 15
                     val requested = info.permissions
                     val sms = requested.any { it in smsPermissions }
@@ -204,7 +219,7 @@ internal class FileAnalyzer(
                 put("hash", digest.digest().joinToString("") { "%02x".format(it) })
                 put("signers", signerHashes)
                 put("details", details)
-                put("signatureChecked", false)
+                put("signatureChecked", details["signatureStatus"] in setOf("signatureVerified", "signatureFailed"))
                 if (format.isNotEmpty()) put("format", listOfNotNull(format, packageName).joinToString(" · "))
             }
         } catch (stop: ScanStopped) {

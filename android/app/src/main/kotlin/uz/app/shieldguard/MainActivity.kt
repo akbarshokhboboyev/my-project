@@ -93,7 +93,8 @@ class MainActivity : FlutterActivity() {
                         try {
                             @Suppress("DEPRECATION")
                             startActivityForResult(Intent(Intent.ACTION_OPEN_DOCUMENT)
-                                .addCategory(Intent.CATEGORY_OPENABLE).setType("*/*"), 81)
+                                .addCategory(Intent.CATEGORY_OPENABLE).setType("*/*")
+                                .putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true), 81)
                         } catch (_: RuntimeException) {
                             picker = null
                             reply.error("unavailable", null, null)
@@ -231,6 +232,21 @@ class MainActivity : FlutterActivity() {
         if (requestCode != 81) return
         val reply = picker ?: return
         picker = null
+        val clip = data?.clipData
+        if (resultCode == RESULT_OK && clip != null) {
+            val uris = (0 until minOf(8, clip.itemCount)).map { clip.getItemAt(it).uri }
+            val cancellation = fileCancellation
+            background(reply) {
+                val reports = uris.map { selected ->
+                    try { NativeFileInspector(applicationContext).inspect(selected) { cancellation.get() } }
+                    catch (_: Exception) { mapOf("complete" to false, "findings" to mapOf("failed" to 0)) }
+                }.toMutableList()
+                if (clip.itemCount > 8) reports.add(mapOf("complete" to false,
+                    "findings" to mapOf("contentLimit" to 0)))
+                mapOf("batch" to reports)
+            }
+            return
+        }
         val uri = data?.data
         if (resultCode != RESULT_OK || uri == null) reply.success(null)
         else {

@@ -62,7 +62,7 @@ android {
 
 gradle.taskGraph.whenReady {
     if (allTasks.any { it.name in setOf("assembleRelease", "bundleRelease") } && !hasSigning &&
-        !project.hasProperty("shieldAllowUnsigned")) {
+        !project.hasProperty("shieldAllowUnsigned") && System.getenv("SHIELD_ALLOW_UNSIGNED") != "true") {
         throw GradleException("Release imzolash sozlanmagan. RELEASE_GUIDE.md hujjatini ko‘ring.")
     }
 }
@@ -75,4 +75,9 @@ kotlin {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    implementation("com.android.tools.build:apksig:9.1.0")
+    implementation("com.tom-roush:pdfbox-android:2.0.27.0")
 }

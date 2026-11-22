@@ -7,6 +7,8 @@
         android:usesCleartextTraffic="false"
         android:name="${applicationName}"
         android:icon="@drawable/shield_launcher">
+        <service android:name=".PdfParserService" android:exported="false"
+            android:isolatedProcess="true" android:process=":pdf_parser" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
