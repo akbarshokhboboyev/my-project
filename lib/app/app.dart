@@ -184,10 +184,26 @@ class _WorkspaceState extends ConsumerState<Workspace>
               engine.message(text),
               ...engine.links(text).where((r) => r.complete),
             ]);
+          } else if (value['kind'] == 'fileProgress') {
+            setState(() {
+              busy = value['busy'] == true;
+              if (busy) {
+                mode = 'file';
+                results = [];
+                notice = null;
+              }
+            });
+            if (busy) context.go('/scan');
+          } else if (value['kind'] == 'fileRejected') {
+            setState(() => notice = value['code'] as String? ?? 'busy');
           } else {
-            await present([
-              platform.decode(value),
-            ], record: value['kind'] != 'alert');
+            if (value['batch'] is List || value['kind'] == 'file') {
+              mode = 'file';
+            }
+            await present(
+              platform.decodeBatch(value),
+              record: value['kind'] != 'alert',
+            );
           }
         }
       });
@@ -217,12 +233,7 @@ class _WorkspaceState extends ConsumerState<Workspace>
         if (mode == 'file') {
           final value = await platform.pick();
           if (value != null) {
-            final batch = value['batch'];
-            await present(
-              batch is List
-                  ? batch.whereType<Map>().map(platform.decode).toList()
-                  : [platform.decode(value)],
-            );
+            await present(platform.decodeBatch(value));
           } else if (mounted) {
             setState(() => notice = 'cancelled');
           }
@@ -501,9 +512,7 @@ class _WorkspaceState extends ConsumerState<Workspace>
       if (busy) const LinearProgressIndicator(),
       if (busy && mode == 'file')
         TextButton(
-          onPressed: () => act(
-            () => ShieldPlatform.channel.invokeMethod<void>('cancelScan'),
-          ),
+          onPressed: () => act(platform.cancelFileScan),
           child: Text(l('cancelScan')),
         ),
     ];
@@ -585,6 +594,7 @@ class _WorkspaceState extends ConsumerState<Workspace>
       }),
     ),
     if (!result.complete && result.score > 0) Text(l('partial')),
+    if (result.type == ThreatType.file) Text(l('sharedAdvice')),
     heading('advice'),
     Text(
       l(switch (result.type) {

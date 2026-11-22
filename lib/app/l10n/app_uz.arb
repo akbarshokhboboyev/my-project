@@ -219,5 +219,8 @@
   "installedUpdated": "Paketning oxirgi yangilanish vaqti",
   "installedCoverage": "Tekshiruv qamrovi",
   "installedContent": "Metadata va chegaralangan APK kontenti",
-  "installedPartial": "Metadata va APK kontentining bir qismi"
+  "installedPartial": "Metadata va APK kontentining bir qismi",
+  "batchItem": "Fayl tartibi",
+  "sharedInvalid": "Fayl manzili qo‘llab-quvvatlanmaydi yoki noto‘g‘ri. Faylni tanlash orqali qayta tanlang.",
+  "sharedAdvice": "Keyingi harakatni o‘zingiz tanlang: hisobotni nusxalash, boshqa faylni tanlash yoki fayl yuborgan ilovaga qaytish."
 }

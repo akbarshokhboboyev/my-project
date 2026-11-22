@@ -1352,6 +1352,24 @@ abstract class Strings {
   /// In uz, this message translates to:
   /// **'Metadata va APK kontentining bir qismi'**
   String get installedPartial;
+
+  /// No description provided for @batchItem.
+  ///
+  /// In uz, this message translates to:
+  /// **'Fayl tartibi'**
+  String get batchItem;
+
+  /// No description provided for @sharedInvalid.
+  ///
+  /// In uz, this message translates to:
+  /// **'Fayl manzili qo‘llab-quvvatlanmaydi yoki noto‘g‘ri. Faylni tanlash orqali qayta tanlang.'**
+  String get sharedInvalid;
+
+  /// No description provided for @sharedAdvice.
+  ///
+  /// In uz, this message translates to:
+  /// **'Keyingi harakatni o‘zingiz tanlang: hisobotni nusxalash, boshqa faylni tanlash yoki fayl yuborgan ilovaga qaytish.'**
+  String get sharedAdvice;
 }
 
 class _StringsDelegate extends LocalizationsDelegate<Strings> {

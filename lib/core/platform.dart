@@ -24,6 +24,13 @@ class ShieldPlatform {
   Future<Map<String, dynamic>?> pending() =>
       channel.invokeMapMethod<String, dynamic>('pending');
 
+  Future<void> cancelFileScan() => channel.invokeMethod<void>('cancelScan');
+
+  List<ScanResult> decodeBatch(Map<dynamic, dynamic> value) =>
+      value['batch'] is List
+      ? (value['batch'] as List).whereType<Map>().map(decode).toList()
+      : [decode(value)];
+
   Future<List<Map<String, dynamic>>> history() async =>
       (await channel.invokeListMethod<Map>('history') ?? [])
           .map(Map<String, dynamic>.from)

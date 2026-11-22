@@ -1,3 +1,23 @@
+# ShieldGuard V3.1 — PHASE 3A
+
+2026-11-22. feature/shieldguard-v3-1. File open/share kodi implementatsiya qilindi; kengaytirilgan E2E qayta sinovi qo‘shimcha tasdiq talab qiladi.
+
+- FileOpenScanHandler: VIEW, SEND va SEND_MULTIPLE; stream/data/ClipData; sovuq va ishlab turgan ilova intent’lari. Eski text SEND saqlandi.
+- SharedFileScanner: SAF bilan umumiy 8 unique URI batch, 64 candidate cap, dedup, har fayl uchun error isolation, cancellation va 60s cooperative batch deadline.
+- Sender read flag’i va Android’dagi actual per-URI read permission tekshiriladi. Faqat content URI; file/http/invalid URI rad etiladi. URI/fayl nomi history’ga yoki tarmoqqa yozilmaydi.
+- Mavjud NativeFileInspector/FileAnalyzer/PDF/apksig qayta ishlatiladi. SIZE katta bo‘lsa stream ochilmaydi; noma’lum hajmda mavjud stream limiti ishlaydi.
+- Flutter progress/cancel, Uzbek per-file verdict, batch tartibi va keyingi harakatni foydalanuvchiga tanlash izohi.
+- Flutter 189/189, Kotlin 173 + 387 malformed, Python 13/13, analyze toza. Debug APK yig‘ildi va Android16’da o‘rnatildi.
+- Dastlabki Android16 file open/share 24 tekshiruv o‘tdi: real grants/format/signature/error isolation va cold VIEW/warm SEND UI.
+- Qo‘shimcha MULTIPLE UI case bilan 25-case runner qayta sinovi unverified: yakuniy test APK o‘rnatilishi INSTALL_FAILED_USER_RESTRICTED bilan rad etildi. Policy bypass bo‘lmadi.
+- SAF regressiyasi: O‘tdi: yangi umumiy scanner yo‘lida isolated PDF parser dalili UI’da ko‘rindi.
+- Hech qanday avtomatik file execute/install/upload yoki global interception yo‘q. Grant’lar persist qilinmaydi. Provider blocking I/O hard interruption kafolati emas.
+- PHASE 3B folder monitoring va PHASE 4–8 implementatsiya qilinmadi. Mavjud installed-app/Telegram funksiyalari saqlandi.
+
+Tafsilotlar TEST_REPORT.md va FILE_ANALYSIS.md da. Quyida PHASE 2/1/V3 tarixi saqlangan.
+
+---
+
 # ShieldGuard V3.1 — PHASE 2
 
 2026-11-22. feature/shieldguard-v3-1. Installed-app monitoring kodi va testlari qo‘shildi. Holat: ishlaydi, lekin qo‘shimcha real install/update/alert sinovi kerak.

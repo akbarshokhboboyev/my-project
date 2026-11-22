@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit
 
 class MainActivity : FlutterActivity() {
     private lateinit var bridge: MethodChannel
+    private var fileJobActive = false
     private var picker: MethodChannel.Result? = null
     private var fileCancellation = java.util.concurrent.atomic.AtomicBoolean(false)
     private var nextRebindAt = 0L
@@ -98,7 +99,7 @@ class MainActivity : FlutterActivity() {
                     }
                 }
                 "pick" -> {
-                    if (picker != null) reply.error("busy", null, null)
+                    if (picker != null || fileJobActive) reply.error("busy", null, null)
                     else {
                         picker = reply
                         fileCancellation = java.util.concurrent.atomic.AtomicBoolean(false)
@@ -212,17 +213,18 @@ class MainActivity : FlutterActivity() {
         if (intent == null) return
         try {
             when (intent.action) {
-                Intent.ACTION_SEND -> {
-                    @Suppress("DEPRECATION")
-                    val uri = intent.getParcelableExtra<Uri>(Intent.EXTRA_STREAM)
-                    if (uri?.scheme == "content" && intent.flags and Intent.FLAG_GRANT_READ_URI_PERMISSION != 0) {
-                        background(null) { NativeFileInspector(applicationContext).inspect(uri) }
-                    } else if (uri == null) {
+                Intent.ACTION_VIEW, Intent.ACTION_SEND, Intent.ACTION_SEND_MULTIPLE -> {
+                    val request = FileOpenScanHandler.request(intent)
+                    if (request != null) {
+                        if (picker != null || fileJobActive) enqueue(mapOf("kind" to "fileRejected", "code" to "busy"))
+                        else {
+                            fileCancellation = java.util.concurrent.atomic.AtomicBoolean(false)
+                            scanFiles(request)
+                        }
+                    } else if (intent.action == Intent.ACTION_SEND) {
                         intent.getCharSequenceExtra(Intent.EXTRA_TEXT)?.take(32000)?.toString()?.let {
                             enqueue(mapOf("kind" to "text", "text" to it))
                         }
-                    } else {
-                        enqueue(mapOf("kind" to "file", "complete" to false, "findings" to mapOf("filePermission" to 0)))
                     }
                 }
                 SHOW_INSTALLED -> {
@@ -250,30 +252,52 @@ class MainActivity : FlutterActivity() {
         if (requestCode != 81) return
         val reply = picker ?: return
         picker = null
-        val clip = data?.clipData
-        if (resultCode == RESULT_OK && clip != null) {
-            val uris = (0 until minOf(8, clip.itemCount)).map { clip.getItemAt(it).uri }
-            val cancellation = fileCancellation
-            background(reply) {
-                val reports = uris.map { selected ->
-                    try { NativeFileInspector(applicationContext).inspect(selected) { cancellation.get() } }
-                    catch (_: Exception) { mapOf("complete" to false, "findings" to mapOf("failed" to 0)) }
-                }.toMutableList()
-                if (clip.itemCount > 8) reports.add(mapOf("complete" to false,
-                    "findings" to mapOf("contentLimit" to 0)))
-                mapOf("batch" to reports)
-            }
+        if (resultCode != RESULT_OK || data == null) { reply.success(null); return }
+        val clip = data.clipData
+        val uris = if (clip != null) (0 until minOf(clip.itemCount, 64))
+            .mapNotNull { clip.getItemAt(it).uri?.toString() }
+            else listOfNotNull(data.data?.toString())
+        if (uris.isEmpty()) reply.success(null)
+        else scanFiles(SharedFileRequest(uris, true, (clip?.itemCount ?: 0) > 64), reply)
+    }
+
+    private fun scanFiles(request: SharedFileRequest, reply: MethodChannel.Result? = null) {
+        if (fileJobActive) {
+            if (reply != null) reply.error("busy", null, null)
+            else enqueue(mapOf("kind" to "fileRejected", "code" to "busy"))
             return
         }
-        val uri = data?.data
-        if (resultCode != RESULT_OK || uri == null) reply.success(null)
-        else {
-            val cancellation = fileCancellation
-            background(reply) { NativeFileInspector(applicationContext).inspect(uri) { cancellation.get() } }
+        fileJobActive = true
+        val cancellation = fileCancellation
+        if (reply == null) enqueue(mapOf("kind" to "fileProgress", "busy" to true))
+        try {
+            worker.execute {
+                val report = try {
+                    FileOpenScanHandler.scanner(applicationContext).scan(request) { cancellation.get() }
+                } catch (_: Exception) { mapOf("batch" to listOf(SharedFileScanner.error("failed"))) }
+                runOnUiThread {
+                    fileJobActive = false
+                    if (!isDestroyed) {
+                        if (reply != null) reply.success(report)
+                        else {
+                            enqueue(report)
+                            enqueue(mapOf("kind" to "fileProgress", "busy" to false))
+                        }
+                    }
+                }
+            }
+        } catch (_: java.util.concurrent.RejectedExecutionException) {
+            fileJobActive = false
+            if (reply != null) reply.error("busy", null, null)
+            else {
+                enqueue(SharedFileScanner.error("busy"))
+                enqueue(mapOf("kind" to "fileProgress", "busy" to false))
+            }
         }
     }
 
     override fun onDestroy() {
+        fileCancellation.set(true)
         InstalledAppMonitor.changed = null
         TelegramThreatListener.connectionChanged = null
         if (::bridge.isInitialized) bridge.setMethodCallHandler(null)

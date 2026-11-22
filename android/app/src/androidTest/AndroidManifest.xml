@@ -1,0 +1,12 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <permission android:name="uz.app.shieldguard.test.FIXTURE_READ" android:protectionLevel="signature" />
+    <application android:name="android.app.Application">
+        <activity android:name="uz.app.shieldguard.FileShareTestSender" android:exported="true"
+            android:label="ShieldGuard sintetik fayl sinovi" />
+        <provider android:name="uz.app.shieldguard.FileShareFixtureProvider"
+            android:authorities="uz.app.shieldguard.test.filefixtures"
+            android:readPermission="uz.app.shieldguard.test.FIXTURE_READ"
+            android:exported="true" android:grantUriPermissions="true"
+            android:process=":filefixtures" />
+    </application>
+</manifest>

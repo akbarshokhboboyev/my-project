@@ -712,4 +712,15 @@ class StringsUz extends Strings {
 
   @override
   String get installedPartial => 'Metadata va APK kontentining bir qismi';
+
+  @override
+  String get batchItem => 'Fayl tartibi';
+
+  @override
+  String get sharedInvalid =>
+      'Fayl manzili qo‘llab-quvvatlanmaydi yoki noto‘g‘ri. Faylni tanlash orqali qayta tanlang.';
+
+  @override
+  String get sharedAdvice =>
+      'Keyingi harakatni o‘zingiz tanlang: hisobotni nusxalash, boshqa faylni tanlash yoki fayl yuborgan ilovaga qaytish.';
 }

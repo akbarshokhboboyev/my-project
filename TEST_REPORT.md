@@ -1,3 +1,61 @@
+# ShieldGuard V3.1 — PHASE 3A sinovlari
+
+2026-11-22. feature/shieldguard-v3-1, PHASE 2 baseline 5215543. shieldguard-security va shieldguard-testing qo‘llandi. Faqat file open/share; folder monitoring va PHASE 4–8 o‘zgartirilmadi.
+
+| Tekshiruv | Shu bosqichdagi natija |
+| --- | --- |
+| flutter test test/file_share_test.dart | 5/5 o‘tdi |
+| flutter analyze | No issues found |
+| flutter test --coverage | 189/189; oldingi 184 saqlandi |
+| test/native/run_tests.ps1 -KotlinLib <Gradle 9.3.1/lib> | 173 tekshiruv + 387 malformed input o‘tdi; 31 yangi shared-file holati |
+| python -m unittest discover -s backend | 13/13 o‘tdi |
+| flutter build apk --debug | Muvaffaqiyatli, yakuniy build 30,5 s |
+| :app:assembleDebugAndroidTest -PshieldTestRunner=uz.app.shieldguard.FileShareInstrumentation | BUILD SUCCESSFUL |
+| Android16 API36 dastlabki file open/share runner | 24 ta tekshiruv o‘tdi; quyidagi qamrovga qarang |
+| Android16 kengaytirilgan 25-case runner qayta sinovi | Unverified: test APK qayta o‘rnatilishi INSTALL_FAILED_USER_RESTRICTED bilan rad etildi |
+| Mavjud Android16 SAF PDF regressiyasi | O‘tdi: yangi umumiy scanner yo‘lida isolated PDF parser dalili UI’da ko‘rindi |
+
+31 yangi JVM holati haqiqiy FileAnalyzer bilan benign PDF/raw format, synthetic APK ZIP (PackageManager/signature metadata callback mock), unknown format, malformed ZIP, oversized input, har bir fayl uchun error isolation, read flag/actual grant rad etilishi, scheme/URI invalid, normalized-scheme dedup, 8 fayl limit, cancellation va fake-clock batch timeout’ni tekshirdi. JVM APK case haqiqiy signature verification deb ko‘rsatilmaydi.
+
+5 Flutter testi startup inbox, warm incoming, individual verdict, progress/cancel/busy, eski text share va o‘zbekcha natijani tekshiradi. MethodChannel bu testlarda mock. Pending fayllar avtomatik online reputatsiyaga yuborilmasligi bridge chaqiruvlarida tekshirildi.
+
+## Qurilmada kuzatilgan qamrov va cheklov
+
+Dastlab muvaffaqiyatli runner 24 ta real Android tekshiruvini bajardi. Cross-UID test provider’dan haqiqiy URI grant/revoke; bitta PDF; apksig tasdiqlagan o‘z benign test APK arxivi; VIEW, SEND(data/stream/ClipData), SEND_MULTIPLE; dedup; missing flag/grant; invalid file URI; metadata’da katta deb ko‘rsatilgan faylni ochmasdan rad etish; unknown/harmless format; malformed ZIP; missing+valid aralash batch; cancellation va text fallback tekshirildi. Shu running o‘zida real MainActivity cold-start VIEW PDF va warm SEND APK o‘zbekcha Flutter natijasida kuzatildi; eski activity destroyed bo‘lmagani ham tekshirildi.
+
+Keyin multiple-file share’ning Activity UI’da 2-tartibli natijasini tekshiradigan 25-case runner tayyorlandi. Bu qayta urinishda fixture provider grant/bootstrap holati tufayli Unknown authority xatosi kuzatildi. Runner’ga boshlangandan keyin sender grant’ini kutadigan PHASE3A_READY_FOR_SENDER handshake qo‘shildi va test APK kompilyatsiya qilindi. Lekin yangi APK’ni qayta o‘rnatish INSTALL_FAILED_USER_RESTRICTED / Install canceled by user bilan rad etildi. Ushbu kengaytirilgan E2E qayta sinovi unverified; 25/25 deb ko‘rsatilmaydi. Dastlabki 24 ta kuzatilgan muvaffaqiyat asosiy debug APK A34A55... uchun amal qiladi. Physical policy o‘zgartirilmadi va rad etilgan install qayta majburlanmadi.
+
+Dastlab Android testidagi MatrixCursor type inference va Intent.setClipData Unit qaytarishi bilan bog‘liq compile xatolari tuzatildi. AGP instrument runner’ni defaultConfig’dan tanlashi uchun shieldTestRunner property qo‘shildi; default Phase2 runner saqlandi. Alohida test processida target APK’ning Kotlin runtime’i bo‘lmagani crash log bilan aniqlandi: provider va sender Java/platform API’lariga o‘tkazildi. Bu fixture/test harness xatolari production parser muvaffaqiyati deb ko‘rsatilmaydi.
+
+Test APK provider’i faqat o‘z private cache’idagi sintetik fayllarni beradi; read permission va per-URI grant tekshiriladi. APK fixture o‘z signed benign test APK arxivi, ishga tushirish/o‘rnatish buyrug‘i bilan skanerlanmagan. Haqiqiy malware ishlatilmadi. Test APK yakunda o‘chirildi; uning synthetic cache’i va grant’lari shu package bilan olib tashlandi. Asosiy debug ilova qurilmada qoldi.
+
+PHASE 2 Android21 instrumentation, jonli Telegram, boshqa Android versiyalari, adversarial provider hang va production online API bu bosqichda qayta tekshirilmadi. Existing installed-app/Telegram JVM regressiyalari to‘liq o‘tdi. Provider blocking query/read uchun hard interruption kafolati yo‘q; timeout/cancellation cooperative, FILE_ANALYSIS.md ga qarang.
+
+## Coverage, artefakt va qayta bajarish
+
+coverage/lcov.info LH/LF = 1000/1279 = 78,19%; generated l10n kiradi. Kotlin/Android satr qamrovi bu foizga kirmaydi.
+
+build/app/outputs/flutter-apk/app-debug.apk — 191103142 bayt.
+SHA-256: a34a55f102cb6d6ffd3e192627626ab776cb31dbe20b12a885c93092b33f4b8d.
+apksigner v2 verify o‘tdi. Source version 3.0.0+3 — development build, production release emas.
+
+Production manifestga faqat SEND_MULTIPLE va content VIEW intent filter’lari qo‘shildi. Storage, QUERY_ALL_PACKAGES yoki Device Admin ruxsati qo‘shilmadi. No automatic upload/install/execute. Test-only provider/sender androidTest APK’da; production APK’da ular yo‘q.
+
+~~~powershell
+flutter analyze
+flutter test --coverage
+python -m unittest discover -s backend
+powershell -NoProfile -ExecutionPolicy RemoteSigned -File test/native/run_tests.ps1 -KotlinLib <Gradle-lib>
+flutter build apk --debug
+.\android\gradlew.bat -p android :app:assembleDebugAndroidTest '-PshieldTestRunner=uz.app.shieldguard.FileShareInstrumentation'
+~~~
+
+Androidda ikkala APK’ni standart tasdiqlash bilan o‘rnating. Terminal A’da am instrument -w uz.app.shieldguard.test/uz.app.shieldguard.FileShareInstrumentation ni ishga tushiring. PHASE3A_READY_FOR_SENDER chiqqach, Terminal B’da am start -W -n uz.app.shieldguard.test/uz.app.shieldguard.FileShareTestSender ni ishga tushiring. Yakuniy expanded runner hali qurilmada tasdiqlanmagan; install policy ruxsat bermasa bypass qilmang. So‘ng faqat o‘zingiz o‘rnatgan uz.app.shieldguard.test test package’ini o‘chiring. PHASE 2 runner uchun shieldTestRunner parametrini bermang.
+
+Quyidagi PHASE 2/1/V3 natijalari tarixiy baseline.
+
+---
+
 # ShieldGuard V3.1 — PHASE 2 sinovlari
 
 2026-11-22. Windows, Flutter 3.47.6, Dart 3.13.5, JDK 17. feature/shieldguard-v3-1, PHASE 1 baseline 63ade45. shieldguard-security va shieldguard-testing qo‘llandi; release skill ishlatilmadi.

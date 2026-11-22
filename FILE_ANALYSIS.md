@@ -1,5 +1,22 @@
 # Fayl tahlili
 
+## PHASE 3A — faylni ochish va ulashish
+
+Foydalanuvchi ShieldGuard’ni tanlaganda ACTION_VIEW (content), ACTION_SEND va ACTION_SEND_MULTIPLE fayllari FileOpenScanHandler orqali mavjud NativeFileInspector/FileAnalyzer’ga beriladi. SEND stream, data yoki ClipData’dan; MULTIPLE bounded stream list/ClipData’dan olinadi. Text-only SEND eski havola/xabar tahliliga boradi. Cold-start configureFlutterEngine va warm onNewIntent bir accept yo‘lini ishlatadi. [Android Intent](https://developer.android.com/reference/android/content/Intent), [URI grant](https://developer.android.com/reference/androidx/core/content/FileProvider).
+
+Fayl turi sender MIME’iga ishonib emas, mavjud magic/ZIP/manifest tahlili bilan aniqlanadi. APK imzosi va available indikatorlar mavjud apksig/DEX/ELF qoidalarida tekshiriladi. Tahlil incomplete bo‘lsa verdict unknown; permission/limit/missing-file xatosi boshqa faylni to‘xtatmaydi.
+
+Share uchun read flag va actual checkUriPermission talab qilinadi; SAF Android bergan read grant bilan ishlaydi. Faqat valid content URI, 4096 belgigacha; userinfo/fragment/unsupported scheme rad etiladi. Global storage ruxsati, hidden filesystem access yoki persistable grant olinmaydi.
+
+64 candidate’gacha ko‘riladi, scheme normalizatsiyasi bilan bir xil URI dedup qilinadi, dastlabki 8 unique fayl tekshiriladi; ortiqchasi incomplete contentLimit sifatida ko‘rsatiladi. Dedup URI bo‘yicha, barcha provider alias’larining bir fayl ekanini kafolatlamaydi. Bir activity’da bitta file batch; band holatda yangi file request busy bilan rad etiladi. Mavjud worker queue chegarasi saqlandi.
+
+Batch 60 soniyalik monotonic cooperative deadline va cancel token ishlatadi. Per-file stream/format stage mavjud 15 soniyalik checkpoint va hajm limitlari bilan qoladi. Provider metadata query yoki bloklangan read chaqiruvini har doim darhol to‘xtatish mumkin emas; hard wall-clock isolation qo‘shilmadi. Cancel/deadline qaytganda natija incomplete; bajarilgan oldingi fayllarning dalillari saqlanadi.
+
+Metadata SIZE 128 MiB’dan katta deb berilsa, fayl stream’i ochilmasdan incomplete tooLarge qaytadi. SIZE noma’lum/yolg‘on kichik bo‘lsa ham real stream 128 MiB limitida to‘xtaydi. Arxivlar uchun mavjud 32 MiB va boshqa limitlar saqlandi. Resource limitning o‘zi malware isboti emas.
+
+Natijalar o‘zbekcha per-file kartalarda chiqadi. Foydalanuvchi hisobotni nusxalashi, boshqa fayl tanlashi yoki asl ilovaga qaytishi mumkin. Fayl avtomatik ochilmaydi, o‘rnatilmaydi, bajarilmaydi va serverga yuborilmaydi. Vaqtinchalik cache nusxasi finally bilan o‘chiriladi; raw URI va fayl nomi history/report export’ga kiritilmaydi. Boshqa ilovalarda ochilgan barcha fayllar universal kuzatilmaydi. Folder monitoring PHASE 3B bu yerga kirmaydi.
+
+
 | Format | V3 tekshiruvi | Chegara |
 | --- | --- | --- |
 | APK | PackageManager manifest, paket/versiya/SDK/ruxsatlar/exported komponentlar; apksig imzo yaxlitligi va verifier sertifikat SHA-256 | Imzo ishlab chiquvchiga ishonch kafolati emas; lineage alohida tekshirilmaydi |

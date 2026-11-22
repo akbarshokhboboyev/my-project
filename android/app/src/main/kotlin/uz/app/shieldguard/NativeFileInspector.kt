@@ -12,9 +12,16 @@ import java.security.MessageDigest
 internal class NativeFileInspector(private val context: Context) {
     fun inspect(uri: Uri, cancelled: () -> Boolean = { false }): Map<String, Any> {
         require(uri.scheme == "content")
+        var oversized = false
         val displayName = context.contentResolver.query(
-            uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null
-        )?.use { if (it.moveToFirst()) it.getString(0) else null }.orEmpty()
+            uri, arrayOf(OpenableColumns.DISPLAY_NAME, OpenableColumns.SIZE), null, null, null
+        )?.use {
+            if (!it.moveToFirst()) return@use null
+            val sizeColumn = it.getColumnIndex(OpenableColumns.SIZE)
+            oversized = sizeColumn >= 0 && !it.isNull(sizeColumn) && it.getLong(sizeColumn) > ScanLimits().maxFileBytes
+            it.getString(0)
+        }.orEmpty()
+        if (oversized) return SharedFileScanner.error("tooLarge")
         val analyzer = FileAnalyzer(File(context.cacheDir, "shield-scans"), cancelled = cancelled,
             inspectPdf = { file ->
                 PdfInspector(context).inspect(file, cancelled).let { it.findings to it.complete }
