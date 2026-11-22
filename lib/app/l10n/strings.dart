@@ -1,0 +1,846 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/intl.dart' as intl;
+
+import 'strings_uz.dart';
+
+// ignore_for_file: type=lint
+
+/// Callers can lookup localized strings with an instance of Strings
+/// returned by `Strings.of(context)`.
+///
+/// Applications need to include `Strings.delegate()` in their app's
+/// `localizationDelegates` list, and the locales they support in the app's
+/// `supportedLocales` list. For example:
+///
+/// ```dart
+/// import 'l10n/strings.dart';
+///
+/// return MaterialApp(
+///   localizationsDelegates: Strings.localizationsDelegates,
+///   supportedLocales: Strings.supportedLocales,
+///   home: MyApplicationHome(),
+/// );
+/// ```
+///
+/// ## Update pubspec.yaml
+///
+/// Please make sure to update your pubspec.yaml to include the following
+/// packages:
+///
+/// ```yaml
+/// dependencies:
+///   # Internationalization support.
+///   flutter_localizations:
+///     sdk: flutter
+///   intl: any # Use the pinned version from flutter_localizations
+///
+///   # Rest of dependencies
+/// ```
+///
+/// ## iOS Applications
+///
+/// iOS applications define key application metadata, including supported
+/// locales, in an Info.plist file that is built into the application bundle.
+/// To configure the locales supported by your app, you’ll need to edit this
+/// file.
+///
+/// First, open your project’s ios/Runner.xcworkspace Xcode workspace file.
+/// Then, in the Project Navigator, open the Info.plist file under the Runner
+/// project’s Runner folder.
+///
+/// Next, select the Information Property List item, select Add Item from the
+/// Editor menu, then select Localizations from the pop-up menu.
+///
+/// Select and expand the newly-created Localizations item then, for each
+/// locale your application supports, add a new item and select the locale
+/// you wish to add from the pop-up menu in the Value field. This list should
+/// be consistent with the languages listed in the Strings.supportedLocales
+/// property.
+abstract class Strings {
+  Strings(String locale)
+    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+
+  final String localeName;
+
+  static Strings? of(BuildContext context) {
+    return Localizations.of<Strings>(context, Strings);
+  }
+
+  static const LocalizationsDelegate<Strings> delegate = _StringsDelegate();
+
+  /// A list of this localizations delegate along with the default localizations
+  /// delegates.
+  ///
+  /// Returns a list of localizations delegates containing this delegate along with
+  /// GlobalMaterialLocalizations.delegate, GlobalCupertinoLocalizations.delegate,
+  /// and GlobalWidgetsLocalizations.delegate.
+  ///
+  /// Additional delegates can be added by appending to this list in
+  /// MaterialApp. This list does not have to be used at all if a custom list
+  /// of delegates is preferred or required.
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
+      <LocalizationsDelegate<dynamic>>[
+        delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ];
+
+  /// A list of this localizations delegate's supported locales.
+  static const List<Locale> supportedLocales = <Locale>[Locale('uz')];
+
+  /// No description provided for @home.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bosh sahifa'**
+  String get home;
+
+  /// No description provided for @scan.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tekshirish'**
+  String get scan;
+
+  /// No description provided for @protection.
+  ///
+  /// In uz, this message translates to:
+  /// **'Himoya'**
+  String get protection;
+
+  /// No description provided for @history.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tarix'**
+  String get history;
+
+  /// No description provided for @settings.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sozlamalar'**
+  String get settings;
+
+  /// No description provided for @tagline.
+  ///
+  /// In uz, this message translates to:
+  /// **'Raqamli xavfsizligingiz uchun'**
+  String get tagline;
+
+  /// No description provided for @active.
+  ///
+  /// In uz, this message translates to:
+  /// **'Himoya faol'**
+  String get active;
+
+  /// No description provided for @inactive.
+  ///
+  /// In uz, this message translates to:
+  /// **'Himoya o‘chirilgan'**
+  String get inactive;
+
+  /// No description provided for @paused.
+  ///
+  /// In uz, this message translates to:
+  /// **'Himoya vaqtincha to‘xtagan'**
+  String get paused;
+
+  /// No description provided for @noAlerts.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ogohlantirishlarga ruxsat kerak'**
+  String get noAlerts;
+
+  /// No description provided for @noAccess.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bildirishnomalarga kirish ruxsati kerak'**
+  String get noAccess;
+
+  /// No description provided for @link.
+  ///
+  /// In uz, this message translates to:
+  /// **'Havolani tekshirish'**
+  String get link;
+
+  /// No description provided for @message.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xabarni tekshirish'**
+  String get message;
+
+  /// No description provided for @file.
+  ///
+  /// In uz, this message translates to:
+  /// **'Faylni tekshirish'**
+  String get file;
+
+  /// No description provided for @notification.
+  ///
+  /// In uz, this message translates to:
+  /// **'Avtomatik tekshiruv'**
+  String get notification;
+
+  /// No description provided for @automatic.
+  ///
+  /// In uz, this message translates to:
+  /// **'Avtomatik himoya'**
+  String get automatic;
+
+  /// No description provided for @manual.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qo‘lda tekshirish'**
+  String get manual;
+
+  /// No description provided for @choose.
+  ///
+  /// In uz, this message translates to:
+  /// **'Faylni tanlash'**
+  String get choose;
+
+  /// No description provided for @pasteLink.
+  ///
+  /// In uz, this message translates to:
+  /// **'Havolani yoki havolali xabarni joylang'**
+  String get pasteLink;
+
+  /// No description provided for @pasteMessage.
+  ///
+  /// In uz, this message translates to:
+  /// **'Shubhali xabar matnini joylang'**
+  String get pasteMessage;
+
+  /// No description provided for @clearInput.
+  ///
+  /// In uz, this message translates to:
+  /// **'Matnni tozalash'**
+  String get clearInput;
+
+  /// No description provided for @working.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tekshirilmoqda'**
+  String get working;
+
+  /// No description provided for @cancelled.
+  ///
+  /// In uz, this message translates to:
+  /// **'Fayl tanlash bekor qilindi'**
+  String get cancelled;
+
+  /// No description provided for @failed.
+  ///
+  /// In uz, this message translates to:
+  /// **'Amalni bajarib bo‘lmadi. Qayta urinib ko‘ring.'**
+  String get failed;
+
+  /// No description provided for @unavailable.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qurilmada kerakli tizim oynasi mavjud emas.'**
+  String get unavailable;
+
+  /// No description provided for @busy.
+  ///
+  /// In uz, this message translates to:
+  /// **'Boshqa tekshiruv davom etmoqda.'**
+  String get busy;
+
+  /// No description provided for @fileMissing.
+  ///
+  /// In uz, this message translates to:
+  /// **'Fayl topilmadi.'**
+  String get fileMissing;
+
+  /// No description provided for @filePermission.
+  ///
+  /// In uz, this message translates to:
+  /// **'Faylni o‘qish uchun ruxsat yo‘q.'**
+  String get filePermission;
+
+  /// No description provided for @tooLarge.
+  ///
+  /// In uz, this message translates to:
+  /// **'Fayl 128 MiB chegarasidan katta.'**
+  String get tooLarge;
+
+  /// No description provided for @unknown.
+  ///
+  /// In uz, this message translates to:
+  /// **'Fayl formati aniqlanmadi.'**
+  String get unknown;
+
+  /// No description provided for @invalid.
+  ///
+  /// In uz, this message translates to:
+  /// **'Havola noto‘g‘ri yoki qo‘llab-quvvatlanmaydi.'**
+  String get invalid;
+
+  /// No description provided for @empty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tekshirish uchun matn yoki havola kiriting.'**
+  String get empty;
+
+  /// No description provided for @result.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tekshiruv natijasi'**
+  String get result;
+
+  /// No description provided for @low.
+  ///
+  /// In uz, this message translates to:
+  /// **'Past xavf'**
+  String get low;
+
+  /// No description provided for @caution.
+  ///
+  /// In uz, this message translates to:
+  /// **'E’tibor talab etadi'**
+  String get caution;
+
+  /// No description provided for @high.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yuqori xavf'**
+  String get high;
+
+  /// No description provided for @severe.
+  ///
+  /// In uz, this message translates to:
+  /// **'Juda yuqori xavf'**
+  String get severe;
+
+  /// No description provided for @score.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xavf balli'**
+  String get score;
+
+  /// No description provided for @confidence.
+  ///
+  /// In uz, this message translates to:
+  /// **'Belgilar ishonchliligi'**
+  String get confidence;
+
+  /// No description provided for @limited.
+  ///
+  /// In uz, this message translates to:
+  /// **'Cheklangan'**
+  String get limited;
+
+  /// No description provided for @moderate.
+  ///
+  /// In uz, this message translates to:
+  /// **'O‘rtacha'**
+  String get moderate;
+
+  /// No description provided for @strong.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yuqori'**
+  String get strong;
+
+  /// No description provided for @source.
+  ///
+  /// In uz, this message translates to:
+  /// **'Manba'**
+  String get source;
+
+  /// No description provided for @local.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qurilmadagi mahalliy qoidalar'**
+  String get local;
+
+  /// No description provided for @online.
+  ///
+  /// In uz, this message translates to:
+  /// **'Internet orqali reputatsiya tekshirilmadi.'**
+  String get online;
+
+  /// No description provided for @partial.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tekshiruv to‘liq bajarilmadi.'**
+  String get partial;
+
+  /// No description provided for @noFindings.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ma’lum xavf belgisi topilmadi. Xavfsizlik kafolatlanmaydi.'**
+  String get noFindings;
+
+  /// No description provided for @subject.
+  ///
+  /// In uz, this message translates to:
+  /// **'Domen yoki fayl formati'**
+  String get subject;
+
+  /// No description provided for @why.
+  ///
+  /// In uz, this message translates to:
+  /// **'Aniqlangan belgilar'**
+  String get why;
+
+  /// No description provided for @limits.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tekshiruv chegaralari'**
+  String get limits;
+
+  /// No description provided for @advice.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tavsiya'**
+  String get advice;
+
+  /// No description provided for @linkLimit.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sahifa ochilmadi. Yo‘naltirishlar va sahifa mazmuni tekshirilmadi.'**
+  String get linkLimit;
+
+  /// No description provided for @messageLimit.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bot yoki yuboruvchining haqiqiyligi tekshirilmadi.'**
+  String get messageLimit;
+
+  /// No description provided for @fileLimit.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mahalliy statik tekshiruv ishlatildi. Arxiv ichidagi fayllar ochilmadi. Siqilgan PDF obyektlari va barcha zararli kodlar aniqlanmasligi mumkin.'**
+  String get fileLimit;
+
+  /// No description provided for @alertLimit.
+  ///
+  /// In uz, this message translates to:
+  /// **'Android taqdim etgan bildirishnoma matni mahalliy tekshirildi.'**
+  String get alertLimit;
+
+  /// No description provided for @linkAdvice.
+  ///
+  /// In uz, this message translates to:
+  /// **'Havola manbasini mustaqil tekshiring. Shubhali sahifaga parol yoki kod kiritmang.'**
+  String get linkAdvice;
+
+  /// No description provided for @messageAdvice.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tasdiqlash kodi va parolingizni yubormang. So‘rovni tanish aloqa yo‘li orqali tekshiring.'**
+  String get messageAdvice;
+
+  /// No description provided for @fileAdvice.
+  ///
+  /// In uz, this message translates to:
+  /// **'Manbasini tekshirmaguncha faylni ochmang yoki o‘rnatmang.'**
+  String get fileAdvice;
+
+  /// No description provided for @http.
+  ///
+  /// In uz, this message translates to:
+  /// **'Havola shifrlanmagan HTTP orqali ishlaydi.'**
+  String get http;
+
+  /// No description provided for @userinfo.
+  ///
+  /// In uz, this message translates to:
+  /// **'Havola tarkibida haqiqiy domenni yashirishi mumkin bo‘lgan foydalanuvchi qismi bor.'**
+  String get userinfo;
+
+  /// No description provided for @ip.
+  ///
+  /// In uz, this message translates to:
+  /// **'Domen o‘rnida IP manzil ishlatilgan.'**
+  String get ip;
+
+  /// No description provided for @idn.
+  ///
+  /// In uz, this message translates to:
+  /// **'Domen xalqaro belgilar yoki Punycode ishlatadi. O‘xshash harflarni tekshiring.'**
+  String get idn;
+
+  /// No description provided for @short.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qisqartirilgan havola yakuniy manzilni yashiradi.'**
+  String get short;
+
+  /// No description provided for @brand.
+  ///
+  /// In uz, this message translates to:
+  /// **'Domen nomi Telegram xizmatiga taqlid qilishi mumkin.'**
+  String get brand;
+
+  /// No description provided for @lure.
+  ///
+  /// In uz, this message translates to:
+  /// **'Havolada kirish, tasdiqlash yoki sovg‘aga oid iboralar bor.'**
+  String get lure;
+
+  /// No description provided for @secret.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xabar maxfiy kod yoki parolni yuborish yoki kiritishni so‘raydi.'**
+  String get secret;
+
+  /// No description provided for @gift.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sovg‘a va’dasi maxfiy ma’lumot so‘rovi yoki shubhali havola bilan birga kelgan.'**
+  String get gift;
+
+  /// No description provided for @urgent.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xabar zudlik bilan harakat qilishga undaydi.'**
+  String get urgent;
+
+  /// No description provided for @support.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xabar o‘zini yordam xizmati deb tanishtirib, maxfiy ma’lumot so‘raydi.'**
+  String get support;
+
+  /// No description provided for @install.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xabar havola orqali dastur o‘rnatishga undashi mumkin.'**
+  String get install;
+
+  /// No description provided for @messageLink.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xabarda firibgarlik belgilariga ega havola bor.'**
+  String get messageLink;
+
+  /// No description provided for @mismatch.
+  ///
+  /// In uz, this message translates to:
+  /// **'Faylning ichki imzosi kengaytmasiga mos kelmaydi.'**
+  String get mismatch;
+
+  /// No description provided for @doubleExtension.
+  ///
+  /// In uz, this message translates to:
+  /// **'Fayl nomida chalg‘ituvchi kengaytma yoki yo‘nalish belgisi bor.'**
+  String get doubleExtension;
+
+  /// No description provided for @structure.
+  ///
+  /// In uz, this message translates to:
+  /// **'Faylning asosiy tuzilishi buzilgan yoki kutilmagan.'**
+  String get structure;
+
+  /// No description provided for @archiveLimit.
+  ///
+  /// In uz, this message translates to:
+  /// **'Arxiv tekshiruv uchun belgilangan resurs chegarasidan oshdi.'**
+  String get archiveLimit;
+
+  /// No description provided for @executable.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bu Windows bajariladigan fayli.'**
+  String get executable;
+
+  /// No description provided for @pdfAction.
+  ///
+  /// In uz, this message translates to:
+  /// **'PDF ichida avtomatik amal yoki skript belgisi bor.'**
+  String get pdfAction;
+
+  /// No description provided for @pdfEmbedded.
+  ///
+  /// In uz, this message translates to:
+  /// **'PDF ichiga fayl biriktirilgan bo‘lishi mumkin.'**
+  String get pdfEmbedded;
+
+  /// No description provided for @apkUnreadable.
+  ///
+  /// In uz, this message translates to:
+  /// **'APK ma’lumotlarini o‘qib bo‘lmadi.'**
+  String get apkUnreadable;
+
+  /// No description provided for @apkSms.
+  ///
+  /// In uz, this message translates to:
+  /// **'APK qisqa xabarlarga oid sezgir ruxsat so‘raydi.'**
+  String get apkSms;
+
+  /// No description provided for @apkAccess.
+  ///
+  /// In uz, this message translates to:
+  /// **'APK qurilmani boshqarish imkonini beruvchi maxsus xizmatni e’lon qilgan.'**
+  String get apkAccess;
+
+  /// No description provided for @apkInstall.
+  ///
+  /// In uz, this message translates to:
+  /// **'APK boshqa ilovalarni o‘rnatish ruxsatini so‘raydi.'**
+  String get apkInstall;
+
+  /// No description provided for @apkCombo.
+  ///
+  /// In uz, this message translates to:
+  /// **'APK qisqa xabarlar va internetdan birga foydalanishi mumkin.'**
+  String get apkCombo;
+
+  /// No description provided for @disclosure.
+  ///
+  /// In uz, this message translates to:
+  /// **'Android ushbu ruxsat orqali bildirishnomalarga kirish beradi. ShieldGuard faqat Telegram va Telegram X xabarlarining tizim ko‘rsatgan qismini qurilmada tahlil qiladi. Matn, kod va parollar yozib olinmaydi yoki uzatilmaydi.'**
+  String get disclosure;
+
+  /// No description provided for @enable.
+  ///
+  /// In uz, this message translates to:
+  /// **'Roziman, himoyani yoqish'**
+  String get enable;
+
+  /// No description provided for @disable.
+  ///
+  /// In uz, this message translates to:
+  /// **'Himoyani o‘chirish'**
+  String get disable;
+
+  /// No description provided for @grant.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ruxsat berish'**
+  String get grant;
+
+  /// No description provided for @grantAlerts.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ogohlantirishlarni yoqish'**
+  String get grantAlerts;
+
+  /// No description provided for @hidden.
+  ///
+  /// In uz, this message translates to:
+  /// **'Maxfiy suhbatlar va Android yashirgan kodlar ko‘rinmasligi mumkin. Bunday xabarlarni qo‘lda tekshirishingiz mumkin.'**
+  String get hidden;
+
+  /// No description provided for @guide.
+  ///
+  /// In uz, this message translates to:
+  /// **'Telegram xavfsizlik qo‘llanmasi'**
+  String get guide;
+
+  /// No description provided for @twoFactor.
+  ///
+  /// In uz, this message translates to:
+  /// **'Telegram sozlamalarida «Maxfiylik va xavfsizlik» bo‘limidan ikki bosqichli himoyani yoqing. Tiklash elektron pochtangizni himoyalang.'**
+  String get twoFactor;
+
+  /// No description provided for @sessions.
+  ///
+  /// In uz, this message translates to:
+  /// **'Telegram sozlamalarida «Qurilmalar» bo‘limini oching. Tanimagan seanslarni tugating.'**
+  String get sessions;
+
+  /// No description provided for @codes.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tasdiqlash kodi va ikki bosqichli himoya parolini hech kimga yubormang.'**
+  String get codes;
+
+  /// No description provided for @report.
+  ///
+  /// In uz, this message translates to:
+  /// **'Shubhali bot profilidagi menyudan uni bloklang va shikoyat yuboring.'**
+  String get report;
+
+  /// No description provided for @incident.
+  ///
+  /// In uz, this message translates to:
+  /// **'Begona kirishdan shubhalansangiz, ishonchli qurilmadan seanslarni tugating, himoya parolini yangilang va kontaktlaringizni ogohlantiring.'**
+  String get incident;
+
+  /// No description provided for @selfCheck.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bajarilgan ishlarni qo‘lda belgilang. ShieldGuard Telegram sozlamalarini o‘qimaydi.'**
+  String get selfCheck;
+
+  /// No description provided for @historyOpt.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tekshiruv tarixini saqlash'**
+  String get historyOpt;
+
+  /// No description provided for @historyDesc.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yozuvda faqat vaqt, tur, ball, belgilar soni va tekshiruv holati qoladi.'**
+  String get historyDesc;
+
+  /// No description provided for @historyEmpty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tekshiruv yozuvlari yo‘q.'**
+  String get historyEmpty;
+
+  /// No description provided for @clearHistory.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tarixni tozalash'**
+  String get clearHistory;
+
+  /// No description provided for @confirmClear.
+  ///
+  /// In uz, this message translates to:
+  /// **'Barcha tekshiruv yozuvlari o‘chirilsinmi?'**
+  String get confirmClear;
+
+  /// No description provided for @later.
+  ///
+  /// In uz, this message translates to:
+  /// **'Keyinroq'**
+  String get later;
+
+  /// No description provided for @all.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hammasi'**
+  String get all;
+
+  /// No description provided for @onlyRisk.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xavfli tekshiruvlar'**
+  String get onlyRisk;
+
+  /// No description provided for @date.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sana'**
+  String get date;
+
+  /// No description provided for @last.
+  ///
+  /// In uz, this message translates to:
+  /// **'Oxirgi yozuv'**
+  String get last;
+
+  /// No description provided for @events.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yuqori xavfli yozuvlar'**
+  String get events;
+
+  /// No description provided for @dark.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qorong‘i mavzu'**
+  String get dark;
+
+  /// No description provided for @privacy.
+  ///
+  /// In uz, this message translates to:
+  /// **'Maxfiylik siyosati'**
+  String get privacy;
+
+  /// No description provided for @privacyBody.
+  ///
+  /// In uz, this message translates to:
+  /// **'Havola, xabar va fayl tahlili qurilmada amalga oshiriladi. Tarix ixtiyoriy. Xabar matni, to‘liq URL, parol, tasdiqlash kodi, fayl nomi yoki identifikatori tarixga yozilmaydi. Fayl nusxasi tekshiruv vaqtida vaqtincha saqlanadi va yakunda o‘chiriladi.'**
+  String get privacyBody;
+
+  /// No description provided for @about.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ilova haqida'**
+  String get about;
+
+  /// No description provided for @aboutBody.
+  ///
+  /// In uz, this message translates to:
+  /// **'ShieldGuard havola, xabar va fayllarda shubhali belgilarni mahalliy qoidalar bilan aniqlaydi.'**
+  String get aboutBody;
+
+  /// No description provided for @help.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yordam'**
+  String get help;
+
+  /// No description provided for @helpBody.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xabarni nusxalab ShieldGuard’ga joylang yoki boshqa ilovadagi ulashish menyusidan ShieldGuard’ni tanlang. Faylni tizim oynasi orqali ham tanlashingiz mumkin.'**
+  String get helpBody;
+
+  /// No description provided for @intro.
+  ///
+  /// In uz, this message translates to:
+  /// **'ShieldGuard bilan tanishing'**
+  String get intro;
+
+  /// No description provided for @continueButton.
+  ///
+  /// In uz, this message translates to:
+  /// **'Davom etish'**
+  String get continueButton;
+
+  /// No description provided for @done.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tugallangan'**
+  String get done;
+
+  /// No description provided for @back.
+  ///
+  /// In uz, this message translates to:
+  /// **'Orqaga'**
+  String get back;
+
+  /// No description provided for @close.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yopish'**
+  String get close;
+
+  /// No description provided for @signer.
+  ///
+  /// In uz, this message translates to:
+  /// **'Imzolovchi sertifikat izi'**
+  String get signer;
+}
+
+class _StringsDelegate extends LocalizationsDelegate<Strings> {
+  const _StringsDelegate();
+
+  @override
+  Future<Strings> load(Locale locale) {
+    return SynchronousFuture<Strings>(lookupStrings(locale));
+  }
+
+  @override
+  bool isSupported(Locale locale) =>
+      <String>['uz'].contains(locale.languageCode);
+
+  @override
+  bool shouldReload(_StringsDelegate old) => false;
+}
+
+Strings lookupStrings(Locale locale) {
+  // Lookup logic when only language code is specified.
+  switch (locale.languageCode) {
+    case 'uz':
+      return StringsUz();
+  }
+
+  throw FlutterError(
+    'Strings.delegate failed to load unsupported locale "$locale". This is likely '
+    'an issue with the localizations generation tool. Please file an issue '
+    'on GitHub with a reproducible sample app and the gen-l10n configuration '
+    'that was used.',
+  );
+}

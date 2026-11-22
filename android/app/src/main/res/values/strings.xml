@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">ShieldGuard</string>
+    <string name="listener_name">ShieldGuard avtomatik himoyasi</string>
+    <string name="alert_channel">Xavfsizlik ogohlantirishlari</string>
+    <string name="alert_title">Yuqori xavf aniqlandi</string>
+    <string name="alert_body">Telegram bildirishnomasida firibgarlik belgilari bor. Tafsilotlarni ko‘ring.</string>
+</resources>

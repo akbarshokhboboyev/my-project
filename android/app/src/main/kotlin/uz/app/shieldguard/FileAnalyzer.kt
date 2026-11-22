@@ -1,0 +1,194 @@
+package uz.app.shieldguard
+
+import java.io.File
+import java.io.InputStream
+import java.io.RandomAccessFile
+import java.security.MessageDigest
+import java.util.zip.ZipException
+import java.util.zip.ZipFile
+
+internal data class ApkMetadata(
+    val packageName: String,
+    val permissions: Set<String>,
+    val accessibility: Boolean,
+    val signers: List<String>
+)
+
+internal class FileAnalyzer(
+    private val directory: File,
+    private val readApk: (File) -> ApkMetadata?
+) {
+    fun inspect(displayName: String, open: () -> InputStream): Map<String, Any> {
+        val extension = displayName.lowercase()
+        directory.mkdirs()
+        val staleBefore = System.currentTimeMillis() - 24L * 60 * 60 * 1000
+        directory.listFiles()?.forEach { file ->
+            if (file.name.startsWith("scan-") && file.lastModified() < staleBefore) file.delete()
+        }
+        // PackageManager expects the archive to have an APK suffix.
+        val temp = File.createTempFile("scan-", ".apk", directory)
+        try {
+            val digest = MessageDigest.getInstance("SHA-256")
+            var size = 0L
+            val pdfFindings = linkedMapOf<String, Int>()
+            var overlap = ""
+            open().buffered().use { source ->
+                source.mark(5)
+                val pdf = "%PDF-".all { source.read() == it.code }
+                source.reset()
+                temp.outputStream().use { output ->
+                    val buffer = ByteArray(64 * 1024)
+                    while (true) {
+                        val count = source.read(buffer)
+                        if (count < 0) break
+                        size += count
+                        if (size > 128L * 1024 * 1024) return result("tooLarge")
+                        if (pdf) {
+                            val chunk = overlap + String(buffer, 0, count, Charsets.ISO_8859_1)
+                            if (pdfAction.containsMatchIn(chunk)) pdfFindings["pdfAction"] = 25
+                            if (pdfEmbedded.containsMatchIn(chunk)) pdfFindings["pdfEmbedded"] = 20
+                            overlap = chunk.takeLast(64)
+                        }
+                        digest.update(buffer, 0, count)
+                        output.write(buffer, 0, count)
+                    }
+                }
+            }
+            val findings = linkedMapOf<String, Int>()
+            var complete = true
+            val format = RandomAccessFile(temp, "r").use { file ->
+                val header = ByteArray(minOf(64L, size).toInt())
+                file.readFully(header)
+                fun starts(vararg bytes: Int) =
+                    header.size >= bytes.size && bytes.indices.all { (header[it].toInt() and 255) == bytes[it] }
+                fun tail(amount: Int): ByteArray {
+                    val bytes = ByteArray(minOf(amount.toLong(), size).toInt())
+                    file.seek(size - bytes.size)
+                    file.readFully(bytes)
+                    return bytes
+                }
+                when {
+                    starts(0x25, 0x50, 0x44, 0x46, 0x2d) -> {
+                        findings.putAll(pdfFindings)
+                        if (!String(tail(2048), Charsets.ISO_8859_1).contains("%%EOF")) findings["structure"] = 30
+                        "PDF"
+                    }
+                    starts(0xff, 0xd8, 0xff) -> {
+                        if (!tail(2).contentEquals(byteArrayOf(-1, -39))) findings["structure"] = 30
+                        "JPEG"
+                    }
+                    starts(137, 80, 78, 71, 13, 10, 26, 10) -> {
+                        if (size < 45 || !String(tail(12), Charsets.ISO_8859_1).contains("IEND")) findings["structure"] = 30
+                        "PNG"
+                    }
+                    starts(77, 90) -> {
+                        val offset = if (header.size >= 64) java.nio.ByteBuffer.wrap(header)
+                            .order(java.nio.ByteOrder.LITTLE_ENDIAN).getInt(60).toLong() else -1L
+                        if (offset < 64 || offset > size - 4) findings["structure"] = 30
+                        else {
+                            file.seek(offset)
+                            if (file.readInt() == 0x50450000) findings["executable"] = 50
+                            else findings["structure"] = 30
+                        }
+                        if ("executable" in findings) "PE" else "MZ"
+                    }
+                    starts(80, 75, 3, 4) || starts(80, 75, 5, 6) -> {
+                        val end = tail(65557)
+                        var entries = -1
+                        for (i in end.size - 22 downTo 0) {
+                            if (end[i] == 80.toByte() && end[i+1] == 75.toByte() &&
+                                end[i+2] == 5.toByte() && end[i+3] == 6.toByte()) {
+                                entries = (end[i+10].toInt() and 255) or ((end[i+11].toInt() and 255) shl 8)
+                                break
+                            }
+                        }
+                        if (entries < 0) findings["structure"] = 30
+                        if (entries > 4096) findings["archiveLimit"] = 55
+                        if (entries !in 0..4096 || size > 32L * 1024 * 1024) {
+                            if (size > 32L * 1024 * 1024) findings["archiveLimit"] = 55
+                            complete = false
+                            "ZIP"
+                        } else try {
+                            ZipFile(temp).use { zip ->
+                                val enumeration = zip.entries()
+                                var total = 0L
+                                var count = 0
+                                while (enumeration.hasMoreElements()) {
+                                    val entry = enumeration.nextElement()
+                                    count++
+                                    if (count > 4096 || entry.size !in 0..(256L * 1024 * 1024) ||
+                                        entry.size > (256L * 1024 * 1024) - total ||
+                                        (entry.size > 1024 * 1024 && entry.size / maxOf(1, entry.compressedSize) > 200)) {
+                                        findings["archiveLimit"] = 55
+                                        complete = false
+                                        break
+                                    }
+                                    total += entry.size
+                                }
+                                when {
+                                    zip.getEntry("AndroidManifest.xml") != null -> "APK"
+                                    zip.getEntry("[Content_Types].xml") != null && zip.getEntry("word/document.xml") != null -> "DOCX"
+                                    zip.getEntry("[Content_Types].xml") != null && zip.getEntry("xl/workbook.xml") != null -> "XLSX"
+                                    else -> "ZIP"
+                                }
+                            }
+                        } catch (_: ZipException) {
+                            findings["structure"] = 30
+                            complete = false
+                            "ZIP"
+                        }
+                    }
+                    else -> { complete = false; findings["unknown"] = 0; "" }
+                }
+            }
+            val expected = mapOf("pdf" to "PDF", "jpg" to "JPEG", "jpeg" to "JPEG",
+                "png" to "PNG", "apk" to "APK", "exe" to "PE", "zip" to "ZIP",
+                "docx" to "DOCX", "xlsx" to "XLSX")
+            val suffix = extension.substringAfterLast('.', "")
+            if (format.isNotEmpty() && expected[suffix]?.let { it != format } == true) findings["mismatch"] = 55
+            if (extension.any { it in '\u202a'..'\u202e' || it in '\u2066'..'\u2069' } ||
+                Regex("""\.(pdf|jpg|jpeg|png|docx|xlsx|zip)\.(apk|exe|scr|bat|cmd|js)$""").containsMatchIn(extension)) {
+                findings["doubleExtension"] = 45
+            }
+            var packageName: String? = null
+            var signerHashes = emptyList<String>()
+            if (format == "APK" && complete) {
+                val info = readApk(temp)
+                if (info == null) {
+                    findings["apkUnreadable"] = 30
+                    complete = false
+                } else {
+                    packageName = info.packageName
+                    signerHashes = info.signers
+                    val requested = info.permissions
+                    val sms = requested.any { it in smsPermissions }
+                    val accessibility = info.accessibility
+                    if (sms) findings["apkSms"] = 25
+                    if (accessibility) findings["apkAccess"] = 30
+                    if ("android.permission.REQUEST_INSTALL_PACKAGES" in requested) findings["apkInstall"] = 25
+                    if (sms && "android.permission.INTERNET" in requested) findings["apkCombo"] = 20
+                }
+            }
+            return buildMap {
+                put("kind", "file")
+                put("complete", complete && "structure" !in findings)
+                put("findings", findings)
+                put("hash", digest.digest().joinToString("") { "%02x".format(it) })
+                put("signers", signerHashes)
+                if (format.isNotEmpty()) put("format", listOfNotNull(format, packageName).joinToString(" · "))
+            }
+        } finally {
+            temp.delete()
+        }
+    }
+
+    private fun result(code: String) = mapOf("kind" to "file", "complete" to false,
+        "findings" to mapOf(code to 0))
+
+    companion object {
+        private val pdfAction = Regex("""/(JavaScript|JS|Launch|OpenAction|AA)\b""")
+        private val pdfEmbedded = Regex("""/(EmbeddedFile|EmbeddedFiles|Filespec)\b""")
+        private val smsPermissions = setOf("android.permission.READ_SMS",
+            "android.permission.RECEIVE_SMS", "android.permission.SEND_SMS")
+    }
+}
