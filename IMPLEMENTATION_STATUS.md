@@ -1,6 +1,10 @@
-# ShieldGuard V3.1 — PHASE 4 (davom etmoqda)
+# ShieldGuard V3.1 — PHASE 4
 
-4A–4C: APK discovery/risk policy, immutable snapshot/hash/generation forwarding gate, Uzbek modal/strict opt-in, lokal bounded tarix, rozilikka bog‘liq background notification va unknown-source settings navigatsiyasi implementatsiya qilindi. FileProvider faqat private APK snapshot root’ini read grant bilan beradi; installer/global storage/overlay ruxsati qo‘shilmadi. Flutter 205/205, native 238 + 387 malformed, Python 13/13; analyze toza, coverage 80,32%. 4D real device tekshiruvi hali yakunlanmagan. Tafsilot: AUTO_BLOCK_PROTECTION.md.
+4A–4C kodi implementatsiya qilindi: APK discovery/risk, native snapshot/hash/generation gate, Uzbek modal/strict opt-in, bounded lokal tarix, consent-based background notification va unknown-source settings. FileProvider tor private root bilan; installer/global storage/overlay ruxsati qo‘shilmadi. Flutter 205/205, Kotlin 238 + 387 malformed, Python 13/13, analyze toza, coverage 80,32%.
+
+4D: Android16 real SAF’da imzosi buzilgan kodsiz APK → Uzbek block modal + blockedByShieldGuard; benign APK → heuristic-only va explicit confirmation’dan so‘ng Android chooser. Authorized folder background manual job’da notification posted; real POST_NOTIFICATIONS denied’da scan ishladi, notification yo‘q. Unknown-source settings real ochildi. Installer tanlanmadi, scanned APK install/execute qilinmadi. Permission va own test grant/cache/history/snapshotlar tozalandi.
+
+4D Native test runner **unverified**: build o‘tdi, test APK install INSTALL_FAILED_USER_RESTRICTED bilan rad etildi; uning maxsus failure-path assertion’lari device’da bajarilmadi. Tabiiy periodic/low-battery/reboot, jonli reputation/developer roots va oldingi PHASE 2 install/update, PHASE 3A 25-case, PHASE 3B native runner, real Telegram notification ochiq. PHASE 5–8 o‘zgartirilmadi. Tafsilot: AUTO_BLOCK_PROTECTION.md va TEST_REPORT.md.
 
 # ShieldGuard V3.1 — PHASE 3B
 

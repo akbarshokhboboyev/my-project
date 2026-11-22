@@ -75,10 +75,8 @@ class MainActivity : FlutterActivity() {
                     if (key == null || key !in setOf("enabled", "history", "intro", "dark", "onlineConsent", "appMonitoring", "apkAutoBlock", "apkStrict", "apkAlerts") || value == null) {
                         reply.error("invalid", null, null)
                     } else {
-                        if (key == "apkAutoBlock" && !value) {
-                            options().edit().putBoolean(key, false).putBoolean("apkStrict", false).putBoolean("apkAlerts", false).commit()
-                            InstallProtectionCoordinator.clear(this)
-                            BlockedThreatHistory.clear(this)
+                        if (key == "apkAutoBlock") {
+                            InstallProtectionCoordinator.setEnabled(this, value)
                             reply.success(null)
                             return@setMethodCallHandler
                         }
@@ -348,12 +346,13 @@ class MainActivity : FlutterActivity() {
         }
         fileJobActive = true
         val cancellation = fileCancellation
+        val apkEpoch = InstallProtectionCoordinator.epoch()
         if (reply == null) enqueue(mapOf("kind" to "fileProgress", "busy" to true))
         try {
             worker.execute {
                 val report = try {
                     InstallProtectionCoordinator.finalizeBatch(this,
-                        FileOpenScanHandler.scanner(applicationContext, stageForward = true).scan(request) { cancellation.get() })
+                        FileOpenScanHandler.scanner(applicationContext, stageForward = true, expectedEpoch = apkEpoch).scan(request) { cancellation.get() })
                 } catch (_: Exception) { mapOf("batch" to listOf(SharedFileScanner.error("failed"))) }
                 runOnUiThread {
                     fileJobActive = false

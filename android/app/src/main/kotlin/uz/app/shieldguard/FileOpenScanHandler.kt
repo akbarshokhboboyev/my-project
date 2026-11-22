@@ -29,13 +29,14 @@ internal object FileOpenScanHandler {
             streams.orEmpty().size > 64 || (clip?.itemCount ?: 0) > 64 || uris.size > 64)
     }
 
-    fun scanner(context: Context, stageForward: Boolean = false) = SharedFileScanner(
+    fun scanner(context: Context, stageForward: Boolean = false,
+        expectedEpoch: Long = InstallProtectionCoordinator.epoch()) = SharedFileScanner(
         readable = { raw ->
             context.checkUriPermission(Uri.parse(raw).normalizeScheme(), Process.myPid(), Process.myUid(),
                 Intent.FLAG_GRANT_READ_URI_PERMISSION) == PackageManager.PERMISSION_GRANTED
         },
         inspect = { raw, cancelled ->
-            NativeFileInspector(context, stageForward).inspect(Uri.parse(raw).normalizeScheme(), cancelled)
+            NativeFileInspector(context, stageForward, expectedEpoch).inspect(Uri.parse(raw).normalizeScheme(), cancelled)
         }
     )
 }

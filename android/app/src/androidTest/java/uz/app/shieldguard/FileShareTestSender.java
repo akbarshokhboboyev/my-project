@@ -10,7 +10,7 @@ public final class FileShareTestSender extends Activity {
         super.onCreate(savedInstanceState);
         Uri base = Uri.parse("content://uz.app.shieldguard.test.filefixtures");
         getContentResolver().call(base, "prepare", null, null);
-        for (String name : new String[]{"document.pdf", "fixture.apk", "harmless.txt", "broken.zip", "large.dat", "missing.pdf"})
+        for (String name : new String[]{"document.pdf", "fixture.apk", "harmless.txt", "broken.zip", "large.dat", "missing.pdf", "photo.jpg.apk", "tampered.apk"})
             getContentResolver().call(base, "grant", name, null);
         finish();
     }

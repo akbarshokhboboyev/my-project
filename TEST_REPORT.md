@@ -1,5 +1,32 @@
 # ShieldGuard V3.1 — PHASE 4 bosqichma-bosqich sinovlari
 
+## 4D — yakuniy Android16 tekshiruvi (2026-11-22)
+
+| Amal | Kuzatilgan natija |
+| --- | --- |
+| Yakuniy debug build / install | 18,6 s; API36’da Success; debug v2 signature Verifies |
+| APK guard test runner build | BUILD SUCCESSFUL, 7 s |
+| APK guard test runner install/run | **unverified** — INSTALL_FAILED_USER_RESTRICTED; runner ishga tushmadi |
+| Real SAF, benign kodsiz APK imzosi buzilgan nusxa | `signatureFailed`, `strongSuspicion`, complete=true; Uzbek APK BLOKLANDI modal; history blockedByShieldGuard |
+| Real SAF, asl benign APK | 15 ball exported launcher; heuristicWarning/warningOnly; bloklash modal yo‘q |
+| Benign explicit external open | Native snapshot/hash/FileProvider yo‘li Android ChooserActivity’gacha ishladi; installer tanlanmadi, install bajarilmadi |
+| Authorized folder, manual job, app HOME’da | 2 scanned/0 cached; partial=false/unverified=0; OS’da apk-guard notification qayd etildi |
+| POST_NOTIFICATIONS vaqtincha denied | O‘zgargan APK: 1 scanned/1 cached; permission denied haqiqiy; APK notification yo‘q. Avvalgi granted holat tiklandi |
+| Unknown-source settings tugmasi | Real ManageExternalSourcesActivity ochildi; sozlamalar o‘zgartirilmadi |
+| Cleanup | Own roots/cache/summary/history/private snapshots bo‘sh; consent strict/alerts false; auto-block true; owned test papka/fayllar olib tashlandi |
+
+Bu UI/SAF tekshiruvlari native instrumentation o‘rniga hisoblanmaydi. Background testi manual JobScheduler ishini HOME’dan tekshiradi, tabiiy 15-daqiqalik periodic ishga tushish yoki real Telegram sender testi emas. Kuchli integrity dalili malware tasdig‘i emas. Snapshot mutation/generation/limits bo‘yicha yangi Android assertion’lar kompilyatsiya qilindi, ammo alohida runner install rad etilgani uchun ularning device natijasi **unverified**.
+
+SAF helper birinchi urinishda lock-screen sabab tile topmadi; foydalanuvchi qulfni ochgach block modal dalili ko‘rindi. Benign helper’dagi anchored regex Flutter merged semantics bilan mos kelmadi; keyingi bevosita UI/metadata tekshiruvi heuristic-only natija va explicit chooser handoff’ni tasdiqladi. Bular app scanner crash emas. Papka helper’i eski scroll pozitsiyasida bir marta tugmacha topmadi; cold launch’dan keyin haqiqiy tree tanlandi. Testlar uchun qo‘shimcha production test endpoint yoki UI backdoor yaratilmagan.
+
+Persistable read grant removal bajarildi; Android picker’ning vaqtinchalik Activity grant’i process tugaguncha yashashi kuzatildi. Cold launch’dan keyin owned URI permission yozuvi ham qolmadi. Hech qanday foydalanuvchi fayli yoki boshqa ilova sozlamasi o‘zgartirilmadi. O‘z app’imiz POST_NOTIFICATIONS ruxsati faqat talab qilingan test uchun revoke/grant qilinib, avvalgi holat tiklandi.
+
+Yakuniy regressiya: Flutter **205/205**, Kotlin **238 + 387 malformed**, Python **13/13**, analyze **No issues found**, Dart LH/LF **1318/1641 = 80,32%** (4C’da shu Dart source bilan bajarilgan). 4D o‘zgarishlari native gate/Android testlarga tegishli, final main va test APK kompilyatsiyasi yuqorida. Manifest APK auditida faqat INTERNET, POST_NOTIFICATIONS, RECEIVE_BOOT_COMPLETED va androidx ichki receiver permission’i bor; installer/storage/overlay/admin ruxsati qo‘shilmadi. `shieldguard-release` faqat manifest/Play auditida ishlatildi.
+
+APK SHA-256: `31c3878f3265e30771b45a125841cde7276c5da8a3131213a1ff7e5cc081b4fe`, 191135457 bytes. Build APK va sintetik APK’lar Git’ga commit qilinmaydi. PHASE 2 install/update, PHASE 3A 25-case, PHASE 3B native instrumentation va real Telegram notification hali ochiq.
+
+## 4A–4C regressiya tarixi
+
 4C: `flutter test test/apk_guard_test.dart test/file_share_test.dart test/folder_monitor_test.dart` **21/21**. `flutter analyze` toza. `flutter test --coverage` **205/205**, LH/LF **1318/1641 = 80,32%**. Native runner **238 + 387 malformed** (35 APK assertion). Python **13/13**. Yangi 9 Flutter testi mocked MethodChannel bilan Uzbek modal/no-forward, strict incomplete, heuristic false-positive, explicit confirm/cancel, settings navigation, default-off strict/alerts va alohida history clear’ni tekshiradi. 7 native notification policy assertion permission/consent/channel/risk/opt-out shartlarini mock bilan qoplaydi; bular real OS notification natijasi emas.
 
 Dastlabki Flutter compile/lint va bitta eski folder testining scroll regressiyasi tuzatildi; yakuniy to‘liq Flutter suite o‘tdi. Kotlin Android build’dagi Intent.setClipData Unit-return xatosi tuzatildi. Native gate batch timeout’dan keyingi downgraded completeness’ni ham ishlatadi; strict qarori eski per-file verdict’ga tayanmaydi. Signature failure “verifier ishladi, integrity yaroqsiz” holati bo‘lib, verification complete va signature validity alohida talqin qilinadi.

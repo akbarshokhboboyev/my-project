@@ -11,6 +11,7 @@ internal object InstallProtectionCoordinator {
         val expires: Long, val generation: Long, var validated: Boolean = false)
     private val lock = Any()
     private val pending = linkedMapOf<String, Snapshot>()
+    private val staging = java.util.concurrent.Semaphore(1)
     private var generation = 0L
     private const val ttl = 10 * 60 * 1000L
     fun epoch() = synchronized(lock) { generation }
@@ -18,16 +19,25 @@ internal object InstallProtectionCoordinator {
     private fun directory(context: Context) = File(context.cacheDir, "apk-forward").apply { mkdirs() }
     fun enabled(context: Context) = context.options().getBoolean("apkAutoBlock", true)
     fun strict(context: Context) = context.options().getBoolean("apkStrict", false)
+    fun setEnabled(context: Context, value: Boolean) = synchronized(lock) {
+        val edit = context.options().edit().putBoolean("apkAutoBlock", value)
+        if (!value) edit.putBoolean("apkStrict", false).putBoolean("apkAlerts", false)
+        edit.commit()
+        if (!value) { clear(context); BlockedThreatHistory.clear(context) }
+    }
     fun decision(context: Context, report: Map<String, Any>) = AutomaticBlockEngine.decide(
         ApkRiskPolicy.assess(report), (report["format"] as? String).orEmpty().substringBefore(" · ") == "APK",
         enabled(context), strict(context))
 
-    fun stage(context: Context, source: File, report: Map<String, Any>, cancelled: () -> Boolean): Map<String, Any> {
+    fun stage(context: Context, source: File, report: Map<String, Any>, cancelled: () -> Boolean,
+        expectedEpoch: Long = epoch()): Map<String, Any> {
         if (!(report["format"] as? String).orEmpty().startsWith("APK") || cancelled()) return report
-        val epoch = synchronized(lock) { generation }
+        val epoch = expectedEpoch
+        synchronized(lock) { if (generation != epoch) return report }
         if (source.length() > 32L * 1024 * 1024) return report
         val token = UUID.randomUUID().toString()
         val file = File(directory(context), "$token.apk")
+        if (!staging.tryAcquire()) return report
         try {
             source.inputStream().use { input -> file.outputStream().use { output ->
                 val buffer = ByteArray(64 * 1024)
@@ -45,6 +55,14 @@ internal object InstallProtectionCoordinator {
             synchronized(lock) {
                 if (epoch != generation || cancelled()) return report
                 prune(context)
+                // Bound disk snapshots too, including already handed-off files and process orphans.
+                val existing = directory(context).listFiles().orEmpty().filter { it != file &&
+                    Regex("[a-f0-9-]{36}\\.apk").matches(it.name) }.sortedBy { it.lastModified() }.toMutableList()
+                while (existing.size >= 8) {
+                    val oldest = existing.removeAt(0)
+                    check(oldest.delete())
+                    pending.entries.removeAll { it.value.file == oldest }
+                }
                 while (pending.size >= 8) { val first = pending.keys.first(); pending.remove(first)?.file?.delete() }
                 check(file.setReadOnly())
                 pending[token] = Snapshot(file, report, hash, android.os.SystemClock.elapsedRealtime() + ttl, epoch)
@@ -53,6 +71,7 @@ internal object InstallProtectionCoordinator {
             }
         } finally {
             synchronized(lock) { if (pending[token]?.file != file) file.delete() }
+            staging.release()
         }
     }
 
@@ -86,6 +105,7 @@ internal object InstallProtectionCoordinator {
         prune(context)
         val snapshot = pending[token] ?: throw IllegalStateException("apkExpired")
         check(snapshot.generation == generation)
+        snapshot.validated = false
         val hash = MessageDigest.getInstance("SHA-256")
         snapshot.file.inputStream().use { input ->
             val bytes = ByteArray(64 * 1024)

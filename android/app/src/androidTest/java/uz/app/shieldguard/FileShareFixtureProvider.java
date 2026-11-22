@@ -20,7 +20,7 @@ import java.util.*;
 public final class FileShareFixtureProvider extends ContentProvider {
     private static final String AUTHORITY = "uz.app.shieldguard.test.filefixtures";
     private static final List<String> NAMES = Arrays.asList("document.pdf", "fixture.apk",
-        "harmless.txt", "broken.zip", "large.dat", "missing.pdf");
+        "harmless.txt", "broken.zip", "large.dat", "missing.pdf", "photo.jpg.apk", "tampered.apk");
     private File file(String name) { return new File(getContext().getCacheDir(), "phase3-" + name); }
 
     @Override public boolean onCreate() { prepare(); return true; }
@@ -38,6 +38,28 @@ public final class FileShareFixtureProvider extends ContentProvider {
                 byte[] buffer = new byte[8192];
                 int count;
                 while ((count = in.read(buffer)) != -1) out.write(buffer, 0, count);
+            }
+            try (InputStream in = new FileInputStream(file("fixture.apk"));
+                 OutputStream out = new FileOutputStream(file("photo.jpg.apk"))) {
+                byte[] buffer = new byte[8192]; int count;
+                while ((count = in.read(buffer)) != -1) out.write(buffer, 0, count);
+            }
+            // Benign self APK, rewritten without its signing block and with an unsigned extra entry.
+            // Never installed or executed: this is exclusively a static signature-integrity fixture.
+            try (java.util.zip.ZipFile zip = new java.util.zip.ZipFile(source);
+                 java.util.zip.ZipOutputStream out = new java.util.zip.ZipOutputStream(new FileOutputStream(file("tampered.apk")))) {
+                Enumeration<? extends java.util.zip.ZipEntry> entries = zip.entries();
+                byte[] buffer = new byte[8192];
+                while (entries.hasMoreElements()) {
+                    java.util.zip.ZipEntry entry = entries.nextElement();
+                    out.putNextEntry(new java.util.zip.ZipEntry(entry.getName()));
+                    if (!entry.isDirectory()) try (InputStream in = zip.getInputStream(entry)) {
+                        int count; while ((count = in.read(buffer)) != -1) out.write(buffer, 0, count);
+                    }
+                    out.closeEntry();
+                }
+                out.putNextEntry(new java.util.zip.ZipEntry("SHIELDGUARD_BENIGN_TEST.txt"));
+                out.write("Benign integrity regression only".getBytes(StandardCharsets.US_ASCII)); out.closeEntry();
             }
         } catch (IOException error) { throw new IllegalStateException("Synthetic fixture preparation failed", error); }
     }
