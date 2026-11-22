@@ -1,3 +1,51 @@
+# ShieldGuard V3.1 — PHASE 2 sinovlari
+
+2026-11-22. Windows, Flutter 3.47.6, Dart 3.13.5, JDK 17. feature/shieldguard-v3-1, PHASE 1 baseline 63ade45. shieldguard-security va shieldguard-testing qo‘llandi; release skill ishlatilmadi.
+
+| Buyruq / ssenariy | Shu bosqichda kuzatilgan natija |
+| --- | --- |
+| flutter test test/installed_monitor_test.dart | Dastlabki 4/4 o‘tdi; keyin report localization testi qo‘shildi |
+| flutter analyze | No issues found |
+| flutter test --coverage | 184/184; oldingi 179 test saqlandi |
+| test/native/run_tests.ps1 -KotlinLib <Gradle 9.3.1/lib> | 142 tekshiruv + 387 malformed input o‘tdi; 27 yangi installed-app policy holati |
+| python -m unittest discover -s backend | 13/13 o‘tdi |
+| flutter build apk --debug | Muvaffaqiyatli, yakuniy incremental build 12,2 s |
+| Gradle :app:assembleDebugAndroidTest | BUILD SUCCESSFUL |
+| Android16 API36 real instrumentation | 21/21 o‘tdi |
+| Android16 isolated PDF SAF regressiyasi | O‘tdi: alohida parser process dalili UI’da ko‘rindi |
+| Install/update fixture E2E | Unverified: fixture install INSTALL_FAILED_USER_RESTRICTED bilan rad etildi, update bajarilmadi |
+| Automatic high-risk alert E2E | Unverified: riskli permission kombinatsiyali kodsiz fixture o‘rnatilmadi |
+
+JVM testlari PACKAGE_ADDED, replacing ADDED’ni tashlash, PACKAGE_REPLACED, noto‘g‘ri event/nom, yangi/yangilangan paket rejasi, monitoring disabled, visibility bo‘sh natija, takroriy event, batch limit, benign/SMS+internet/exported false-positive nazorati, sezgir kombinatsiya, notification denied va incomplete findings’ni tekshiradi. Bu OS broadcast yetkazilishining real sinovi emas.
+
+5 ta yangi Flutter test: mustaqil opt-in/out, lokal scheduling tugmasi, metadata-only verdict, unavailable verdict va o‘zbekcha report qamrovi. Bridge native metodi widget testlarda mock, live Android deb ko‘rsatilmaydi.
+
+21 Android tekshiruvi haqiqiy PackageManager’da o‘z APK’sining paket/signing ma’lumotlari, katta APK uchun metadata-only va signature-unchecked, absent package va cancellation’ni tekshirdi. JobScheduler rejalash, dedup queue, opt-out va keshni o‘chirish tasdiqlandi. O‘z APK’siga yo‘naltirilgan haqiqiy fon job’i OS orqali ishga tushdi, report yozdi va keyin opt-out uni tozaladi. Boshqa ilovalarning APK kontenti tahlil qilinmadi; test faqat timestamp baseline’ni o‘qidi. Hech qanday force-job yoki policy bypass ishlatilmadi.
+
+## Kuzatilgan xatolar va cheklovlar
+
+Dastlab widget tap pastki navigatsiyaga to‘g‘ri keldi; test scroll alignment tuzatildi. Uchta analyze ogohlantirishi tuzatildi. Dastlab custom instrumentation start chaqiruvi yetishmadi; test runner tuzatilib, so‘ng 21 tekshiruv o‘tdi.
+
+Oldingi PHASE 1 o‘rnatish rad etilishi dastur xatosi deb olinmadi. Qurilmadagi cheklov yozuvlari read-only tekshirildi; primary-user uchun barcha restriction’lar faol degan xulosa qilinmadi. Foydalanuvchi tasdiqlashga tayyorligini bildirdi, ShieldGuard va test APK keyin muvaffaqiyatli o‘rnatildi. hasCode=false sintetik fixture1 esa INSTALL_FAILED_USER_RESTRICTED / Install canceled by user bilan rad etildi. Kutayotgan event runner timeout (IllegalStateException) bilan yakunlandi va finally monitoringni o‘chirib keshni tozaladi. Bu test muvaffaqiyat deb hisoblanmaydi; fixture qayta majburlanmadi, policy o‘zgartirilmadi, fixture2 o‘rnatilmadi.
+
+Faqat kodsiz, o‘zimiz yaratgan benign fixture builder mavjud. Haqiqiy shubhali APK o‘rnatilmadi yoki ishga tushirilmadi. Fixture qurilmada yo‘qligi pm path bilan tasdiqlandi. O‘z androidTest APK’si sinovdan keyin o‘chirildi; ikkala monitoring job’i unknown/not found, ya’ni opt-out’dan keyin qolmadi. ShieldGuard debug APK qurilmada qoldi; monitoring standart holatda o‘chiq.
+
+Jonli Telegram, Google/Web Risk yoki hash production API, signing lineage, Android13–15 runtime, natural reboot/Doze, broad package visibility, katta install storm va notification high-risk payload device tekshiruvi bu bosqichda bajarilmadi. Python adapterlari faqat mock bilan tekshirildi. PHASE 3–8 implementatsiya qilinmadi.
+
+## Coverage va artefakt
+
+coverage/lcov.info LH/LF = 958/1260 = 76,03%; generated l10n kiradi, Kotlin va Android satr qamrovi kirmaydi. Precision/recall va statistik false-positive rate uchun labeled real corpus yo‘q.
+
+Debug APK: build/app/outputs/flutter-apk/app-debug.apk, 191101723 bayt.
+SHA-256: 6c6735790418cc336e83144a413550a41042b83d35c5f1fdbdd72ebb44836c58.
+apksigner v2 verify o‘tdi. Development source version 3.0.0+3; production release deb ko‘rsatilmaydi.
+
+Manifest audit: INTERNET, POST_NOTIFICATIONS, RECEIVE_BOOT_COMPLETED va AndroidX ichki signature receiver permission. QUERY_ALL_PACKAGES, Device Admin, SMS read yoki Accessibility runtime permission ShieldGuard’ga qo‘shilmadi. Yangi RECEIVE_BOOT_COMPLETED faqat persisted job uchun. Installed-app ma’lumotlari tarmoqqa yuborilmaydi.
+
+Arxitektura/chegaralar va qayta bajarish: INSTALLED_APP_PROTECTION.md. Quyidagi PHASE 1 va V3 natijalari tarixiy baseline, hozirgi artefakt sifatida qabul qilinmaydi.
+
+---
+
 # ShieldGuard V3.1 — PHASE 1 sinovlari
 
 2026-11-22, Windows, Flutter 3.47.6 / Dart 3.13.5 / JDK 17. Branch: feature/shieldguard-v3-1. Faqat Telegram anti-phishing bosqichi; 2–8 bosqichlar bajarilmadi. shieldguard-security va shieldguard-testing skill’lari qo‘llandi.

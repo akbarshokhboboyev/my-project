@@ -11,6 +11,10 @@ class ShieldPlatform {
   Future<void> setOption(String key, bool value) =>
       channel.invokeMethod<void>('option', {'key': key, 'value': value});
 
+  Future<void> scanInstalled() => channel.invokeMethod<void>('installedScan');
+  Future<Map<String, dynamic>?> installedReport() =>
+      channel.invokeMapMethod<String, dynamic>('installedReport');
+
   Future<void> openAccess() => channel.invokeMethod<void>('access');
   Future<void> allowAlerts() => channel.invokeMethod<void>('alerts');
 

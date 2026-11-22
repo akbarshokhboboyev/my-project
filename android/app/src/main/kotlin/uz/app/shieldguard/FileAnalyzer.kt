@@ -201,15 +201,7 @@ internal class FileAnalyzer(
                     packageName = info.packageName
                     signerHashes = info.signers
                     details = info.details
-                    if (details["signatureStatus"] == "signatureFailed") findings["signatureFailed"] = 30
-                    if (info.unprotectedExports) findings["apkExported"] = 15
-                    val requested = info.permissions
-                    val sms = requested.any { it in smsPermissions }
-                    val accessibility = info.accessibility
-                    if (sms) findings["apkSms"] = 25
-                    if (accessibility) findings["apkAccess"] = 30
-                    if ("android.permission.REQUEST_INSTALL_PACKAGES" in requested) findings["apkInstall"] = 25
-                    if (sms && "android.permission.INTERNET" in requested) findings["apkCombo"] = 20
+                    findings.putAll(ApkRiskAnalyzer.inspect(info))
                 }
             }
             return buildMap {

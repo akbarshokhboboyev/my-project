@@ -25,7 +25,7 @@ internal class NativeFileInspector(private val context: Context) {
     }
 
     @Suppress("DEPRECATION")
-    private fun readApk(file: File): ApkMetadata? {
+    internal fun readApk(file: File): ApkMetadata? {
         val info = context.packageManager.getPackageArchiveInfo(file.path,
             PackageManager.GET_PERMISSIONS or PackageManager.GET_SERVICES or PackageManager.GET_ACTIVITIES or
                 PackageManager.GET_RECEIVERS or PackageManager.GET_PROVIDERS) ?: return null

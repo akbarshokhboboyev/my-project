@@ -1220,6 +1220,138 @@ abstract class Strings {
   /// In uz, this message translates to:
   /// **'PDF obyektlari alohida jarayonda tahlil qilindi.'**
   String get pdfParsed;
+
+  /// No description provided for @installedTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'O‘rnatilgan ilovalar monitoringi'**
+  String get installedTitle;
+
+  /// No description provided for @installedDisclosure.
+  ///
+  /// In uz, this message translates to:
+  /// **'O‘rnatishdan keyingi lokal tekshiruv. Faol jarayonda paket hodisalari, fonda Android rejalashtirgan davriy tekshiruv ishlaydi. Kamida 15 daqiqalik interval, batareya va tizim cheklovlari sabab kechikishi mumkin. Faqat ko‘rinadigan paketlar qamrab olinadi; to‘liq himoya kafolati berilmaydi. Ilovalar ro‘yxati serverga yuborilmaydi.'**
+  String get installedDisclosure;
+
+  /// No description provided for @installedScheduled.
+  ///
+  /// In uz, this message translates to:
+  /// **'Davriy tekshiruv rejalashtirilgan.'**
+  String get installedScheduled;
+
+  /// No description provided for @installedUnscheduled.
+  ///
+  /// In uz, this message translates to:
+  /// **'Davriy tekshiruv rejalashtirilmagan.'**
+  String get installedUnscheduled;
+
+  /// No description provided for @installedScan.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ko‘rinadigan ilovalarni tekshirishni rejalashtirish'**
+  String get installedScan;
+
+  /// No description provided for @installedReport.
+  ///
+  /// In uz, this message translates to:
+  /// **'Oxirgi ilova hisobotini ko‘rish'**
+  String get installedReport;
+
+  /// No description provided for @installedStatenone.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hali tekshiruv natijasi yo‘q.'**
+  String get installedStatenone;
+
+  /// No description provided for @installedStatecontent.
+  ///
+  /// In uz, this message translates to:
+  /// **'Oxirgi ilovaning metadata va chegaralangan APK kontenti tekshirildi.'**
+  String get installedStatecontent;
+
+  /// No description provided for @installedStatemetadata.
+  ///
+  /// In uz, this message translates to:
+  /// **'Oxirgi tekshiruv qisman: metadata yoki APK kontentining bir qismi o‘qildi.'**
+  String get installedStatemetadata;
+
+  /// No description provided for @installedStateunavailable.
+  ///
+  /// In uz, this message translates to:
+  /// **'Paket ko‘rinmadi yoki metadata o‘qilmadi. Natija aniqlanmadi.'**
+  String get installedStateunavailable;
+
+  /// No description provided for @installedStatescheduleFailed.
+  ///
+  /// In uz, this message translates to:
+  /// **'Android fon tekshiruvini rejalashtira olmadi.'**
+  String get installedStatescheduleFailed;
+
+  /// No description provided for @installedCombo.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sezgir imkoniyatlar birga so‘ralgan: SMS/internet va APK o‘rnatish yoki Accessibility va overlay/o‘rnatish. Bu malware isboti emas.'**
+  String get installedCombo;
+
+  /// No description provided for @installedTrustUnknown.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tasdiqlangan developer reference mavjud emas; noma’lum sertifikatning o‘zi xavf degani emas.'**
+  String get installedTrustUnknown;
+
+  /// No description provided for @installedMetadataOnly.
+  ///
+  /// In uz, this message translates to:
+  /// **'APK kontenti to‘liq tekshirilmadi. Metadata asosidagi natija cheklangan.'**
+  String get installedMetadataOnly;
+
+  /// No description provided for @installedUnavailable.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ilova o‘chirilgan, ko‘rinmaydi yoki metadata o‘qishga ruxsat yo‘q.'**
+  String get installedUnavailable;
+
+  /// No description provided for @installedPlatformSignature.
+  ///
+  /// In uz, this message translates to:
+  /// **'Android o‘rnatilgan paketning joriy signing identity’sini berdi; barcha APK kontenti mustaqil tekshirilmagan.'**
+  String get installedPlatformSignature;
+
+  /// No description provided for @installedPackage.
+  ///
+  /// In uz, this message translates to:
+  /// **'Paket nomi'**
+  String get installedPackage;
+
+  /// No description provided for @installedLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ilova nomi'**
+  String get installedLabel;
+
+  /// No description provided for @installedUpdated.
+  ///
+  /// In uz, this message translates to:
+  /// **'Paketning oxirgi yangilanish vaqti'**
+  String get installedUpdated;
+
+  /// No description provided for @installedCoverage.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tekshiruv qamrovi'**
+  String get installedCoverage;
+
+  /// No description provided for @installedContent.
+  ///
+  /// In uz, this message translates to:
+  /// **'Metadata va chegaralangan APK kontenti'**
+  String get installedContent;
+
+  /// No description provided for @installedPartial.
+  ///
+  /// In uz, this message translates to:
+  /// **'Metadata va APK kontentining bir qismi'**
+  String get installedPartial;
 }
 
 class _StringsDelegate extends LocalizationsDelegate<Strings> {

@@ -1,5 +1,8 @@
 # Maxfiylik siyosati
 
+PHASE 2’da alohida rozilik bilan installed-app monitoring qo‘shildi. Paket/versiya timestamp keshi, bounded event navbati, oxirgi event, oxirgi scan va alert report private lokal preferences’da saqlanadi. Report ilova label’i, permissions va public signing fingerprint’ni o‘z ichiga olishi mumkin; serverga yuborilmaydi. Opt-out job/receiver’larni to‘xtatib monitoring keshini va alert’ini o‘chiradi. QUERY_ALL_PACKAGES ishlatilmaydi; ko‘rinadigan paketlar qamrovi UI’da tushuntiriladi. Backup o‘chiq. Boshqa mavjud tarix/online consent sozlamalari mustaqil qoladi.
+
+
 V3 backend hash endpointi alohida rozilik flagisiz ishlamaydi. Flutter har bir SHA-256 so‘rovi oldidan alohida rozilik oladi; hash HTTPS gateway va VirusTotal’ga borishi tushuntiriladi. Fayl kontenti yuborilmaydi. Natijalar seans xotirasida qoladi. Clipboard JSON xom xabar, URL va fayl nomini chiqarib tashlaydi. DEX, ELF va split APK tarkibi lokal tekshiriladi.
 
 ShieldGuard havola, xabar va fayllarni standart holatda qurilmada tahlil qiladi. Xabarlar, OTP, parol, to‘liq URL va fayl nomi tarixga yozilmaydi. Ixtiyoriy tarix faqat vaqt, tur, ball, belgilar soni va holatni saqlaydi.

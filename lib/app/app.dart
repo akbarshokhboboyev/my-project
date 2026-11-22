@@ -562,8 +562,10 @@ class _WorkspaceState extends ConsumerState<Workspace>
       Text(
         [
           l(entry.key),
-          entry.key == 'signatureStatus'
+          entry.key == 'signatureStatus' || entry.key == 'installedCoverage'
               ? l(entry.value.toString())
+              : entry.key == 'installedUpdated' && entry.value is int
+              ? stamp(entry.value as int)
               : entry.value.toString(),
         ].join(' · '),
       ),
@@ -612,6 +614,45 @@ class _WorkspaceState extends ConsumerState<Workspace>
       ],
       Text(l('hidden')),
     ]),
+    card([
+      heading('installedTitle'),
+      Text(l('installedDisclosure')),
+      SwitchListTile(
+        title: Text(l('installedTitle')),
+        value: status['appMonitoring'] == true,
+        onChanged: (value) => option('appMonitoring', value),
+      ),
+      if (status['appMonitoring'] == true) ...[
+        Text(
+          l(
+            status['appScheduled'] == true
+                ? 'installedScheduled'
+                : 'installedUnscheduled',
+          ),
+        ),
+        Text(l('installedState${status['appLastState'] as String? ?? 'none'}')),
+        if (status['appAlerts'] != true)
+          button('grantAlerts', () => act(platform.allowAlerts)),
+        button(
+          'installedScan',
+          () => act(() async {
+            await platform.scanInstalled();
+            await refresh();
+          }),
+        ),
+        if (status['appHasReport'] == true)
+          button(
+            'installedReport',
+            () => act(() async {
+              final report = await platform.installedReport();
+              if (report != null) {
+                await present([platform.decode(report)], record: false);
+              }
+            }),
+          ),
+      ],
+    ]),
+
     heading('guide'),
     button(
       'testAlert',

@@ -6,4 +6,10 @@
     <string name="alert_channel">Xavfsizlik ogohlantirishlari</string>
     <string name="alert_title">Yuqori xavf aniqlandi</string>
     <string name="alert_body">Telegram bildirishnomasida firibgarlik belgilari bor. Tafsilotlarni ko‘ring.</string>
+    <string name="installed_channel">Ilovalar xavfsizligi</string>
+    <string name="installed_alert_title">Yangi ilovada shubhali belgilar aniqlandi.</string>
+    <string name="installed_reason_combo">Sezgir imkoniyatlar birga so‘ralgan.</string>
+    <string name="installed_reason_signature">APK imzo tekshiruvi muvaffaqiyatsiz.</string>
+    <string name="installed_reason_static">APK tarkibida bir nechta shubhali statik belgi bor.</string>
+    <string name="installed_alert_body">%1$s: %2$s Ilovani ochishga shoshilmang, manbasini va ruxsatlarini tekshiring. Bu malware tasdig‘i emas.</string>
 </resources>

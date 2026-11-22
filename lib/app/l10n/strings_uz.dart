@@ -635,4 +635,81 @@ class StringsUz extends Strings {
 
   @override
   String get pdfParsed => 'PDF obyektlari alohida jarayonda tahlil qilindi.';
+
+  @override
+  String get installedTitle => 'O‘rnatilgan ilovalar monitoringi';
+
+  @override
+  String get installedDisclosure =>
+      'O‘rnatishdan keyingi lokal tekshiruv. Faol jarayonda paket hodisalari, fonda Android rejalashtirgan davriy tekshiruv ishlaydi. Kamida 15 daqiqalik interval, batareya va tizim cheklovlari sabab kechikishi mumkin. Faqat ko‘rinadigan paketlar qamrab olinadi; to‘liq himoya kafolati berilmaydi. Ilovalar ro‘yxati serverga yuborilmaydi.';
+
+  @override
+  String get installedScheduled => 'Davriy tekshiruv rejalashtirilgan.';
+
+  @override
+  String get installedUnscheduled => 'Davriy tekshiruv rejalashtirilmagan.';
+
+  @override
+  String get installedScan =>
+      'Ko‘rinadigan ilovalarni tekshirishni rejalashtirish';
+
+  @override
+  String get installedReport => 'Oxirgi ilova hisobotini ko‘rish';
+
+  @override
+  String get installedStatenone => 'Hali tekshiruv natijasi yo‘q.';
+
+  @override
+  String get installedStatecontent =>
+      'Oxirgi ilovaning metadata va chegaralangan APK kontenti tekshirildi.';
+
+  @override
+  String get installedStatemetadata =>
+      'Oxirgi tekshiruv qisman: metadata yoki APK kontentining bir qismi o‘qildi.';
+
+  @override
+  String get installedStateunavailable =>
+      'Paket ko‘rinmadi yoki metadata o‘qilmadi. Natija aniqlanmadi.';
+
+  @override
+  String get installedStatescheduleFailed =>
+      'Android fon tekshiruvini rejalashtira olmadi.';
+
+  @override
+  String get installedCombo =>
+      'Sezgir imkoniyatlar birga so‘ralgan: SMS/internet va APK o‘rnatish yoki Accessibility va overlay/o‘rnatish. Bu malware isboti emas.';
+
+  @override
+  String get installedTrustUnknown =>
+      'Tasdiqlangan developer reference mavjud emas; noma’lum sertifikatning o‘zi xavf degani emas.';
+
+  @override
+  String get installedMetadataOnly =>
+      'APK kontenti to‘liq tekshirilmadi. Metadata asosidagi natija cheklangan.';
+
+  @override
+  String get installedUnavailable =>
+      'Ilova o‘chirilgan, ko‘rinmaydi yoki metadata o‘qishga ruxsat yo‘q.';
+
+  @override
+  String get installedPlatformSignature =>
+      'Android o‘rnatilgan paketning joriy signing identity’sini berdi; barcha APK kontenti mustaqil tekshirilmagan.';
+
+  @override
+  String get installedPackage => 'Paket nomi';
+
+  @override
+  String get installedLabel => 'Ilova nomi';
+
+  @override
+  String get installedUpdated => 'Paketning oxirgi yangilanish vaqti';
+
+  @override
+  String get installedCoverage => 'Tekshiruv qamrovi';
+
+  @override
+  String get installedContent => 'Metadata va chegaralangan APK kontenti';
+
+  @override
+  String get installedPartial => 'Metadata va APK kontentining bir qismi';
 }

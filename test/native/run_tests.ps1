@@ -4,9 +4,9 @@ $root = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
 $output = Join-Path $root 'build/native-tests.jar'
 $null = New-Item -ItemType Directory -Force -Path (Join-Path $root 'build')
 $sourceRoot = Join-Path $root 'android/app/src/main/kotlin/uz/app/shieldguard'
-$sources = @('FileAnalyzer.kt', 'NotificationAnalyzer.kt', 'ScanLimits.kt', 'StructuralInspector.kt', 'AlertGate.kt', 'ApkContentInspector.kt', 'SplitApkAnalyzer.kt') |
+$sources = @('FileAnalyzer.kt', 'NotificationAnalyzer.kt', 'ScanLimits.kt', 'StructuralInspector.kt', 'AlertGate.kt', 'ApkContentInspector.kt', 'SplitApkAnalyzer.kt', 'InstalledAppPolicy.kt') |
     ForEach-Object { Join-Path $sourceRoot $_ }
-$tests = @('FileAnalyzerTest.kt', 'NotificationAnalyzerTest.kt', 'AdvancedFileTest.kt', 'V3StaticTest.kt', 'TelegramPhishingTest.kt') |
+$tests = @('FileAnalyzerTest.kt', 'NotificationAnalyzerTest.kt', 'AdvancedFileTest.kt', 'V3StaticTest.kt', 'TelegramPhishingTest.kt', 'InstalledAppTest.kt') |
     ForEach-Object { Join-Path $PSScriptRoot $_ }
 if ($KotlinLib) {
     $stdlib = (Get-ChildItem -LiteralPath $KotlinLib -Filter 'kotlin-stdlib-*.jar' | Select-Object -First 1).FullName
@@ -17,7 +17,7 @@ if ($KotlinLib) {
     $runtime = $output
 }
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-foreach ($main in @('FileAnalyzerTestKt', 'NotificationAnalyzerTestKt', 'AdvancedFileTestKt', 'V3StaticTestKt')) {
+foreach ($main in @('FileAnalyzerTestKt', 'NotificationAnalyzerTestKt', 'AdvancedFileTestKt', 'V3StaticTestKt', 'InstalledAppTestKt')) {
     & java -cp $runtime "uz.app.shieldguard.$main"
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }

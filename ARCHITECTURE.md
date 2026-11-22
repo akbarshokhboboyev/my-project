@@ -1,5 +1,8 @@
 # Arxitektura
 
+PHASE 2: ShieldGuardApplication → dinamik InstalledAppMonitor/PackageUpdateMonitor → ScanScheduler/JobScheduler → InstalledAppJobService → InstalledAppScanner → lokal report va InstalledAppAlert. Mavjud FileAnalyzer/apksig qayta ishlatiladi; umumiy APK risk qoidalari ApkRiskAnalyzer’da ajratildi. Alohida opt-in/generation cancellation va isolated PDF process guard mavjud. Cheklangan visibility va fon qoidalari INSTALLED_APP_PROTECTION.md da.
+
+
 V3 qo‘shimchalari ApkContentInspector, SplitApkAnalyzer, NativeFileInspector ichidagi apksig verifikatsiyasi va TrustedDeveloperRegistry. Markaziy ScanResult verdict ko‘rsatadi. PdfInspector/PdfParserService isolated PDFBox, FileHashReputationProvider, per-request consent va /v1/hash ham qo‘shildi. To‘liq yagona ShieldGuardSecurityEngine fasadi hali ajratilmagan.
 
 Mavjud Flutter Material 3, Riverpod, go_router va ARB tuzilmasi saqlandi.

@@ -1,3 +1,23 @@
+# ShieldGuard V3.1 — PHASE 2
+
+2026-11-22. feature/shieldguard-v3-1. Installed-app monitoring kodi va testlari qo‘shildi. Holat: ishlaydi, lekin qo‘shimcha real install/update/alert sinovi kerak.
+
+- InstalledAppMonitor: asosiy processdagi dinamik package receiver; PackageUpdateMonitor install/update va replacing/dedup qoidalari.
+- ScanScheduler/InstalledAppJobService: persisted 15 daqiqalik JobScheduler, 32 paketli navbat, 8 paketli batch, battery-not-low va generation cancellation.
+- InstalledAppScanner: PackageManager metadata/signing/exported komponentlar; OS ruxsat bergan 32 MiB gacha APK’lar uchun mavjud FileAnalyzer/apksig/DEX/ELF qayta ishlatiladi. Partial/metadata-only unknown verdict.
+- InstalledAppAlert: o‘zbekcha ilova nomi, risk sababi va tavsiya. Notification ruxsati va channel tekshiriladi; benign SMS+internet/exported yoki unknown certificate yakka holda alert bermaydi.
+- Himoya UI: mustaqil opt-in/out, qamrov izohi, scheduling, oxirgi report. Default o‘chiq. Opt-out receiver/job/cache/monitor alert’ini tozalaydi, eski worker publish’ini to‘sadi.
+- Visibility: QUERY_ALL_PACKAGES qo‘shilmadi; launcher queries va avtomatik ko‘rinadigan paketlar bilan cheklangan. Bu o‘rnatishdan keyingi tekshiruv, universal blokirovka emas.
+- Flutter 184/184, Kotlin 142 + 387 malformed, Python 13/13, analyze toza. Debug APK yig‘ildi va Android16’da o‘rnatildi.
+- Android16 real PackageManager/JobScheduler 21/21; o‘z APK’si uchun tabiiy fon job’i ishladi. PDF isolated SAF regressiyasi ham o‘tdi.
+- Install/update va high-risk alert E2E unverified: kodsiz fixture o‘rnatilishi INSTALL_FAILED_USER_RESTRICTED bilan rad etildi. Policy bypass yoki qayta majburlash bo‘lmadi.
+- Monitoring ma’lumotlari faqat lokal. Noaniq signing identity trusted deb ko‘rsatilmaydi; production developer roots/lineage hali ochiq.
+- PHASE 3–8 hozircha boshlanmadi. Web Risk/hash credential’lari, jonli Telegram, MID, signed APK/AAB va Play internal testing ochiq qoladi.
+
+Tafsilotlar: TEST_REPORT.md va INSTALLED_APP_PROTECTION.md. Quyidagi PHASE 1/V3 holati tarixiy baseline.
+
+---
+
 # ShieldGuard V3.1 — PHASE 1
 
 2026-11-22. feature/shieldguard-v3-1. Faqat Telegram anti-phishing bosqichi implementatsiya qilindi.

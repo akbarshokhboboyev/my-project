@@ -29,6 +29,7 @@ class MainActivity : FlutterActivity() {
         super.configureFlutterEngine(engine)
         bridge = MethodChannel(engine.dartExecutor.binaryMessenger, "uz.app.shieldguard/platform")
         TelegramThreatListener.connectionChanged = { bridge.invokeMethod("statusChanged", null) }
+        InstalledAppMonitor.changed = { bridge.invokeMethod("statusChanged", null) }
         bridge.setMethodCallHandler { call, reply ->
             when (call.method) {
                 "status" -> {
@@ -46,6 +47,12 @@ class MainActivity : FlutterActivity() {
                     reply.success(mapOf(
                         "access" to access, "connected" to TelegramThreatListener.connected,
                         "enabled" to enabled,
+                        "appMonitoring" to InstalledAppMonitor.enabled(this),
+                        "appScheduled" to ScanScheduler.scheduled(this),
+                        "appLastState" to InstalledAppMonitor.store(this).getString("state", "none"),
+                        "appHasReport" to InstalledAppMonitor.store(this).contains("report"),
+                        "appAlerts" to (manager.areNotificationsEnabled() &&
+                            manager.getNotificationChannel("installed")?.importance != NotificationManager.IMPORTANCE_NONE),
                         "alerts" to (manager.areNotificationsEnabled() &&
                             manager.getNotificationChannel("protection")?.importance != NotificationManager.IMPORTANCE_NONE),
                         "history" to options().getBoolean("history", false),
@@ -57,9 +64,14 @@ class MainActivity : FlutterActivity() {
                 "option" -> {
                     val key = call.argument<String>("key")
                     val value = call.argument<Boolean>("value")
-                    if (key == null || key !in setOf("enabled", "history", "intro", "dark", "onlineConsent") || value == null) {
+                    if (key == null || key !in setOf("enabled", "history", "intro", "dark", "onlineConsent", "appMonitoring") || value == null) {
                         reply.error("invalid", null, null)
                     } else {
+                        if (key == "appMonitoring") {
+                            InstalledAppMonitor.setEnabled(this, value)
+                            reply.success(null)
+                            return@setMethodCallHandler
+                        }
                         options().edit().putBoolean(key, value).apply()
                         if (key == "onlineConsent" && !value) {
                             background(reply) { ThreatCache(this).use { it.clear() }; null }
@@ -101,6 +113,8 @@ class MainActivity : FlutterActivity() {
                         }
                     }
                 }
+                "installedScan" -> { ScanScheduler.enqueue(this); reply.success(null) }
+                "installedReport" -> reply.success(installedReport(this))
                 "pending" -> reply.success(inbox.removeFirstOrNull())
                 "testAlert" -> {
                     val manager = getSystemService(NotificationManager::class.java)
@@ -211,6 +225,10 @@ class MainActivity : FlutterActivity() {
                         enqueue(mapOf("kind" to "file", "complete" to false, "findings" to mapOf("filePermission" to 0)))
                     }
                 }
+                SHOW_INSTALLED -> {
+                    if (intent.getStringExtra("proof") != alertProof(this)) return
+                    installedReport(this, alert = true)?.let { enqueue(it) }
+                }
                 SHOW_ALERT -> {
                     if (intent.getStringExtra("proof") != alertProof(this)) return
                     val codes = intent.getStringArrayExtra("indicators").orEmpty().take(8)
@@ -256,6 +274,7 @@ class MainActivity : FlutterActivity() {
     }
 
     override fun onDestroy() {
+        InstalledAppMonitor.changed = null
         TelegramThreatListener.connectionChanged = null
         if (::bridge.isInitialized) bridge.setMethodCallHandler(null)
         worker.shutdown()
@@ -263,6 +282,7 @@ class MainActivity : FlutterActivity() {
     }
 
     companion object {
+        internal const val SHOW_INSTALLED = "uz.app.shieldguard.SHOW_INSTALLED"
         internal const val SHOW_ALERT = "uz.app.shieldguard.SHOW_ALERT"
     }
 }
