@@ -5,10 +5,15 @@ $fixture = '/sdcard/Download/' + $fixtureName
 $treePath = '/data/local/tmp/shieldguard-saf-test.xml'
 
 function Get-Nodes {
-    $null = & $adb shell uiautomator dump $treePath
-    if ($LASTEXITCODE -ne 0) { return }
-    [xml]$tree = (& $adb shell cat $treePath) -join ''
-    $tree.SelectNodes('//node')
+    $null = & $adb shell input keyevent KEYCODE_WAKEUP
+    for ($attempt = 0; $attempt -lt 3; $attempt++) {
+        $null = & $adb shell uiautomator dump $treePath
+        if ($LASTEXITCODE -eq 0) {
+            [xml]$tree = (& $adb shell cat $treePath) -join ''
+            return $tree.SelectNodes('//node')
+        }
+        Start-Sleep -Milliseconds 500
+    }
 }
 function Tap-Node($node) {
     if (!$node -or $node.bounds -notmatch '\[(\d+),(\d+)\]\[(\d+),(\d+)\]') { return $false }
@@ -56,10 +61,10 @@ try {
             ($_.text -eq 'Downloads' -or $_.text -eq 'Yuklamalar' -or $_.text -match '^Ko.chirmalar$|^\u0417\u0430\u0433\u0440\u0443\u0437')
         } | Select-Object -First 1
         if (!(Tap-Node $downloads)) { throw 'Downloads location missing in DocumentsUI.' }
-        $file = Search-Node ([regex]::Escape($fixtureName))
+        $file = Wait-Node ([regex]::Escape($fixtureName))
     }
     if (!(Tap-Node $file)) { throw 'Synthetic fixture was not listed by DocumentsUI.' }
-    $result = Search-Node '45/100'
+    $result = Wait-Node '45/100'
     $format = Search-Node '132aa3d9440b48e561fc147f04482f1dd2cd33f1b7bd3d4b946078809910bfc5'
     if (!$result -or !$format) { throw 'The expected PDF score and SHA-256 were not visible.' }
     'Android SAF PDF scan returned the expected score and SHA-256.'
