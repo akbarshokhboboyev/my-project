@@ -1,7 +1,11 @@
 # Maxfiylik siyosati
 
-ShieldGuard kiritilgan matn, ulashilgan xabar va fayllarni qurilmada tahlil qiladi. Tasdiqlash kodi, parol, xabar matni va to‘liq URL doimiy tarixga yozilmaydi. Fayl tanlanganda vaqtinchalik nusxa ilovaning yopiq keshida yaratiladi va tekshiruv tugagach o‘chiriladi. Android jarayonni kutilmaganda to‘xtatsa, vaqtinchalik kesh fayli qolishi mumkin. Keyingi fayl tekshiruvida bir kundan eski vaqtinchalik fayllar o‘chiriladi.
+ShieldGuard havola, xabar va fayllarni standart holatda qurilmada tahlil qiladi. Xabarlar, OTP, parol, to‘liq URL va fayl nomi tarixga yozilmaydi. Ixtiyoriy tarix faqat vaqt, tur, ball, belgilar soni va holatni saqlaydi.
 
-Tarix standart holatda o‘chirilgan. Yoqilganda tekshiruv vaqti, turi, balli, belgilar soni va holati saqlanadi. Mavjud yozuvlarni Tarix ekranidan o‘chirish mumkin. Avtomatik himoya alohida yoqiladi va Android sozlamalaridan bildirishnomalarga kirish ruxsatini istalgan vaqtda bekor qilish mumkin.
+Onlayn tekshiruv Sozlamalar ekranida alohida rozilik bilan yoqiladi. Qo‘lda kiritilgan havolaning to‘liq URL’i tanlangan HTTPS serverga, u yerdan Google Web Risk’ka yuboriladi. URL ichida shaxsiy token bo‘lishi mumkin. Xabar va Telegram bildirishnomalari avtomatik tashqi serverga uzatilmaydi. API kaliti faqat serverda, gateway kirish tokeni ilova seansi xotirasida qoladi. Rozilik qaytarib olinsa reputatsiya keshi tozalanadi.
 
-Ushbu versiyada tashqi reputatsiya provayderi va analitika integratsiyasi mavjud emas. Ilova ma’lumotlarining tizim zaxiralashi manifestda o‘chirilgan.
+SQLite reputatsiya keshi URL o‘rniga SHA-256 kalit va moslik muddati saqlaydi. Bunday xesh taxmin qilinadigan URL’lar uchun anonimlashtirish kafolati bermaydi. Keshdagi ijobiy natija Google expireTime bilan tugaydi. Muddati tugagan yozuvlar keyingi kesh operatsiyasida o‘chiriladi. Tarix va reputatsiya alohida bazalarda saqlanadi.
+
+Vaqtinchalik fayllar yopiq keshda turadi va tekshiruv finally bosqichida o‘chiriladi. Jarayon kutilmaganda o‘lsa keyingi fayl tekshiruvida bir kundan eski qoldiqlar tozalanadi. Backup o‘chirilgan.
+
+Bildirishnomalarga kirish Android sozlamalaridan istalgan vaqtda bekor qilinadi. Ommaviy nashrdan oldin xizmat egasi, aloqa manzili va serverning haqiqiy saqlash siyosati ushbu hujjatga qo‘shiladi.
