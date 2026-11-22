@@ -1,24 +1,59 @@
-# Sinov hisoboti
+# ShieldGuard V3 sinov hisoboti
 
-Sinov muhiti Windows 11, Flutter 3.47.6, Dart 3.13.5, JDK 17.
+2026-11-22. Windows, Flutter 3.47.6, Dart 3.13.5, JDK 17. V2 boshlang‘ich regressiya 95/95 o‘tdi. Bu hujjat V3 natijalarini ajratadi; V2 artefakt izlari Git tarixida.
 
-- `flutter analyze --suggestions` Java, Gradle 9.3.1, AGP 9.1.0 va Kotlin konfiguratsiyasini mos deb topdi. Tekshiruv usuli [Flutter rasmiy qo‘llanmasi](https://docs.flutter.dev/release/breaking-changes/android-java-gradle-migration-guide) bilan solishtirildi.
-- Mahalliy Dart va Flutter sinovlari havola, firibgarlik xabarlari, ball chegaralari va asosiy ekranlarni qamrab oladi. Xavfsiz sun’iy matnlar va namuna domenlari ishlatildi.
-- `flutter analyze` xato topmadi. `flutter test --coverage` barcha 64 ta testdan o‘tdi. Dart satr qamrovi 583/779 (74,8 foiz), jumladan avtomatik yaratilgan lokalizatsiya kodi.
-- Kotlin sinovlarida 12 ta bildirishnoma qoidasi va 17 ta fayl tekshiruvi JVM’da o‘tdi. Fayl sinovlari sun’iy imzolar, SHA-256, format nomuvofiqligi, arxiv metama’lumoti va vaqtinchalik faylni tozalashni qamrab oldi. APK metama’lumoti uchun test namunasi ishlatildi.
-- Dart qamrov ma’lumoti `coverage/lcov.info` faylida. Kotlin, Android ruxsatlari, haqiqiy fayl tanlagich va bildirishnoma qamrovi ushbu hisobotga kirmaydi.
-- Ulangan Android 16 qurilmada `flutter test integration_test` natijasi 2/2. Platforma holati, tarix metama’lumoti va mavzu sozlamasining saqlanishi tekshirildi. Dastlabki o‘rnatish rad etildi, Flutter qayta uringach sinovlar ishladi.
-- `flutter build apk --debug` muvaffaqiyatli yakunlandi va APK Android 16 qurilmaga o‘rnatildi. Paket API 26+ uchun `armeabi-v7a`, `arm64-v8a` va `x86_64` variantlarini o‘z ichiga oladi.
-- `integration_test/share_smoke.ps1` Android 16 qurilmada sovuq ishga tushirish orqali `ACTION_SEND` havolasini qabul qilish va 67/100 ballni ko‘rsatish yo‘lini tasdiqladi.
-- Android 16 tizim fayl tanlagichi orqali sun’iy PDF qabul qilindi. Ekranda 45/100 ball va kutilgan SHA-256 izi ko‘rindi. Qayta bajarish skripti `integration_test/saf_smoke.ps1`. Boshqa ilovadan PDF ulashish yo‘li tasdiqlanmagan, chunki ADB manba URI’si uchun o‘qish ruxsatini bera olmadi.
-- Android 16’da mavjud listener ruxsati vaqtincha bekor qilinganda xizmat uzildi. Ruxsat asl holatiga qaytarilgach xizmat qayta ulandi. Jonli Telegram ogohlantirishi va ogohlantirishni bosish yo‘li qurilmada tasdiqlanmagan.
-- Yakuniy debug APK SHA-256 izi `2d7ffc6e64ddb47e7d054533ffb8f9255996a8839f88ea953a516de4f4a1645f`.
+| To‘plam | Tasdiqlangan natija |
+| --- | --- |
+| Flutter unit/widget/HTTP mock | 121/121; v3-tests.log |
+| Flutter analyze | No issues found |
+| Kotlin mavjud fayl / notification | 17 + 12 tekshiruv |
+| Kotlin advanced | 16 holat + 129 malformed input |
+| Kotlin V3 | 9 assertion + 258 malformed input |
+| Python | 13/13; consent, quota, hash response va error mocklari |
+| Android 16 integratsiya | 3/3; SQLite cache/consent revoke, theme va typed bridge |
+| Dart coverage | 890/1179 satr = 75,49%; generated l10n ham kiradi |
+| Debug APK | Kompilyatsiya va apksigner v2 verification o‘tdi |
+| Release APK / AAB | R8 bilan ikkalasi kompilyatsiya bo‘ldi; imzosiz |
 
-Mustaqil Kotlin kompilyatori mavjud bo‘lsa, JVM sinovlarini quyidagicha qayta bajarish mumkin.
+Android 16 integratsiya yangi isolated PDF xizmatini, hash rozilik UI’sini yoki ko‘p faylli picker yo‘lini tekshirmaydi. Widget/HTTP mocklar hash rozilik, bekor qilish va response holatlarini tekshiradi. Jonli API kaliti bilan so‘rov bajarilmadi. Jonli Telegram akkaunt sinovi bajarilmadi.
 
-```powershell
-$src = 'android/app/src/main/kotlin/uz/app/shieldguard'
-kotlinc "$src/FileAnalyzer.kt" "$src/NotificationAnalyzer.kt" test/native/FileAnalyzerTest.kt test/native/NotificationAnalyzerTest.kt -include-runtime -d build/native-tests.jar
-java -cp build/native-tests.jar uz.app.shieldguard.FileAnalyzerTestKt
-java -cp build/native-tests.jar uz.app.shieldguard.NotificationAnalyzerTestKt
-```
+## Qurilma fixture tekshiruvi
+
+SAF avtomatlashtirishida UI selector va Downloads provider muammolari, ADB uzilishlari kuzatildi. 6320f75b API31 Android12; hqyd9xx4t8cekf7p API36 Android16. Ularni bir xil qurilma deb hisoblamaymiz. Keyin SAF skripti multi-select uchun long-press va Open tasdig‘iga moslandi. Android16 haqiqiy qurilma va Android17 API37 test emulyatorida har birida uchala ssenariy o‘tdi: isolated PDF obyekt tahlili, valid APK imzosini qabul qilish, o‘zgartirilgan APK imzosini rad etish — jami 6/6. Bu fixture APK’lar o‘rnatilmadi, faqat o‘qildi. Avvalgi UI xatolari muvaffaqiyat deb hisoblanmadi.
+
+475-byte to‘g‘ri xref/object tuzilishli sintetik PDF yaratildi. Imzo fixture’lari faqat o‘z debug arxivimizdan olingan benign kontent bilan tayyorlandi: host apksigner valid v2/v3 ni qabul qildi, qo‘shimcha asset bilan o‘zgartirilgan nusxani rad etdi. Fixture APK’lar o‘rnatilmadi/bajarilmadi va Git’ga kiritilmaydi.
+
+DEX/ELF malformed bounds, split paket/sertifikat mismatch va unchecked, duplicate ZIP, kengaytma/bidi aldovi hamda resource limitlar sintetik testlar bilan tekshirildi. Bu haqiqiy malware korpusi emas. To‘y arxivi / OneID asl namunasi berilmagan; precision, recall yoki statistik false-positive rate hisoblanmagan.
+
+## V3 artefaktlari
+
+| Fayl | Bayt | SHA-256 |
+| --- | --- | --- |
+| build/app/outputs/flutter-apk/app-debug.apk | 191093075 | 6f2d0070d9799b50c227f22707e424896a6360e8bb24bcb482511c02b59daa3e |
+| build/app/outputs/flutter-apk/app-release.apk | 60932835 | b4bcb0c1c5e99fa8e3fbe8600b99ffccb2c23b540494a449c18cdf74b1586ad9 |
+| build/app/outputs/bundle/release/app-release.aab | 59609815 | 4e93b96e3e55f3f7617d0014d575e062838176f7896b4688749fb9ddd2dff891 |
+
+zipalign -c -P 16 4 release APK uchun exit 0 qaytardi; jarsigner AAB uchun jar is unsigned qaytardi. Bu Play pre-launch yoki minified release runtime sinovini almashtirmaydi.
+
+Versiya 3.0.0+3. Debug imzosi Android public debug keystore; production imzo emas. Release uchun apksigner DOES NOT VERIFY — kutilgan natija. Haqiqiy signing credential yo‘q. SHIELD_ALLOW_UNSIGNED=true faqat kompilyatsiya auditi uchun ishlatildi; odatiy signed release yo‘li kalitsiz guard bilan rad etiladi. APK/AAB Play’ga yuborilmadi.
+
+PDFBox qo‘shilgach R8 optional JP2Decoder yo‘qligi uchun to‘xtadi. Rasmiy JPXFilter source bu kutubxonani reflection bilan optional tekshiradi. Parser rasm render qilmaydi; proguard-rules.pro faqat shu bitta class uchun dontwarn qo‘shadi. Shundan keyin release APK 105,9s va AAB 39,6s da yig‘ildi. Bu to‘liq dependency xavfsizlik auditi emas.
+
+## Qayta bajarish
+
+Buyruqlarni ketma-ket bajaring. Flutter integration/debug va release build’larini parallel bajarmang: generated plugin registrant o‘zgaradi.
+
+~~~powershell
+flutter pub get
+flutter gen-l10n
+flutter analyze
+flutter test --coverage
+python -m unittest discover -s backend
+powershell -NoProfile -ExecutionPolicy RemoteSigned -File test/native/run_tests.ps1
+flutter test integration_test -d <qurilma-id>
+flutter build apk --debug
+~~~
+
+Kotlinc bo‘lmasa run_tests.ps1 -KotlinLib <Gradle Kotlin compiler lib> ishlaydi. integration_test/saf_smoke.ps1 -Serial <id> -FixturePath <benign-file> -ExpectedText <regex> real SAF orqali tekshiradi. Skript faqat o‘zi yaratgan UUID fayllarni o‘chiradi. Haqiqiy zararli fayllar ishlatilmadi.
+
+Store uchun 1080×2400 o‘lchamdagi 2 haqiqiy UI skrinshoti toza API37 emulyatordan olindi; ikkinchisi sintetik tampered APK natijasidir. To‘liq screenshot provenance store/README.md da. Android12 qurilmasi uzilgani sabab qo‘lda yuborilgan benign /sdcard/Download/ShieldGuard-validation.pdf (475 bayt) keyingi ulanishda tozalanishi kerak; UUID skript fixture’lari finally orqali o‘chirildi.

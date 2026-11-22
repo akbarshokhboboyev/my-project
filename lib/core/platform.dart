@@ -42,6 +42,10 @@ class ShieldPlatform {
     ),
     subject: value['format'] as String?,
     hash: value['hash'] as String?,
+    details: Map<String, dynamic>.from(value['details'] as Map? ?? {}),
+    signatureUnchecked:
+        (value['format'] as String? ?? '').startsWith('APK') &&
+        value['signatureChecked'] != true,
     signers: List<String>.unmodifiable(value['signers'] as List? ?? []),
     scannedAt: switch (value['time']) {
       final int time when time > 0 => DateTime.fromMillisecondsSinceEpoch(time),

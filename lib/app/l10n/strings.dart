@@ -750,7 +750,7 @@ abstract class Strings {
   /// No description provided for @privacyBody.
   ///
   /// In uz, this message translates to:
-  /// **'Havola, xabar va fayl tahlili qurilmada amalga oshiriladi. Tarix ixtiyoriy. Xabar matni, to‘liq URL, parol, tasdiqlash kodi, fayl nomi yoki identifikatori tarixga yozilmaydi. Fayl nusxasi tekshiruv vaqtida vaqtincha saqlanadi va yakunda o‘chiriladi.'**
+  /// **'Havola, xabar va fayl tahlili qurilmada amalga oshiriladi. Tarix ixtiyoriy. Xabar matni, to‘liq URL, parol, tasdiqlash kodi, fayl nomi yoki identifikatori tarixga yozilmaydi. Fayl nusxasi tekshiruv vaqtida vaqtincha saqlanadi va yakunda o‘chiriladi. Onlayn himoya alohida rozilik bilan qo‘lda tekshiriladigan to‘liq URL’ni serveringizga va Google Web Risk’ka yuboradi. Rozilik o‘chirilsa reputatsiya keshi tozalanadi.'**
   String get privacyBody;
 
   /// No description provided for @about.
@@ -762,7 +762,7 @@ abstract class Strings {
   /// No description provided for @aboutBody.
   ///
   /// In uz, this message translates to:
-  /// **'ShieldGuard havola, xabar va fayllarda shubhali belgilarni mahalliy qoidalar bilan aniqlaydi.'**
+  /// **'ShieldGuard havola, xabar va fayllarda shubhali belgilarni mahalliy qoidalar bilan aniqlaydi. Versiya 3.0.0, yig‘ilish 3. Onlayn manba — alohida sozlanadigan Google Web Risk.'**
   String get aboutBody;
 
   /// No description provided for @help.
@@ -812,6 +812,408 @@ abstract class Strings {
   /// In uz, this message translates to:
   /// **'Imzolovchi sertifikat izi'**
   String get signer;
+
+  /// No description provided for @onlineTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Onlayn himoya'**
+  String get onlineTitle;
+
+  /// No description provided for @onlineConsent.
+  ///
+  /// In uz, this message translates to:
+  /// **'To‘liq URL serveringizga va Google Web Risk xizmatiga yuboriladi. URL ichida maxfiy token bo‘lishi mumkin. Faqat qo‘lda havola tekshiruviga rozilik beraman.'**
+  String get onlineConsent;
+
+  /// No description provided for @gateway.
+  ///
+  /// In uz, this message translates to:
+  /// **'Himoyalangan server manzili'**
+  String get gateway;
+
+  /// No description provided for @gatewayToken.
+  ///
+  /// In uz, this message translates to:
+  /// **'Serverga kirish tokeni'**
+  String get gatewayToken;
+
+  /// No description provided for @gatewayHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Token faqat joriy seans xotirasida qoladi. Server uchun API kaliti alohida sozlanadi.'**
+  String get gatewayHint;
+
+  /// No description provided for @reputationMatch.
+  ///
+  /// In uz, this message translates to:
+  /// **'Web Risk tahdidlar bazasida moslik topildi.'**
+  String get reputationMatch;
+
+  /// No description provided for @repMatch.
+  ///
+  /// In uz, this message translates to:
+  /// **'Web Risk bazasida tahdid mosligi bor.'**
+  String get repMatch;
+
+  /// No description provided for @repNoMatch.
+  ///
+  /// In uz, this message translates to:
+  /// **'Web Risk bazasida moslik topilmadi. Xavfsizlik kafolatlanmaydi.'**
+  String get repNoMatch;
+
+  /// No description provided for @repDisabled.
+  ///
+  /// In uz, this message translates to:
+  /// **'Onlayn tekshiruv o‘chirilgan.'**
+  String get repDisabled;
+
+  /// No description provided for @repUnavailable.
+  ///
+  /// In uz, this message translates to:
+  /// **'Onlayn manba javob bermadi. Mahalliy tahlil bajarildi.'**
+  String get repUnavailable;
+
+  /// No description provided for @repRateLimited.
+  ///
+  /// In uz, this message translates to:
+  /// **'Onlayn so‘rovlar vaqtincha cheklangan.'**
+  String get repRateLimited;
+
+  /// No description provided for @repInvalidResponse.
+  ///
+  /// In uz, this message translates to:
+  /// **'Onlayn manba yaroqsiz javob qaytardi.'**
+  String get repInvalidResponse;
+
+  /// No description provided for @repUnconfigured.
+  ///
+  /// In uz, this message translates to:
+  /// **'Onlayn manba uchun HTTPS server va kirish tokeni kerak.'**
+  String get repUnconfigured;
+
+  /// No description provided for @webRisk.
+  ///
+  /// In uz, this message translates to:
+  /// **'Google Web Risk'**
+  String get webRisk;
+
+  /// No description provided for @webRiskCache.
+  ///
+  /// In uz, this message translates to:
+  /// **'Google Web Risk mahalliy keshi'**
+  String get webRiskCache;
+
+  /// No description provided for @archivePath.
+  ///
+  /// In uz, this message translates to:
+  /// **'Arxiv ichida tashqi yo‘lga ishora qiluvchi nom mavjud.'**
+  String get archivePath;
+
+  /// No description provided for @archiveNested.
+  ///
+  /// In uz, this message translates to:
+  /// **'Arxiv ichida yana arxiv bor. Uning mazmuni tekshirilmadi.'**
+  String get archiveNested;
+
+  /// No description provided for @archiveEmbedded.
+  ///
+  /// In uz, this message translates to:
+  /// **'Office hujjatida makros yoki biriktirilgan dastur belgisi mavjud.'**
+  String get archiveEmbedded;
+
+  /// No description provided for @pdfUri.
+  ///
+  /// In uz, this message translates to:
+  /// **'PDF tashqi manzilga murojaat qilishi mumkin.'**
+  String get pdfUri;
+
+  /// No description provided for @scanTimeout.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tekshiruv vaqt chegarasiga yetdi.'**
+  String get scanTimeout;
+
+  /// No description provided for @scanCancelled.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tekshiruv bekor qilindi.'**
+  String get scanCancelled;
+
+  /// No description provided for @signatureUnchecked.
+  ///
+  /// In uz, this message translates to:
+  /// **'APK imzosi yaxlitligi tekshirilmadi. Sertifikat izi nashriyotchining ishonchliligini tasdiqlamaydi.'**
+  String get signatureUnchecked;
+
+  /// No description provided for @apkExported.
+  ///
+  /// In uz, this message translates to:
+  /// **'APK tashqi ilovalarga ochiq, ruxsat bilan himoyalanmagan komponentlarni e’lon qilgan.'**
+  String get apkExported;
+
+  /// No description provided for @testAlert.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sinov ogohlantirishini ko‘rsatish'**
+  String get testAlert;
+
+  /// No description provided for @testAlertTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'ShieldGuard sinov ogohlantirishi'**
+  String get testAlertTitle;
+
+  /// No description provided for @testAlertBody.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ogohlantirish kanali ishlamoqda. Bu sun’iy sinov.'**
+  String get testAlertBody;
+
+  /// No description provided for @metadata.
+  ///
+  /// In uz, this message translates to:
+  /// **'Fayl metama’lumotlari'**
+  String get metadata;
+
+  /// No description provided for @cancelScan.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tekshiruvni bekor qilish'**
+  String get cancelScan;
+
+  /// No description provided for @versionCode.
+  ///
+  /// In uz, this message translates to:
+  /// **'Versiya raqami'**
+  String get versionCode;
+
+  /// No description provided for @versionName.
+  ///
+  /// In uz, this message translates to:
+  /// **'Versiya'**
+  String get versionName;
+
+  /// No description provided for @minSdk.
+  ///
+  /// In uz, this message translates to:
+  /// **'Eng eski Android API'**
+  String get minSdk;
+
+  /// No description provided for @targetSdk.
+  ///
+  /// In uz, this message translates to:
+  /// **'Maqsadli Android API'**
+  String get targetSdk;
+
+  /// No description provided for @permissions.
+  ///
+  /// In uz, this message translates to:
+  /// **'So‘ralgan ruxsatlar'**
+  String get permissions;
+
+  /// No description provided for @architecture.
+  ///
+  /// In uz, this message translates to:
+  /// **'Protsessor turi kodi'**
+  String get architecture;
+
+  /// No description provided for @sections.
+  ///
+  /// In uz, this message translates to:
+  /// **'PE bo‘limlari soni'**
+  String get sections;
+
+  /// No description provided for @archiveDuplicate.
+  ///
+  /// In uz, this message translates to:
+  /// **'Arxivda takroriy nomli elementlar bor.'**
+  String get archiveDuplicate;
+
+  /// No description provided for @contentLimit.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tanlangan kontentning bir qismi resurs chegarasi sabab tekshirilmadi.'**
+  String get contentLimit;
+
+  /// No description provided for @dexMalformed.
+  ///
+  /// In uz, this message translates to:
+  /// **'DEX tuzilishi buzilgan yoki qo‘llab-quvvatlanmaydi.'**
+  String get dexMalformed;
+
+  /// No description provided for @dexDynamic.
+  ///
+  /// In uz, this message translates to:
+  /// **'DEX ichida dinamik kod yuklashga oid statik havola bor.'**
+  String get dexDynamic;
+
+  /// No description provided for @dexInstaller.
+  ///
+  /// In uz, this message translates to:
+  /// **'DEX ichida ilova o‘rnatish API’siga statik havola bor.'**
+  String get dexInstaller;
+
+  /// No description provided for @dexAccessibility.
+  ///
+  /// In uz, this message translates to:
+  /// **'DEX ichida maxsus imkoniyatlar xizmatiga statik havola bor.'**
+  String get dexAccessibility;
+
+  /// No description provided for @dexNotification.
+  ///
+  /// In uz, this message translates to:
+  /// **'DEX ichida bildirishnomalarga kirish xizmatiga statik havola bor.'**
+  String get dexNotification;
+
+  /// No description provided for @elfMalformed.
+  ///
+  /// In uz, this message translates to:
+  /// **'Native kutubxona ELF tuzilishi buzilgan.'**
+  String get elfMalformed;
+
+  /// No description provided for @signatureVerified.
+  ///
+  /// In uz, this message translates to:
+  /// **'APK imzosi yaxlitligi tasdiqlandi. Bu ishlab chiquvchi ishonchliligini tasdiqlamaydi.'**
+  String get signatureVerified;
+
+  /// No description provided for @signatureFailed.
+  ///
+  /// In uz, this message translates to:
+  /// **'APK imzosi yaxlitligini tekshirish muvaffaqiyatsiz.'**
+  String get signatureFailed;
+
+  /// No description provided for @signatureStatus.
+  ///
+  /// In uz, this message translates to:
+  /// **'APK imzosi holati'**
+  String get signatureStatus;
+
+  /// No description provided for @verdictUnknown.
+  ///
+  /// In uz, this message translates to:
+  /// **'Aniqlab bo‘lmadi'**
+  String get verdictUnknown;
+
+  /// No description provided for @verdictPossible.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xavfli bo‘lishi mumkin'**
+  String get verdictPossible;
+
+  /// No description provided for @verdictNoFindings.
+  ///
+  /// In uz, this message translates to:
+  /// **'Muhim xavf belgilari topilmadi'**
+  String get verdictNoFindings;
+
+  /// No description provided for @splitUnchecked.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ichki APK komponentining imzosi yoki metama’lumoti tekshirilmadi.'**
+  String get splitUnchecked;
+
+  /// No description provided for @splitMismatch.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ichki APK komponentlarining paket yoki sertifikatlari mos kelmaydi.'**
+  String get splitMismatch;
+
+  /// No description provided for @unknownContainer.
+  ///
+  /// In uz, this message translates to:
+  /// **'Fayl konteyneri to‘liq tekshirilmadi.'**
+  String get unknownContainer;
+
+  /// No description provided for @exportReport.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hisobotni nusxalash'**
+  String get exportReport;
+
+  /// No description provided for @hashLookup.
+  ///
+  /// In uz, this message translates to:
+  /// **'Fayl xeshini onlayn tekshirish'**
+  String get hashLookup;
+
+  /// No description provided for @hashDisclosure.
+  ///
+  /// In uz, this message translates to:
+  /// **'Faylning SHA-256 izi serveringiz va VirusTotal xizmatiga yuboriladi. Fayl yuborilmaydi. Xeshni so‘rash ushbu faylga qiziqishingizni oshkor qilishi mumkin. Bu so‘rovga rozimisiz?'**
+  String get hashDisclosure;
+
+  /// No description provided for @hashAllow.
+  ///
+  /// In uz, this message translates to:
+  /// **'Roziman, xeshni tekshirish'**
+  String get hashAllow;
+
+  /// No description provided for @hashStatusreported.
+  ///
+  /// In uz, this message translates to:
+  /// **'VirusTotal tahlil hisoblari olindi. Ular zararli faoliyat tasdig‘i yoki ehtimol foizi emas.'**
+  String get hashStatusreported;
+
+  /// No description provided for @hashStatusnoMatch.
+  ///
+  /// In uz, this message translates to:
+  /// **'Reputatsiya bazasida fayl topilmadi. Xavfsizlik kafolatlanmaydi.'**
+  String get hashStatusnoMatch;
+
+  /// No description provided for @hashStatusdisabled.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xesh tekshiruvi o‘chirilgan.'**
+  String get hashStatusdisabled;
+
+  /// No description provided for @hashStatusunconfigured.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xesh manbasi server credentiallari va mos litsenziyani talab qiladi.'**
+  String get hashStatusunconfigured;
+
+  /// No description provided for @hashStatusunavailable.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xesh manbasiga ulanish bajarilmadi.'**
+  String get hashStatusunavailable;
+
+  /// No description provided for @hashStatusrateLimited.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xesh so‘rovlari vaqtincha cheklangan.'**
+  String get hashStatusrateLimited;
+
+  /// No description provided for @hashStatusinvalidResponse.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xesh manbasi yaroqsiz javob qaytardi.'**
+  String get hashStatusinvalidResponse;
+
+  /// No description provided for @hashCounts.
+  ///
+  /// In uz, this message translates to:
+  /// **'Zararli deb belgilagan manbalar {malicious}, shubhali deb belgilagan manbalar {suspicious}.'**
+  String hashCounts(int malicious, int suspicious);
+
+  /// No description provided for @pdfEncrypted.
+  ///
+  /// In uz, this message translates to:
+  /// **'PDF shifrlangan. Parol so‘ralmaydi, ichki tarkib tekshirilmadi.'**
+  String get pdfEncrypted;
+
+  /// No description provided for @pdfParseIncomplete.
+  ///
+  /// In uz, this message translates to:
+  /// **'PDF obyektlarini to‘liq tahlil qilib bo‘lmadi.'**
+  String get pdfParseIncomplete;
+
+  /// No description provided for @pdfParsed.
+  ///
+  /// In uz, this message translates to:
+  /// **'PDF obyektlari alohida jarayonda tahlil qilindi.'**
+  String get pdfParsed;
 }
 
 class _StringsDelegate extends LocalizationsDelegate<Strings> {

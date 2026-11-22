@@ -1,0 +1,4 @@
+storeFile=C:/secure/shieldguard-upload.jks
+storePassword=REPLACE_LOCALLY
+keyAlias=shieldguard-upload
+keyPassword=REPLACE_LOCALLY

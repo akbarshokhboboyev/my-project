@@ -33,6 +33,121 @@ void main() {
     expect(find.text('Himoya o‘chirilgan'), findsOneWidget);
   });
 
+  testWidgets('hash lookup waits for separate consent', (tester) async {
+    fileResult = {
+      'kind': 'file',
+      'format': 'PDF',
+      'hash': 'a' * 64,
+      'complete': true,
+      'findings': <String, int>{},
+    };
+    await launch(tester);
+    await tester.tap(find.text('Faylni tekshirish').first);
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(FilledButton, 'Faylni tanlash'));
+    await tester.pumpAndSettle();
+    final button = find.widgetWithText(
+      TextButton,
+      'Fayl xeshini onlayn tekshirish',
+    );
+    await tester.scrollUntilVisible(
+      button,
+      250,
+      scrollable: find
+          .descendant(
+            of: find.byType(ListView),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
+    await tester.tap(button);
+    await tester.pumpAndSettle();
+    expect(find.textContaining('qiziqishingizni oshkor'), findsOneWidget);
+    await tester.tap(find.text('Keyinroq'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('server credentiallari'), findsNothing);
+  });
+
+  testWidgets('batch results preserve individual signature evidence', (
+    tester,
+  ) async {
+    fileResult = {
+      'batch': [
+        {
+          'kind': 'file',
+          'format': 'APK',
+          'complete': true,
+          'signatureChecked': true,
+          'details': {'signatureStatus': 'signatureVerified'},
+          'findings': <String, int>{},
+        },
+        {
+          'kind': 'file',
+          'complete': false,
+          'findings': {'unknownContainer': 0},
+        },
+      ],
+    };
+    await launch(tester);
+    await tester.tap(find.text('Faylni tekshirish').first);
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(FilledButton, 'Faylni tanlash'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Imzo yaxlitligi'), findsNothing);
+    await tester.scrollUntilVisible(
+      find.textContaining('APK imzosi holati'),
+      250,
+      scrollable: find
+          .descendant(
+            of: find.byType(ListView),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
+    expect(find.textContaining('APK imzosi holati'), findsOneWidget);
+  });
+
+  testWidgets('online scan with missing server preserves local findings', (
+    tester,
+  ) async {
+    protection = {'onlineConsent': true};
+    await launch(tester);
+    await tester.tap(find.text('Havolani tekshirish').first);
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byType(TextField),
+      'https://telegram.example/premium',
+    );
+    await tester.tap(find.widgetWithText(FilledButton, 'Tekshirish'));
+    await tester.pumpAndSettle();
+    expect(find.text('Yuqori xavf'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.textContaining('HTTPS server'),
+      300,
+      scrollable: find
+          .descendant(
+            of: find.byType(ListView),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
+    expect(find.textContaining('HTTPS server'), findsOneWidget);
+  });
+
+  testWidgets('online settings disclose full URL transfer and hide token', (
+    tester,
+  ) async {
+    await launch(tester);
+    await tester.tap(find.byIcon(Icons.settings_outlined));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('To‘liq URL'), findsOneWidget);
+    final fields = tester
+        .widgetList<TextField>(find.byType(TextField))
+        .toList();
+    expect(fields.length, 2);
+    expect(fields.last.obscureText, true);
+  });
+
   testWidgets('manual phishing scan', (tester) async {
     await launch(tester);
     await tester.tap(find.text('Havolani tekshirish').first);

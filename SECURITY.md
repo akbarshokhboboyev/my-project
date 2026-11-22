@@ -1,9 +1,13 @@
 # Xavfsizlik
 
-Havolalar ochilmaydi. TLS mavjudligi, rasmiy ko‘ringan domen va xavf belgisi topilmagani qonuniylik kafolatini bermaydi. Ijobiy natija qoida bilan bog‘lanadi va ishonchlilik xavf ballidan alohida ko‘rsatiladi.
+V3 apksig APK yaxlitligi verifikatorini qo‘shadi. PDF parseri exported=false isolated UID jarayonida ishlaydi. DEX va ELF elementlari 8 MiB dan, jami 16 MiB kontent byudjeti bilan o‘qiladi. Split komponentlar tasodifiy vaqtinchalik nomlar bilan olinadi, tashqi arxiv yo‘llari ishlatilmaydi.
 
-Fayllar bajarilmaydi. Tekshiruv 128 MiB fayl hajmi, 32 MiB arxiv hajmi, 4096 arxiv yozuvi va 256 MiB e’lon qilingan ochilgan hajm bilan chegaralangan. Arxivlar diskka ochilmaydi. PDF marker tahlili siqilgan yoki yashirilgan obyektlarni o‘tkazib yuborishi mumkin. Rasm tahlili asosiy imzo va yakun belgilarini tekshiradi. APK sertifikat izi nashriyotchi reputatsiyasini tasdiqlamaydi.
+URL sahifalari va redirect nishonlari yuklanmaydi. HTTPS gateway adapteri redirect kuzatmaydi. Web Risk API kaliti server muhiti orqali olinadi. So‘rov hajmi, javob hajmi, timeout, tezlik va retry cheklovlari mavjud. Minimal gateway faqat nazoratli o‘rnatish uchun mo‘ljallangan. Ommaviy xizmat uchun autentifikatsiya va deployment konfiguratsiyasi THREAT_INTELLIGENCE.md hujjatida.
 
-Avtomatik ogohlantirish uchun ilovadagi rozilik, tizim listener ruxsati va ogohlantirish kanali kerak. Tizim yashirgan kontent o‘qilmaydi. Bildirishnoma tafsilotlari xom xabarsiz ko‘rsatiladi. Xabarlar, qisqartirilgan URL’lar va fayllar tashqi xizmatga yuborilmaydi.
+Fayl tahlili statik. Arxiv entry yo‘llari disk yo‘li sifatida ishlatilmaydi. Ichki APK faqat tasodifiy cache fayliga ko‘chiriladi; bajarilmaydi. Traversal yo‘llari indikator sifatida ko‘rsatiladi. ScanLimits vaqt va hajmni cheklaydi, ammo bloklangan content provider read chaqiruvini darhol uzolmaydi. PDFBox chegaralangan obyekt parseri va apksig kriptografik tekshiruvi qo‘shilgan. PDF uchun 4 MiB fayl/20 000 obyekt/10 soniya limit; 8 MiB PDFBox stream storage butun process heap limiti emas. JPEG segment parseri hali qo‘shilmagan. APK sertifikat izi ishonchlilik kafolati bermaydi.
 
-Ruxsat va rozilik yondashuvi [Android NotificationListenerService](https://developer.android.com/reference/android/service/notification/NotificationListenerService) hamda [Google Play User Data](https://support.google.com/googleplay/android-developer/answer/10144311) hujjatlari asosida tekshirildi. Play Console deklaratsiyasi va do‘kon ko‘rigi alohida bajariladi.
+Bildirishnoma xom matni log, tarix va ogohlantirishga yozilmaydi. Dedup xeshi tasodifiy seans tuzi bilan faqat xotirada qoladi. Immutable PendingIntent va ilova ichki tasodifiy proof qiymati natijani tashqaridan soxtalashtirishni cheklaydi.
+
+Release debug flag o‘chirilgan, R8 va resurs shrinking yoqilgan. Kalitlar Git’dan chiqarilgan. SMS, Accessibility, root yoki VPN ruxsatlari yo‘q. Tashqi transport HTTPS bilan cheklangan.
+
+Bog‘liqlik versiyalari saqlangan va lockfile yangilangan. To‘liq zaiflik bazasi auditi yoki penetration test o‘tkazilgani da’vo qilinmaydi. [Android listener](https://developer.android.com/reference/android/service/notification/NotificationListenerService), [Google Play User Data](https://support.google.com/googleplay/android-developer/answer/10144311).

@@ -1,4 +1,10 @@
 # Miscellaneous
+*.jks
+*.keystore
+**/key.properties
+.env
+.env.*
+__pycache__/
 *.class
 *.log
 *.pyc

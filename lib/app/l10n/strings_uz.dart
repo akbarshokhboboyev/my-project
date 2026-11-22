@@ -367,14 +367,14 @@ class StringsUz extends Strings {
 
   @override
   String get privacyBody =>
-      'Havola, xabar va fayl tahlili qurilmada amalga oshiriladi. Tarix ixtiyoriy. Xabar matni, to‘liq URL, parol, tasdiqlash kodi, fayl nomi yoki identifikatori tarixga yozilmaydi. Fayl nusxasi tekshiruv vaqtida vaqtincha saqlanadi va yakunda o‘chiriladi.';
+      'Havola, xabar va fayl tahlili qurilmada amalga oshiriladi. Tarix ixtiyoriy. Xabar matni, to‘liq URL, parol, tasdiqlash kodi, fayl nomi yoki identifikatori tarixga yozilmaydi. Fayl nusxasi tekshiruv vaqtida vaqtincha saqlanadi va yakunda o‘chiriladi. Onlayn himoya alohida rozilik bilan qo‘lda tekshiriladigan to‘liq URL’ni serveringizga va Google Web Risk’ka yuboradi. Rozilik o‘chirilsa reputatsiya keshi tozalanadi.';
 
   @override
   String get about => 'Ilova haqida';
 
   @override
   String get aboutBody =>
-      'ShieldGuard havola, xabar va fayllarda shubhali belgilarni mahalliy qoidalar bilan aniqlaydi.';
+      'ShieldGuard havola, xabar va fayllarda shubhali belgilarni mahalliy qoidalar bilan aniqlaydi. Versiya 3.0.0, yig‘ilish 3. Onlayn manba — alohida sozlanadigan Google Web Risk.';
 
   @override
   String get help => 'Yordam';
@@ -400,4 +400,235 @@ class StringsUz extends Strings {
 
   @override
   String get signer => 'Imzolovchi sertifikat izi';
+
+  @override
+  String get onlineTitle => 'Onlayn himoya';
+
+  @override
+  String get onlineConsent =>
+      'To‘liq URL serveringizga va Google Web Risk xizmatiga yuboriladi. URL ichida maxfiy token bo‘lishi mumkin. Faqat qo‘lda havola tekshiruviga rozilik beraman.';
+
+  @override
+  String get gateway => 'Himoyalangan server manzili';
+
+  @override
+  String get gatewayToken => 'Serverga kirish tokeni';
+
+  @override
+  String get gatewayHint =>
+      'Token faqat joriy seans xotirasida qoladi. Server uchun API kaliti alohida sozlanadi.';
+
+  @override
+  String get reputationMatch => 'Web Risk tahdidlar bazasida moslik topildi.';
+
+  @override
+  String get repMatch => 'Web Risk bazasida tahdid mosligi bor.';
+
+  @override
+  String get repNoMatch =>
+      'Web Risk bazasida moslik topilmadi. Xavfsizlik kafolatlanmaydi.';
+
+  @override
+  String get repDisabled => 'Onlayn tekshiruv o‘chirilgan.';
+
+  @override
+  String get repUnavailable =>
+      'Onlayn manba javob bermadi. Mahalliy tahlil bajarildi.';
+
+  @override
+  String get repRateLimited => 'Onlayn so‘rovlar vaqtincha cheklangan.';
+
+  @override
+  String get repInvalidResponse => 'Onlayn manba yaroqsiz javob qaytardi.';
+
+  @override
+  String get repUnconfigured =>
+      'Onlayn manba uchun HTTPS server va kirish tokeni kerak.';
+
+  @override
+  String get webRisk => 'Google Web Risk';
+
+  @override
+  String get webRiskCache => 'Google Web Risk mahalliy keshi';
+
+  @override
+  String get archivePath =>
+      'Arxiv ichida tashqi yo‘lga ishora qiluvchi nom mavjud.';
+
+  @override
+  String get archiveNested =>
+      'Arxiv ichida yana arxiv bor. Uning mazmuni tekshirilmadi.';
+
+  @override
+  String get archiveEmbedded =>
+      'Office hujjatida makros yoki biriktirilgan dastur belgisi mavjud.';
+
+  @override
+  String get pdfUri => 'PDF tashqi manzilga murojaat qilishi mumkin.';
+
+  @override
+  String get scanTimeout => 'Tekshiruv vaqt chegarasiga yetdi.';
+
+  @override
+  String get scanCancelled => 'Tekshiruv bekor qilindi.';
+
+  @override
+  String get signatureUnchecked =>
+      'APK imzosi yaxlitligi tekshirilmadi. Sertifikat izi nashriyotchining ishonchliligini tasdiqlamaydi.';
+
+  @override
+  String get apkExported =>
+      'APK tashqi ilovalarga ochiq, ruxsat bilan himoyalanmagan komponentlarni e’lon qilgan.';
+
+  @override
+  String get testAlert => 'Sinov ogohlantirishini ko‘rsatish';
+
+  @override
+  String get testAlertTitle => 'ShieldGuard sinov ogohlantirishi';
+
+  @override
+  String get testAlertBody =>
+      'Ogohlantirish kanali ishlamoqda. Bu sun’iy sinov.';
+
+  @override
+  String get metadata => 'Fayl metama’lumotlari';
+
+  @override
+  String get cancelScan => 'Tekshiruvni bekor qilish';
+
+  @override
+  String get versionCode => 'Versiya raqami';
+
+  @override
+  String get versionName => 'Versiya';
+
+  @override
+  String get minSdk => 'Eng eski Android API';
+
+  @override
+  String get targetSdk => 'Maqsadli Android API';
+
+  @override
+  String get permissions => 'So‘ralgan ruxsatlar';
+
+  @override
+  String get architecture => 'Protsessor turi kodi';
+
+  @override
+  String get sections => 'PE bo‘limlari soni';
+
+  @override
+  String get archiveDuplicate => 'Arxivda takroriy nomli elementlar bor.';
+
+  @override
+  String get contentLimit =>
+      'Tanlangan kontentning bir qismi resurs chegarasi sabab tekshirilmadi.';
+
+  @override
+  String get dexMalformed =>
+      'DEX tuzilishi buzilgan yoki qo‘llab-quvvatlanmaydi.';
+
+  @override
+  String get dexDynamic =>
+      'DEX ichida dinamik kod yuklashga oid statik havola bor.';
+
+  @override
+  String get dexInstaller =>
+      'DEX ichida ilova o‘rnatish API’siga statik havola bor.';
+
+  @override
+  String get dexAccessibility =>
+      'DEX ichida maxsus imkoniyatlar xizmatiga statik havola bor.';
+
+  @override
+  String get dexNotification =>
+      'DEX ichida bildirishnomalarga kirish xizmatiga statik havola bor.';
+
+  @override
+  String get elfMalformed => 'Native kutubxona ELF tuzilishi buzilgan.';
+
+  @override
+  String get signatureVerified =>
+      'APK imzosi yaxlitligi tasdiqlandi. Bu ishlab chiquvchi ishonchliligini tasdiqlamaydi.';
+
+  @override
+  String get signatureFailed =>
+      'APK imzosi yaxlitligini tekshirish muvaffaqiyatsiz.';
+
+  @override
+  String get signatureStatus => 'APK imzosi holati';
+
+  @override
+  String get verdictUnknown => 'Aniqlab bo‘lmadi';
+
+  @override
+  String get verdictPossible => 'Xavfli bo‘lishi mumkin';
+
+  @override
+  String get verdictNoFindings => 'Muhim xavf belgilari topilmadi';
+
+  @override
+  String get splitUnchecked =>
+      'Ichki APK komponentining imzosi yoki metama’lumoti tekshirilmadi.';
+
+  @override
+  String get splitMismatch =>
+      'Ichki APK komponentlarining paket yoki sertifikatlari mos kelmaydi.';
+
+  @override
+  String get unknownContainer => 'Fayl konteyneri to‘liq tekshirilmadi.';
+
+  @override
+  String get exportReport => 'Hisobotni nusxalash';
+
+  @override
+  String get hashLookup => 'Fayl xeshini onlayn tekshirish';
+
+  @override
+  String get hashDisclosure =>
+      'Faylning SHA-256 izi serveringiz va VirusTotal xizmatiga yuboriladi. Fayl yuborilmaydi. Xeshni so‘rash ushbu faylga qiziqishingizni oshkor qilishi mumkin. Bu so‘rovga rozimisiz?';
+
+  @override
+  String get hashAllow => 'Roziman, xeshni tekshirish';
+
+  @override
+  String get hashStatusreported =>
+      'VirusTotal tahlil hisoblari olindi. Ular zararli faoliyat tasdig‘i yoki ehtimol foizi emas.';
+
+  @override
+  String get hashStatusnoMatch =>
+      'Reputatsiya bazasida fayl topilmadi. Xavfsizlik kafolatlanmaydi.';
+
+  @override
+  String get hashStatusdisabled => 'Xesh tekshiruvi o‘chirilgan.';
+
+  @override
+  String get hashStatusunconfigured =>
+      'Xesh manbasi server credentiallari va mos litsenziyani talab qiladi.';
+
+  @override
+  String get hashStatusunavailable => 'Xesh manbasiga ulanish bajarilmadi.';
+
+  @override
+  String get hashStatusrateLimited => 'Xesh so‘rovlari vaqtincha cheklangan.';
+
+  @override
+  String get hashStatusinvalidResponse =>
+      'Xesh manbasi yaroqsiz javob qaytardi.';
+
+  @override
+  String hashCounts(int malicious, int suspicious) {
+    return 'Zararli deb belgilagan manbalar $malicious, shubhali deb belgilagan manbalar $suspicious.';
+  }
+
+  @override
+  String get pdfEncrypted =>
+      'PDF shifrlangan. Parol so‘ralmaydi, ichki tarkib tekshirilmadi.';
+
+  @override
+  String get pdfParseIncomplete =>
+      'PDF obyektlarini to‘liq tahlil qilib bo‘lmadi.';
+
+  @override
+  String get pdfParsed => 'PDF obyektlari alohida jarayonda tahlil qilindi.';
 }

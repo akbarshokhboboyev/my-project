@@ -16,8 +16,7 @@ import android.service.notification.StatusBarNotification
 internal fun Context.options() = getSharedPreferences("shieldguard", Context.MODE_PRIVATE)
 
 class TelegramThreatListener : NotificationListenerService() {
-    private val recent = LinkedHashMap<String, Long>()
-    private var lastAlert = -30_000L
+    private val gate = AlertGate()
 
     override fun onListenerConnected() { connected = true; connectionChanged?.invoke() }
     override fun onListenerDisconnected() { connected = false; connectionChanged?.invoke() }
@@ -45,11 +44,7 @@ class TelegramThreatListener : NotificationListenerService() {
             NotificationManager.IMPORTANCE_HIGH))
         if (manager.getNotificationChannel("protection")?.importance == NotificationManager.IMPORTANCE_NONE) return
         val now = SystemClock.elapsedRealtime()
-        val key = event.key + findings.keys.joinToString()
-        if (now - lastAlert < 30_000 || recent[key]?.let { now - it < 300_000 } == true) return
-        if (recent.size >= 128) recent.remove(recent.keys.first())
-        recent[key] = now
-        lastAlert = now
+        if (!gate.allow(body, now)) return
         val time = System.currentTimeMillis()
         historyWorker.execute {
             runCatching { HistoryStore(this).use { it.record("notification", score, findings.size, true, time) } }
