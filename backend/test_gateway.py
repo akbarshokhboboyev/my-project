@@ -22,8 +22,8 @@ class GatewayTests(unittest.TestCase):
         self.http.server_close()
         self.token.stop()
 
-    def send(self, body, token="fixture"):
-        request = urllib.request.Request("http://127.0.0.1:%d/v1/check" % self.http.server_port,
+    def send(self, body, token="fixture", path="/v1/check"):
+        request = urllib.request.Request(("http://127.0.0.1:%d" % self.http.server_port) + path,
             data=json.dumps(body).encode(), headers={"Authorization": "Bearer " + token})
         try:
             with urllib.request.urlopen(request, timeout=2) as response:
@@ -51,6 +51,19 @@ class GatewayTests(unittest.TestCase):
     def test_unavailable(self):
         with patch("server.lookup", side_effect=OSError()):
             self.assertEqual(self.send({"url":"https://example.test"})[0], 503)
+
+    def test_hash_requires_separate_consent(self):
+        with patch("server.lookup_hash") as lookup:
+            self.assertEqual(self.send({"sha256":"a"*64}, path="/v1/hash")[0], 403)
+            lookup.assert_not_called()
+
+    def test_distinct_users_have_distinct_budgets(self):
+        server.Handler.user_requests.clear()
+        with patch.dict(os.environ, {"SHIELD_USER_TOKENS": json.dumps({"one":"a"*32, "two":"b"*32})}):
+            with patch("server.lookup", return_value={}):
+                self.assertEqual(self.send({"url":"https://example.test"}, "a"*32)[0], 200)
+                self.assertEqual(self.send({"url":"https://example.test"}, "b"*32)[0], 200)
+                self.assertEqual(self.send({"url":"https://example.test"}, "a"*32)[0], 429)
 
 if __name__ == "__main__":
     unittest.main()

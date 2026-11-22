@@ -7,6 +7,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+from file_hash import lookup_hash
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
@@ -43,29 +44,55 @@ def lookup(url):
 class Handler(BaseHTTPRequestHandler):
     lock = threading.Lock()
     next_request = 0.0
+    user_requests = {}
     def log_message(self, *_):
         pass
     def do_POST(self):
         token = os.environ.get("SHIELD_GATEWAY_TOKEN", "")
-        if not token or not hmac.compare_digest(self.headers.get("Authorization", ""), "Bearer " + token):
+        user = "legacy"
+        configured = os.environ.get("SHIELD_USER_TOKENS")
+        if configured:
+            try:
+                users = json.loads(configured)
+                if not isinstance(users, dict) or len(users) > 1024:
+                    return self.send_json(503, {})
+                user = next((name for name, secret in users.items()
+                    if isinstance(secret, str) and len(secret) >= 32 and
+                    hmac.compare_digest(self.headers.get("Authorization", ""), "Bearer " + secret)), "")
+            except (ValueError, TypeError):
+                return self.send_json(503, {})
+        if (not configured and (not token or not hmac.compare_digest(self.headers.get("Authorization", ""), "Bearer " + token))) or not user:
             return self.send_json(401, {})
-        if self.path != "/v1/check":
+        if self.path not in ("/v1/check", "/v1/hash"):
             return self.send_json(404, {})
         try:
             length = int(self.headers.get("Content-Length", "0"))
             if not 1 <= length <= 8192:
                 return self.send_json(413, {})
             self.connection.settimeout(8)
-            url = json.loads(self.rfile.read(length))["url"]
+            body = json.loads(self.rfile.read(length))
+            if self.path == "/v1/hash":
+                if body.get("consent") is not True:
+                    return self.send_json(403, {})
+                with Handler.lock:
+                    if time.monotonic() < Handler.user_requests.get(user, 0):
+                        return self.send_json(429, {})
+                    Handler.user_requests[user] = time.monotonic() + 15
+                return self.send_json(200, lookup_hash(body.get("sha256"), consent=True))
+            url = body["url"]
             if not isinstance(url, str) or len(url) > 4096:
                 raise ValueError()
             parsed = urllib.parse.urlsplit(url)
             if parsed.scheme not in ("http", "https") or not parsed.hostname or parsed.username or parsed.password:
                 raise ValueError()
             with Handler.lock:
-                if time.monotonic() < Handler.next_request:
+                deadline = Handler.user_requests.get(user, 0) if configured else Handler.next_request
+                if time.monotonic() < deadline:
                     return self.send_json(429, {})
-                Handler.next_request = time.monotonic() + 1
+                if configured:
+                    Handler.user_requests[user] = time.monotonic() + 1
+                else:
+                    Handler.next_request = time.monotonic() + 1
             return self.send_json(200, lookup(url))
         except urllib.error.HTTPError as error:
             return self.send_json(429 if error.code == 429 else 502, {})
