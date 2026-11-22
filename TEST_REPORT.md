@@ -1,5 +1,68 @@
 # ShieldGuard V3.1 — PHASE 4 bosqichma-bosqich sinovlari
 
+## 4D-R — `3c231d6` dan keyingi regressiya, emulator va build (2026-11-23)
+
+Muhit: macOS, Flutter 3.50.1 (stable), JDK 17, Kotlin compiler 2.2.21 (Gradle keshidan), AGP 9.1.1, Android emulator `Pixel_8` AVD (API 36, arm64). Barcha device natijalari **emulator**da olingan; jismoniy telefon va haqiqiy Telegram ilovasi ishlatilmagan. Faqat o‘zimiz yaratgan benign/sintetik fixture’lar; scanned APK install/execute qilinmadi (PHASE 2 uchun o‘zimizning kodsiz `hasCode=false` fixture’i o‘rnatilib, keyin o‘chirildi).
+
+### Topilgan va tuzatilgan xatolar
+
+| # | Xato | Ta’sir | Tuzatish | Dalil |
+| --- | --- | --- | --- | --- |
+| 1 | `3c231d6` dagi `RouteRecoveryPage` ochiq paytda `Workspace` dispose bo‘lib, `setMethodCallHandler(null)` native `incoming` handler’ini o‘chirardi | Noto‘g‘ri route’dan keyin kelgan fayl natijasi ko‘rsatilmasdi (talab 5 buzilgan) | Kanalning yagona egasi (`claimShieldChannel`/`releaseShieldChannel`); recovery sahifasi `incoming` kelsa `/` ga qaytadi, Workspace native navbatni drain qiladi. Eski sahifa dispose’i yangi egani o‘chirmaydi | `file_open_route_test.dart` 2-testi tuzatishsiz FAIL, tuzatish bilan PASS; yangi 3-test teskari o‘tishni qo‘riqlaydi (u eski kodda ham o‘tadi — kelajakdagi regressiya uchun) |
+| 2 | Lokal Flutter 3.50.1 AGP ≥ 9.1.1 talab qiladi, loyiha 9.1.0 da edi | `flutter build`/`flutter test -d` ishlamasdi | `android/settings.gradle.kts` AGP 9.1.0 → 9.1.1 (patch) | Debug/release build va integration test o‘tdi |
+| 3 | Flutter 3.47+ `package:flutter/material.dart` va `GlobalMaterial/CupertinoLocalizations` deprecated | `flutter analyze` 11 issue (1 warning + 10 info) | `material_ui ^1.11.1`, `cupertino_ui ^1.1.7`; importlar ko‘chirildi; app yangi delegatlardan foydalanadi; generatsiya qilinadigan `strings.dart` uchun `l10n.yaml` `header` ignore’i (gen-l10n hali eski delegat chiqaradi); test’dagi unused import olib tashlandi | `flutter analyze`: No issues found |
+| 4 | `ApkGuardInstrumentation` (test harness) sender bergan URI grant’ga tayanardi, `am instrument` esa target paketni force-stop qilib vaqtinchalik grant’larni bekor qiladi | 4D runner hech qachon o‘ta olmasdi (`Owner URI grant required`) | Runner signature-tekshiruvli fixture provider’dan o‘z fayllari uchun grant’ni o‘zi so‘raydi. Production kod o‘zgarmagan | Emulator’da 32/32 |
+
+Kuzatilgan, xato emas: Flutter 3.50 `Intent verification failed ... IGNORED in release builds` logi faqat `route`/`dart_entrypoint`/cached-engine extra’larini cheklaydi. ShieldGuard fayl URI’sini native `FileOpenScanHandler` orqali o‘qiydi; release build’da `VIEW` va `SEND` emulator’da ishlashi tasdiqlandi.
+
+### Avtomatik testlar (joriy HEAD + yuqoridagi tuzatishlar)
+
+| Buyruq | Natija |
+| --- | --- |
+| `flutter analyze` | PASS — No issues found |
+| `flutter test test/file_open_route_test.dart` | PASS 3/3 (tuzatishsiz: 1 FAIL) |
+| `flutter test test/apk_guard_test.dart` / `file_share_test.dart` / `folder_monitor_test.dart` | PASS 9/9, 5/5, 7/7 |
+| `flutter test --coverage` | PASS **208/208**; Dart LH/LF **1349/1671 = 80,73%** |
+| Native JVM: `run_tests.ps1` mantiqi macOS bash’da (`-KotlinLib` rejimi, Kotlin 2.2.21) | PASS **238 + 387 malformed** (17+12+16+9+27+31+30+35+54+7). `pwsh` o‘rnatilmagan; skript Windows `;` classpath ajratuvchisidan foydalanadi |
+| `python3 -m unittest discover -s backend` | PASS 13/13 |
+| `flutter test integration_test/shieldguard_test.dart -d emulator-5554` | PASS 3/3 (emulator) |
+| `flutter build apk --debug` | PASS; SHA-256 `87e9d290a58a249e1ede78972fca2a56fb379da572117c1051f6646bfd41780c` |
+| `flutter build apk --release` (production kalitsiz) | Kutilganidek to‘xtadi: “Release imzolash sozlanmagan” |
+| Xuddi shu, faqat lokal env orqali debug keystore bilan | PASS (R8/minify, 59,8 MB). Tarqatish uchun emas; kalit/parol repo’ga yozilmagan |
+
+### Emulator device matritsasi
+
+| # | Stsenariy | Holat | Usul |
+| --- | --- | --- | --- |
+| 1–2 | Telegram Share/Open → ShieldGuard | **UNVERIFIED** (Telegram yo‘q) | Ekvivalent `SEND`/`VIEW` intentlari adb va 3A runner orqali PASS |
+| — | `3c231d6`: cold-start `VIEW` (debug va release) | PASS | Natija ko‘rsatildi; URI, token, `GoException`, recovery sahifasi yo‘q; “Tekshiruv to‘liq bajarilmadi” |
+| — | Warm-start (boshqa tab ochiq) va background (HOME) `VIEW`, warm `SEND` (debug/release) | PASS | uiautomator |
+| 3 | Multiple-file share | PASS | 3A runner `ArrayList<Uri>` `SEND_MULTIPLE` (“Fayl tartibi · 2”). adb `--eua` `Uri[]` yuboradi — bu adb cheklovi, ilova xatosi emas |
+| 4 | Signature-invalid APK | PASS | 4D: `signatureFailed` → `blockedByShieldGuard`, launch=0 |
+| 5 | Valid benign APK | PASS | 4D: `signatureVerified`, `warningOnly`, tasdiqsiz forward yo‘q |
+| 6 | Strong suspicion blocking + Uzbek modal | PASS | 4D: real `APK BLOKLANDI` modal, ShieldGuard oynasida |
+| 7 | Strict incomplete | PASS | 4D: batch timeout → `scanIncomplete`, forward blocked |
+| 8 | Auto-block o‘chirish/yoqish | PASS | 4D: opt-out epoch in-flight token’ni bekor qiladi |
+| 9 | Background APK notification | PASS | 4D notificationsOnly, ruxsat bilan: shown=true, `VISIBILITY_PRIVATE`, public version, URI yo‘q (9/9) |
+| 10 | Notification permission denied | PASS | permission=false → shown=false; ruxsat asl holatga qaytarildi |
+| 11 | SAF permission revoke | PASS | 3B: `permissionLost`, kesh tozalandi, manual scan `SecurityException` |
+| 12 | Folder manual scan | PASS | 3B: 3 scanned → 3 cached |
+| 13 | Process restart | PASS (qisman) | Force-stop’dan keyin cold-start; 3B `recover()` process-start simulyatsiyasi |
+| 14 | Reboot recovery | **UNVERIFIED** | Emulator reboot qilinmadi |
+| 15 | Snapshot mutation / generation | PASS | 4D: o‘zgargan snapshot rad etildi, eski validation qayta ishlatilmaydi |
+| 15 | Snapshot 10-daqiqalik real expiry | **UNVERIFIED** | Real vaqt kutilmadi; JVM testlari qoplaydi |
+| 16 | Cancellation | PASS | 3A/4D `scanCancelled` |
+| 16 | Parallel so‘rovlar | Qisman | Disk cap (≤8) va staging semaphore tekshirildi; haqiqiy parallel intent oqimi sinalmadi |
+| 17 | Unknown-source settings | **UNVERIFIED (bu sikl)** | 4D da oldin real qurilmada tasdiqlangan |
+| 18 | PHASE 2 install/update | PASS | 21/21 self/job + 27/27 ADDED/REPLACED; fixture o‘chirildi |
+| 19 | PHASE 3A 25-case | PASS 25/25 | `FileShareInstrumentation` + sender |
+| 20 | PHASE 3B native | PASS 26/26 | Real DocumentsUI tanlovi; “changes” rejimi ishga tushirilmadi |
+| 21 | PHASE 4D native | PASS 32/32 | Oldin `unverified` edi |
+
+Device triage eslatmalari: (a) `flutter test integration_test` `app-debug.apk` ni integration harness bilan qayta yozadi — keyin o‘rnatilgan APK splash’da drayverni kutadi; bu ilova xatosi emas, oddiy `flutter build apk --debug` dan keyin hal bo‘ldi. (b) `pm clear` dan keyingi intro modal 3A/4D UI tekshiruvlarini to‘sdi; intro yopilgach o‘tdi.
+
+Cleanup: test paketi `uz.app.shieldguard.test` va sintetik monitor fixture o‘chirildi; Download’dagi barcha sintetik fayl/papkalar o‘chirildi; POST_NOTIFICATIONS `granted=false` holatiga qaytarildi; app data tozalanib debug APK qayta o‘rnatildi.
+
 ## 4D — yakuniy Android16 tekshiruvi (2026-11-22)
 
 | Amal | Kuzatilgan natija |
