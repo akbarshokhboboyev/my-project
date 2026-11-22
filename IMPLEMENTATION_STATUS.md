@@ -1,3 +1,7 @@
+# ShieldGuard V3.1 — PHASE 4 (davom etmoqda)
+
+4A: `ApkDiscoveryCoordinator` / `ApkRiskPolicy` mavjud share va authorized folder scanner’iga ulandi. Risk/confidence/completeness alohida; tasdiqlanmagan Telegram provenance yoki avtomatik online lookup yo‘q. Native 220 + 387 malformed o‘tdi. 4B–4D hali yakunlanmagan. Tafsilot: AUTO_BLOCK_PROTECTION.md.
+
 # ShieldGuard V3.1 — PHASE 3B
 
 2026-11-22. Branch `feature/shieldguard-v3-1`, baseline `02c8dc2`. Faqat authorized folder security qo‘shildi; PHASE 4–8 o‘zgartirilmadi.

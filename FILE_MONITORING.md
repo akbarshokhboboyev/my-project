@@ -29,3 +29,7 @@ Avtomatik upload, reputatsiya so'rovi yoki telemetry yo'q; nom/URI tarmoqqa yubo
 Qayta bajarish: avval debug APK o'rnating; faqat benign 3 fixture bo'lgan yagona test papka uchun `integration_test/folder_saf_smoke.ps1 -Adb <adb> -Serial <serial> -FolderName ShieldGuard-folder-test-<8hex>`. `folder_scan_smoke.ps1` UI orqali manual scan'ni boshlaydi va debug `run-as` bilan faqat natija hisoblagichlarini tekshiradi; URI/cache chiqarilmaydi. Bu helper device UI o'lchamiga moslashtirish talab qilishi mumkin. Instrumentation'ni build qilish: `./gradlew.bat :app:assembleDebugAndroidTest -PshieldTestRunner=uz.app.shieldguard.FolderMonitorInstrumentation` (android katalogidan). Ruxsat tasdiqlanmagan install'ni chetlab o'tmang.
 
 Android primary references: [SAF](https://developer.android.com/training/data-storage/shared/documents-files), [Android 11 storage restrictions](https://developer.android.com/about/versions/11/privacy/storage), [JobInfo](https://developer.android.com/reference/android/app/job/JobInfo).
+# PHASE 4A APK discovery
+
+Folder scan mavjud NativeFileInspector orqali APK assessment oladi: actual format, imzo, permission va mavjud DEX/ELF/split indikatorlari. URI yoki fayl nomi yangi risk metadata’siga kiritilmaydi; avtomatik online hash so‘rovi yo‘q. 4A’da yangi background threat notification hali yoqilmadi.
+

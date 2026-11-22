@@ -9,3 +9,7 @@ Mahalliy link score kamida 45 bo‘lsa messageLink 50, kamida 25 bo‘lsa 25 bal
 NotificationListenerService Android ko‘rsatgan Telegram matniga mavjud opt-in va notification access bilan ishlaydi. Android yashirgan xabarlar olinmaydi. Input 8192 belgi va 24 link bilan cheklangan. 50 ball alert chegarasi, 30 soniya cooldown, 5 daqiqa salted-hash dedup va 128 yozuvli xotira limiti saqlandi. Xom matn, OTP va parollar tarix, log yoki tashqi xizmatga yozilmaydi.
 
 Faol seanslar, ikki bosqichli himoya va begona qurilmalarni uzish bo‘yicha mavjud qo‘llanma saqlandi. ShieldGuard hisobni bevosita boshqarmaydi. Jonli Telegram akkaunt/bildirishnoma sinovi bu bosqichda bajarilmadi; unit fixture yoki ACTION_SEND bunday sinovni almashtirmaydi.
+# PHASE 4A APK discovery
+
+Telegram’da faylni ShieldGuard’ga Share/Open qilish yoki oldindan ruxsat berilgan SAF papkaga saqlash mavjud scanner’ni ishlatadi. APK risk/confidence alohida baholanadi. Private Telegram storage va ShieldGuard chetlab o‘tilgan installer universal kuzatilmaydi. Davriy folder monitoring real-time emas; o‘qilmagan fayl xavfsiz deyilmaydi. Tafsilot: AUTO_BLOCK_PROTECTION.md.
+

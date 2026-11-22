@@ -1,3 +1,7 @@
+# ShieldGuard V3.1 — PHASE 4 bosqichma-bosqich sinovlari
+
+2026-11-22. Baseline `1641653`. 4A: native runner yangi 17 risk/discovery assertion bilan **220 + 387 malformed** o‘tdi. Signature success/failure/unchecked, no findings, single heuristic, sensitive combination, incomplete, spoofed reputation va actual-format ajratish synthetic map bilan tekshirildi. Bu real Telegram/device sinovi emas. Flutter va Android adapter regressiyalari keyingi kichik bosqichlarda qayta bajariladi. PHASE 2 install/update, PHASE 3A 25-case, PHASE 3B native instrumentation va real Telegram notification ochiq qoladi.
+
 # ShieldGuard V3.1 — PHASE 3B sinovlari
 
 2026-11-22. `feature/shieldguard-v3-1`, baseline `02c8dc2`. `shieldguard-security` va `shieldguard-testing` qo‘llandi; release skill yuklanmadi. Quyidagilar shu bosqichda kuzatilgan natijalar.

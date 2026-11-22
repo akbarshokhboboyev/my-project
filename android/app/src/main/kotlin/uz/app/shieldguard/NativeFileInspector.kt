@@ -21,14 +21,15 @@ internal class NativeFileInspector(private val context: Context) {
             oversized = sizeColumn >= 0 && !it.isNull(sizeColumn) && it.getLong(sizeColumn) > ScanLimits().maxFileBytes
             it.getString(0)
         }.orEmpty()
-        if (oversized) return SharedFileScanner.error("tooLarge")
+        if (oversized) return ApkDiscoveryCoordinator.decorate(SharedFileScanner.error("tooLarge"), displayName)
         val analyzer = FileAnalyzer(File(context.cacheDir, "shield-scans"), cancelled = cancelled,
             inspectPdf = { file ->
                 PdfInspector(context).inspect(file, cancelled).let { it.findings to it.complete }
             }, readApk = ::readApk)
-        return analyzer.inspect(displayName) {
+        val report = analyzer.inspect(displayName) {
             context.contentResolver.openInputStream(uri) ?: throw FileNotFoundException()
         }
+        return ApkDiscoveryCoordinator.decorate(report, displayName)
     }
 
     @Suppress("DEPRECATION")
