@@ -1,28 +1,23 @@
-# ShieldGuard V2 holati
+# ShieldGuard V3 holati
 
-2026-11-22 auditi. Mavjud loyiha saqlandi, boshlang‘ich main branch toza edi. Git remote akbarshokhboboyev/my-project va HEAD 91a95ee bilan ishlash boshlandi. O‘zgarishlar feature/shieldguard-v2 branchida. Boshlang‘ich 64 ta Flutter testi ushbu ishda mustaqil qayta o‘tdi.
+2026-11-22. V2 saqlandi; ish feature/shieldguard-v3 tarmog‘ida. Sinov dalillari TEST_REPORT.md da.
 
-| Modul | Holat | Dalil yoki cheklov |
-| --- | --- | --- |
-| Lokal havola va xabar | To‘liq ishlaydi va sinovdan o‘tgan | Mavjud regressiya testlari saqlandi |
-| Online Web Risk adapteri | Tashqi xizmat yoki credential talab qiladi | Adapter, gateway va mock HTTP testlari bor. Haqiqiy Google so‘rovi kalit yo‘qligi sabab bajarilmadi |
-| SQLite reputatsiya keshi | To‘liq ishlaydi va sinovdan o‘tgan | Android integratsiyada persist va consent revoke bilan tozalash |
-| Avtomatik himoya | Android tomonidan cheklangan | Lokal qoidalar, dedup, cooldown, ruxsat va xizmat lifecycle. Jonli Telegram flow hali tasdiqlanmagan |
-| Fayl | Qisman ishlaydi | APK metadata, PE chegaralari, PNG CRC, ZIP xavf belgilari. PDF to‘liq obyekt parseri va APK imzo verifikatori yo‘q |
-| O‘zbekcha interfeys | Ishlaydi, lekin qo‘shimcha sinov kerak | Online rozilik, natijalar, bekor qilish va sinov tugmasi qo‘shildi |
-| Debug APK | To‘liq ishlaydi va sinovdan o‘tgan | Yig‘ildi. Yakuniy artefakt tafsilotlari TEST_REPORT.md hujjatida |
-| Release signing | Tashqi xizmat yoki credential talab qiladi | key.properties andozasi, CI secrets va guard mavjud. Shaxsiy keystore topilmadi |
-| Imzosiz release APK/AAB | To‘liq ishlaydi va sinovdan o‘tgan | R8 bilan kompilyatsiya qilindi. O‘rnatish va tarqatish uchun imzo kerak |
-| Google Play | Qisman ishlaydi | Checklist va o‘zbekcha tavsif tayyor. Play Console nashri bajarilmagan |
-
-## Texnik qarorlar
-
-| Qaror | Sabab |
+| Modul | Holat va chegaralar |
 | --- | --- |
-| Web Risk Lookup | Tijoriy foydalanish uchun hujjatlashtirilgan API |
-| Server API kaliti | Mobil paketda provider sirini saqlamaslik |
-| To‘liq URL uchun alohida rozilik | Hash-prefix kanonizatsiyasining soxta implementatsiyasini kiritmaslik |
-| Ijobiy kesh expireTime | Provayder cache siyosatini bajarish |
-| Nested archive ochilmaydi | Resurs sarfini chegaralash va tekshirilmagan kontentni ochiq ko‘rsatish |
-| SDK versiyalari saqlandi | Flutter suggestions moslikni tasdiqladi |
-| Release kalitisiz guard | Imzosiz natijani tarqatishga tayyor deb ko‘rsatmaslik |
+| Lokal havola/xabar | To‘liq ishlaydi va sinovdan o‘tgan; mavjud regressiya saqlangan |
+| Verdict va clipboard JSON | To‘liq ishlaydi va sinovdan o‘tgan; incomplete tahlil unknown, ball malware tasdig‘i emas |
+| APK imzo yaxlitligi | Qisman ishlaydi; valid/tampered APK Android16 va API37 da o‘tdi; lineage/trust provenance yetishmaydi |
+| DEX / ELF | Qisman ishlaydi; bounded header, struktura va satr indikatorlari |
+| Ichki APK komponentlari | Qisman ishlaydi; paket/sertifikat mosligi, 8 komponent va 8 MiB limit |
+| MID | Hali amalga oshirilmagan; unknown ko‘rsatiladi |
+| PDF obyekt parseri | Ishlaydi, lekin qo‘shimcha sinov kerak; benign obyekt parsing Android16/API37 da o‘tdi, encrypted/timeout device holatlari hali tekshirilmagan |
+| ZIP / Office / rasm / PE | Qisman ishlaydi; statik format va xavf belgilari, FILE_ANALYSIS.md ga qarang |
+| Hash reputatsiya | Tashqi servis yoki credential talab qiladi; Flutter alohida rozilik UI va backend/mock testlar mavjud |
+| Web Risk | Tashqi servis yoki credential talab qiladi; HTTPS adapter va mocklar bor, haqiqiy so‘rov bajarilmagan |
+| Ishonchli nashriyotchi | Qisman ishlaydi; typed registry bor, production reference va UI trust verdict ulanmagan |
+| Bir nechta fayl | Ishlaydi, lekin qurilmada batch sinovi kerak; dastlabki 8 fayl |
+| Telegram avtomatik himoya | Android tomonidan cheklangan; ruxsat/lifecycle/qoidalar bor, jonli akkaunt sinovi bajarilmagan |
+| Imzosiz release APK/AAB | To‘liq ishlaydi va sinovdan o‘tgan; R8 bilan kompilyatsiya, tarqatish uchun imzo kerak |
+| Signed release va Play | Tashqi servis yoki credential talab qiladi; upload key va Play Console yo‘q |
+
+Yagona ShieldGuardSecurityEngine fasadi, chuqur DEX dataflow/call graph, signing lineage, to‘liq split format semantikasi, JPEG segment parseri, haqiqiy malware korpusi va precision/recall hali tugallanmagan. To‘y arxivi va OneID asl namunasi berilmagan.

@@ -1,5 +1,9 @@
 # Tahdid manbalari
 
+V3 backend/file_hash.py SHA-256 bo‘yicha VirusTotal adapterini qo‘shadi. /v1/hash endpointi consent=true talab qiladi. VT_LICENSE_APPROVED=true va VT_API_KEY bo‘lmasa so‘rov bajarilmaydi. Public API tijoriy mahsulotlar va antivirus o‘rnini bosuvchi foydalanishga cheklov qo‘yadi. Shu sabab yozma mos litsenziya tasdiqlanmaguncha integratsiya faollashtirilmaydi. Premium narxi va kvotasi shartnomaga bog‘liq. Hash lookup fayl mazmunini yubormaydi, lekin faylga qiziqishni oshkor qilishi mumkin. Flutter UI har bir SHA-256 so‘rovi oldidan alohida rozilik oladi. Token seans xotirasida, hash natijalari doimiy saqlanmaydi. Mock testlar o‘tgan; jonli API ishlatilmagan. [Rasmiy shartlar](https://docs.virustotal.com/docs/api-overview)
+
+Server SHIELD_USER_TOKENS JSON muhiti orqali alohida tokenli foydalanuvchilar va rate limitni qo‘llaydi. Legacy yagona token rejimi saqlangan. Hash so‘rovlari orasida 15 soniya cheklov bor. Public deployment uchun TLS reverse proxy va secret manager sozlamalari talab qilinadi.
+
 2026-11-22 sanasida rasmiy hujjatlar tekshirildi. Web Risk Lookup adapteri va Python serveri implementatsiya qilindi. Haqiqiy so‘rov uchun WEBRISK_API_KEY, HTTPS gateway va unga kirish tokeni kerak. Pullik xizmat faollashtirilmagan.
 
 | Manba | Litsenziya va narx | Kalit, limit, yangilanish | Maxfiylik va kesh |

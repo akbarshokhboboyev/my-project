@@ -1,5 +1,7 @@
 # ShieldGuard
 
+V3 ish branchida cheklangan APK kontent tahlili, apksig imzo verifikatsiyasi, isolated PDFBox parseri, hash rozilik UI’si, 8 faylli batch va clipboard JSON hisoboti qo‘shildi. Amaldagi imkoniyat va cheklovlar [MALWARE_DETECTION.md](MALWARE_DETECTION.md), [APK_SIGNATURE_VERIFICATION.md](APK_SIGNATURE_VERIFICATION.md) va [SPLIT_APK_SUPPORT.md](SPLIT_APK_SUPPORT.md) hujjatlarida.
+
 V2 uchun [onlayn manbalar va server sozlash](THREAT_INTELLIGENCE.md), [fayl tahlili chegaralari](FILE_ANALYSIS.md), [Android sinovlari](ANDROID_NOTIFICATION_TESTS.md), [release signing](RELEASE_GUIDE.md) va [Play Store ro‘yxati](PLAY_STORE_CHECKLIST.md) tayyorlandi.
 
 Android uchun mahalliy kiberxavfsizlik ilovasi. Havola, xabar va foydalanuvchi tanlagan fayllardagi xavf belgilarini o‘zbek tilida tushuntiradi. Android bildirishnomalariga asoslangan himoya alohida rozilik bilan yoqiladi.

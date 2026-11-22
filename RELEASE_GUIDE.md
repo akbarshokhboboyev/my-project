@@ -1,6 +1,8 @@
 # Release yig‘ilishi
 
-Mavjud applicationId va namespace uz.app.shieldguard. minSdk 26, compile/target SDK Flutter 3.47.6 shablonidan 36. Versiya 2.0.0+2. R8 va resource shrinking yoqilgan. Haqiqiy release kaliti topilmadi.
+V3 source versiyasi 3.0.0+3. Haqiqiy upload keystore ushbu ishda ham taqdim etilmagan. V2 artefakt izlari V3 artefakti sifatida qabul qilinmaydi.
+
+Mavjud applicationId va namespace uz.app.shieldguard. minSdk 26, compile/target SDK Flutter 3.47.6 shablonidan 36. Versiya 3.0.0+3. R8 va resource shrinking yoqilgan. Haqiqiy release kaliti topilmadi.
 
 Upload key Play’ga yuboriladigan AAB’ni imzolaydi. Play App Signing qurilmaga tarqatiladigan APK’larni app signing key bilan imzolaydi. Kalitlarni saqlash va yangilash mavjud ilova yangilanishlariga ta’sir qiladi. [Android qo‘llanmasi](https://developer.android.com/studio/publish/app-signing)
 
@@ -24,12 +26,20 @@ apksigner verify --verbose --print-certs build/app/outputs/flutter-apk/app-relea
 jarsigner -verify -verbose -certs build/app/outputs/bundle/release/app-release.aab
 ```
 
-Signing bo‘lmasa odatiy release buyruqlari aniq xato bilan to‘xtaydi. Faqat CI kompilyatsiya auditi uchun Gradle’ga -PshieldAllowUnsigned berish mumkin. Bunday unsigned artefakt o‘rnatish yoki Play’ga yuklashga tayyor emas.
+Signing bo‘lmasa odatiy release buyruqlari aniq xato bilan to‘xtaydi. Faqat kompilyatsiya auditi uchun SHIELD_ALLOW_UNSIGNED=true ishlatiladi. Bunday unsigned artefakt o‘rnatish yoki Play’ga yuklashga tayyor emas.
 
-```powershell
-Push-Location android
-.\gradlew.bat :app:assembleRelease :app:bundleRelease '-PshieldAllowUnsigned=true' '-Ptarget=lib/main.dart' '-Ptarget-platform=android-arm,android-arm64,android-x64'
-Pop-Location
-```
+~~~powershell
+$env:SHIELD_ALLOW_UNSIGNED='true'
+try {
+    flutter build apk --release
+    if ($LASTEXITCODE -ne 0) { throw 'APK build failed' }
+    flutter build appbundle --release
+    if ($LASTEXITCODE -ne 0) { throw 'AAB build failed' }
+} finally {
+    Remove-Item Env:SHIELD_ALLOW_UNSIGNED
+}
+~~~
+
+Flutter build’larini ketma-ket bajaring. Direct Gradle ishlatilsa generated plugin registrant oldingi integration build’dan qolmaganiga e’tibor bering. PDFBox optional JPEG2000 decoder uchun faqat bitta tor R8 dontwarn qoidasi bor; ShieldGuard rasm render qilmaydi.
 
 Audit natijalari va artefakt izlari TEST_REPORT.md hujjatida saqlanadi.

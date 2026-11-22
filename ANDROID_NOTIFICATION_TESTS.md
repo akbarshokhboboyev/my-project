@@ -1,5 +1,7 @@
 # Android bildirishnoma sinovlari
 
+V3’dagi jonli Telegram testlari bajarilmadi. Pastdagi V2 sinov natijalari qayta bajarilgan V3 testi sifatida ko‘rsatilmaydi.
+
 Telegram paketlari org.telegram.messenger, org.telegram.messenger.web va Telegram X org.thunderdog.challegram ro‘yxati saqlangan. Qurilmada pm list packages orqali mavjud paketlar tekshiriladi. Jonli Telegram sinovi faqat rozilik berilgan test akkaunti orqali bajariladi.
 
 V2 sinov qurilmasida org.telegram.messenger mavjudligi tasdiqlandi. Google Play’dagi [Telegram](https://play.google.com/store/apps/details?id=org.telegram.messenger) va [Telegram X](https://play.google.com/store/apps/details?id=org.thunderdog.challegram) sahifalari paket nomlari uchun tekshirildi.

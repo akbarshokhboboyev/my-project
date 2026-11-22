@@ -1,5 +1,7 @@
 # Arxitektura
 
+V3 qo‘shimchalari ApkContentInspector, SplitApkAnalyzer, NativeFileInspector ichidagi apksig verifikatsiyasi va TrustedDeveloperRegistry. Markaziy ScanResult verdict ko‘rsatadi. PdfInspector/PdfParserService isolated PDFBox, FileHashReputationProvider, per-request consent va /v1/hash ham qo‘shildi. To‘liq yagona ShieldGuardSecurityEngine fasadi hali ajratilmagan.
+
 Mavjud Flutter Material 3, Riverpod, go_router va ARB tuzilmasi saqlandi.
 
 | Qatlam | Vazifa |
@@ -16,6 +18,6 @@ Mavjud Flutter Material 3, Riverpod, go_router va ARB tuzilmasi saqlandi.
 | AlertGate | Xom matnni saqlamasdan cooldown va dedup |
 | TelegramThreatListener | Android ruxsat, lokal qoidalar va xavf ogohlantirishi |
 
-Tarix bazasi va reputatsiya keshi mustaqil. Kesh ijobiy Web Risk javobi muddati bilan boshqariladi. Salbiy Lookup javobi saqlanmaydi. Online so‘rovlar faqat qo‘lda havola tekshiruvida bajariladi.
+Tarix bazasi va reputatsiya keshi mustaqil. Kesh ijobiy Web Risk javobi muddati bilan boshqariladi. Salbiy Lookup javobi saqlanmaydi. Online so‘rovlar qo‘lda URL yoki alohida rozilik bilan hash tekshiruvida bajariladi.
 
 Safe Browsing va feed adapterlari implementatsiya qilinmagan. Web Risk tanlovi tijoriy foydalanish imkoniyati va rasmiy Lookup API hujjatlariga asoslangan. Hash-prefix kanonizatsiyasi to‘liq implementatsiyasiz ishlatilmagan.
