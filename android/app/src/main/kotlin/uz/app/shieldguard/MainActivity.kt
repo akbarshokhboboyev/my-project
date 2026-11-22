@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit
 class MainActivity : FlutterActivity() {
     private lateinit var bridge: MethodChannel
     private var picker: MethodChannel.Result? = null
+    private var fileCancellation = java.util.concurrent.atomic.AtomicBoolean(false)
     private var nextRebindAt = 0L
     private val inbox = ArrayDeque<Map<String, Any>>()
     private val worker = ThreadPoolExecutor(1, 1, 0L, TimeUnit.SECONDS, ArrayBlockingQueue(4))
@@ -49,16 +50,21 @@ class MainActivity : FlutterActivity() {
                             manager.getNotificationChannel("protection")?.importance != NotificationManager.IMPORTANCE_NONE),
                         "history" to options().getBoolean("history", false),
                         "intro" to options().getBoolean("intro", false),
-                        "dark" to options().getBoolean("dark", false)
+                        "dark" to options().getBoolean("dark", false),
+                        "onlineConsent" to options().getBoolean("onlineConsent", false)
                     ))
                 }
                 "option" -> {
                     val key = call.argument<String>("key")
                     val value = call.argument<Boolean>("value")
-                    if (key == null || key !in setOf("enabled", "history", "intro", "dark") || value == null) {
+                    if (key == null || key !in setOf("enabled", "history", "intro", "dark", "onlineConsent") || value == null) {
                         reply.error("invalid", null, null)
                     } else {
                         options().edit().putBoolean(key, value).apply()
+                        if (key == "onlineConsent" && !value) {
+                            background(reply) { ThreatCache(this).use { it.clear() }; null }
+                            return@setMethodCallHandler
+                        }
                         reply.success(null)
                     }
                 }
@@ -83,6 +89,7 @@ class MainActivity : FlutterActivity() {
                     if (picker != null) reply.error("busy", null, null)
                     else {
                         picker = reply
+                        fileCancellation = java.util.concurrent.atomic.AtomicBoolean(false)
                         try {
                             @Suppress("DEPRECATION")
                             startActivityForResult(Intent(Intent.ACTION_OPEN_DOCUMENT)
@@ -94,6 +101,36 @@ class MainActivity : FlutterActivity() {
                     }
                 }
                 "pending" -> reply.success(inbox.removeFirstOrNull())
+                "testAlert" -> {
+                    val manager = getSystemService(NotificationManager::class.java)
+                    if (!manager.areNotificationsEnabled() ||
+                        manager.getNotificationChannel("protection")?.importance == NotificationManager.IMPORTANCE_NONE) {
+                        reply.error("noAlerts", null, null)
+                    } else {
+                        manager.createNotificationChannel(android.app.NotificationChannel("protection",
+                            getString(R.string.alert_channel), NotificationManager.IMPORTANCE_HIGH))
+                        val tap = android.app.PendingIntent.getActivity(this, 7,
+                            Intent(this, MainActivity::class.java),
+                            android.app.PendingIntent.FLAG_IMMUTABLE or android.app.PendingIntent.FLAG_UPDATE_CURRENT)
+                        manager.notify(7, android.app.Notification.Builder(this, "protection")
+                            .setSmallIcon(android.R.drawable.ic_dialog_info)
+                            .setContentTitle(getString(R.string.test_alert_title))
+                            .setContentText(getString(R.string.test_alert_body))
+                            .setContentIntent(tap).setAutoCancel(true).build())
+                        reply.success(null)
+                    }
+                }
+                "cancelScan" -> { fileCancellation.set(true); reply.success(null) }
+                "cacheRead" -> background(reply) {
+                    ThreatCache(this).use { it.read(call.argument<String>("key") ?: "") }
+                }
+                "cacheWrite" -> background(reply) {
+                    if (options().getBoolean("onlineConsent", false)) {
+                        ThreatCache(this).use { it.write(call.argument<String>("key")!!,
+                            call.argument<Boolean>("matched")!!, call.argument<String>("expires")!!) }
+                    }
+                    null
+                }
                 "history" -> background(reply) { HistoryStore(this).use { it.entries() } }
                 "clear" -> background(reply) { HistoryStore(this).use { it.clear() }; null }
                 "record" -> background(reply) {
@@ -196,7 +233,10 @@ class MainActivity : FlutterActivity() {
         picker = null
         val uri = data?.data
         if (resultCode != RESULT_OK || uri == null) reply.success(null)
-        else background(reply) { NativeFileInspector(applicationContext).inspect(uri) }
+        else {
+            val cancellation = fileCancellation
+            background(reply) { NativeFileInspector(applicationContext).inspect(uri) { cancellation.get() } }
+        }
     }
 
     override fun onDestroy() {

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../core/engine.dart';
+import '../core/intelligence.dart';
 import '../core/platform.dart';
 import 'labels.dart';
 import 'l10n/strings.dart';
@@ -85,6 +86,9 @@ class Workspace extends ConsumerStatefulWidget {
 class _WorkspaceState extends ConsumerState<Workspace>
     with WidgetsBindingObserver {
   final input = TextEditingController();
+  final gateway = TextEditingController();
+  final gatewayToken = TextEditingController();
+  ThreatIntelligenceEngine? intelligence;
   final checklist = <String>{};
   Map<String, dynamic> status = {};
   List<Map<String, dynamic>> entries = [];
@@ -123,6 +127,8 @@ class _WorkspaceState extends ConsumerState<Workspace>
     WidgetsBinding.instance.removeObserver(this);
     ShieldPlatform.channel.setMethodCallHandler(null);
     input.dispose();
+    gateway.dispose();
+    gatewayToken.dispose();
     super.dispose();
   }
 
@@ -219,6 +225,33 @@ class _WorkspaceState extends ConsumerState<Workspace>
           final found = mode == 'message'
               ? [engine.message(text)]
               : engine.links(text);
+          if (mode == 'link' && status['onlineConsent'] == true) {
+            intelligence ??= ThreatIntelligenceEngine(
+              PlatformThreatCache(),
+              RemoteReputationProvider(
+                Uri.tryParse(gateway.text.trim()) ?? Uri(),
+                gatewayToken.text.trim(),
+              ),
+            );
+            final urls = engine.extract(text);
+            if (urls.isEmpty) urls.add(text);
+            final seen = <String>{};
+            final normalized = [
+              for (final raw in urls)
+                if (seen.add(engine.normalize(raw)?.toString() ?? raw))
+                  engine.normalize(raw),
+            ];
+            for (var i = 0; i < found.length && i < normalized.length; i++) {
+              if (found[i].complete &&
+                  normalized[i] != null &&
+                  status['onlineConsent'] == true) {
+                found[i] = aggregateReputation(
+                  found[i],
+                  await intelligence!.check(normalized[i]!, consent: true),
+                );
+              }
+            }
+          }
           await present(found.isEmpty ? [engine.link('')] : found);
         }
       });
@@ -455,6 +488,13 @@ class _WorkspaceState extends ConsumerState<Workspace>
         busy ? null : runScan,
       ),
       if (busy) const LinearProgressIndicator(),
+      if (busy && mode == 'file')
+        TextButton(
+          onPressed: () => act(
+            () => ShieldPlatform.channel.invokeMethod<void>('cancelScan'),
+          ),
+          child: Text(l('cancelScan')),
+        ),
     ];
   }
 
@@ -464,7 +504,7 @@ class _WorkspaceState extends ConsumerState<Workspace>
     ),
     Text([l('score'), '${result.score}/100'].join(' · ')),
     Text([l('confidence'), l(result.confidence.name)].join(' · ')),
-    Text([l('source'), l('local')].join(' · ')),
+    Text([l('source'), l(result.source)].join(' · ')),
     Text(stamp(result.time.millisecondsSinceEpoch)),
     if (result.subject != null)
       SelectableText([l('subject'), result.subject].join(' · ')),
@@ -475,7 +515,16 @@ class _WorkspaceState extends ConsumerState<Workspace>
     for (final f in result.findings) Text('• ${l(f.code)}'),
     if (result.complete && result.findings.isEmpty) Text(l('noFindings')),
     heading('limits'),
-    Text(l('online')),
+    if (result.signatureUnchecked) Text(l('signatureUnchecked')),
+    for (final entry in result.details.entries)
+      Text([l(entry.key), entry.value.toString()].join(' · ')),
+    Text(
+      result.reputation == 'disabled'
+          ? l('online')
+          : l(
+              'rep${result.reputation[0].toUpperCase()}${result.reputation.substring(1)}',
+            ),
+    ),
     Text(
       l(switch (result.type) {
         ThreatType.link => 'linkLimit',
@@ -515,6 +564,10 @@ class _WorkspaceState extends ConsumerState<Workspace>
       Text(l('hidden')),
     ]),
     heading('guide'),
+    button(
+      'testAlert',
+      () => act(() => ShieldPlatform.channel.invokeMethod<void>('testAlert')),
+    ),
     Text(l('selfCheck')),
     for (final key in ['twoFactor', 'sessions', 'codes', 'report', 'incident'])
       CheckboxListTile(
@@ -629,6 +682,28 @@ class _WorkspaceState extends ConsumerState<Workspace>
   }
 
   List<Widget> settings() => [
+    heading('onlineTitle'),
+    SwitchListTile(
+      title: Text(l('onlineTitle')),
+      subtitle: Text(l('onlineConsent')),
+      value: status['onlineConsent'] == true,
+      onChanged: (value) => option('onlineConsent', value),
+    ),
+    TextField(
+      controller: gateway,
+      decoration: InputDecoration(labelText: l('gateway')),
+      onChanged: (_) => intelligence = null,
+    ),
+    const SizedBox(height: 12),
+    TextField(
+      controller: gatewayToken,
+      obscureText: true,
+      enableSuggestions: false,
+      autocorrect: false,
+      decoration: InputDecoration(labelText: l('gatewayToken')),
+      onChanged: (_) => intelligence = null,
+    ),
+    Text(l('gatewayHint')),
     SwitchListTile(
       title: Text(l('dark')),
       value: ref.watch(darkProvider),

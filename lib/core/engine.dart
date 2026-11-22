@@ -8,6 +8,19 @@ class Finding {
   const Finding(this.code, this.weight);
   final String code;
   final int weight;
+  String get id => code;
+  String get category => code == 'reputationMatch'
+      ? 'reputation'
+      : {'structure', 'mismatch', 'archivePath'}.contains(code)
+      ? 'structure'
+      : 'heuristic';
+  ThreatLevel get severity => ScanResult.levelForScore(weight);
+  String get evidence => code;
+  Confidence get confidence =>
+      category == 'reputation' ? Confidence.strong : Confidence.moderate;
+  String get detectionMethod => category;
+  String get limitations => category == 'reputation' ? 'online' : 'local';
+  String get recommendedAction => 'advice';
 }
 
 class ScanResult {
@@ -19,6 +32,9 @@ class ScanResult {
     this.signers = const [],
     this.complete = true,
     this.source = 'local',
+    this.reputation = 'disabled',
+    this.details = const {},
+    this.signatureUnchecked = false,
     DateTime? scannedAt,
   }) : findings = List.unmodifiable(findings),
        time = scannedAt ?? DateTime.now();
@@ -30,8 +46,13 @@ class ScanResult {
   final List<String> signers;
   final bool complete;
   final String source;
+  final String reputation;
+  final Map<String, dynamic> details;
+  final bool signatureUnchecked;
   int get score =>
-      findings.fold<int>(0, (sum, f) => sum + f.weight).clamp(0, 100);
+      {for (final f in findings) f.code: f.weight}.values
+          .fold<int>(0, (sum, weight) => sum + weight)
+          .clamp(0, 100);
   ThreatLevel get level => levelForScore(score);
   static ThreatLevel levelForScore(int score) =>
       ThreatLevel.values[score < 25
@@ -43,6 +64,8 @@ class ScanResult {
           : 3];
   Confidence get confidence => !complete || findings.isEmpty
       ? Confidence.limited
+      : findings.any((f) => f.code == 'reputationMatch')
+      ? Confidence.strong
       : type == ThreatType.file && findings.any((f) => f.code == 'mismatch')
       ? Confidence.strong
       : Confidence.moderate;

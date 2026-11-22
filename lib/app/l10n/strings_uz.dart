@@ -367,14 +367,14 @@ class StringsUz extends Strings {
 
   @override
   String get privacyBody =>
-      'Havola, xabar va fayl tahlili qurilmada amalga oshiriladi. Tarix ixtiyoriy. Xabar matni, to‘liq URL, parol, tasdiqlash kodi, fayl nomi yoki identifikatori tarixga yozilmaydi. Fayl nusxasi tekshiruv vaqtida vaqtincha saqlanadi va yakunda o‘chiriladi.';
+      'Havola, xabar va fayl tahlili qurilmada amalga oshiriladi. Tarix ixtiyoriy. Xabar matni, to‘liq URL, parol, tasdiqlash kodi, fayl nomi yoki identifikatori tarixga yozilmaydi. Fayl nusxasi tekshiruv vaqtida vaqtincha saqlanadi va yakunda o‘chiriladi. Onlayn himoya alohida rozilik bilan qo‘lda tekshiriladigan to‘liq URL’ni serveringizga va Google Web Risk’ka yuboradi. Rozilik o‘chirilsa reputatsiya keshi tozalanadi.';
 
   @override
   String get about => 'Ilova haqida';
 
   @override
   String get aboutBody =>
-      'ShieldGuard havola, xabar va fayllarda shubhali belgilarni mahalliy qoidalar bilan aniqlaydi.';
+      'ShieldGuard havola, xabar va fayllarda shubhali belgilarni mahalliy qoidalar bilan aniqlaydi. Versiya 2.0.0, yig‘ilish 2. Onlayn manba — alohida sozlanadigan Google Web Risk.';
 
   @override
   String get help => 'Yordam';
@@ -400,4 +400,120 @@ class StringsUz extends Strings {
 
   @override
   String get signer => 'Imzolovchi sertifikat izi';
+
+  @override
+  String get onlineTitle => 'Onlayn himoya';
+
+  @override
+  String get onlineConsent =>
+      'To‘liq URL serveringizga va Google Web Risk xizmatiga yuboriladi. URL ichida maxfiy token bo‘lishi mumkin. Faqat qo‘lda havola tekshiruviga rozilik beraman.';
+
+  @override
+  String get gateway => 'Himoyalangan server manzili';
+
+  @override
+  String get gatewayToken => 'Serverga kirish tokeni';
+
+  @override
+  String get gatewayHint =>
+      'Token faqat joriy seans xotirasida qoladi. Server uchun API kaliti alohida sozlanadi.';
+
+  @override
+  String get reputationMatch => 'Web Risk tahdidlar bazasida moslik topildi.';
+
+  @override
+  String get repMatch => 'Web Risk bazasida tahdid mosligi bor.';
+
+  @override
+  String get repNoMatch =>
+      'Web Risk bazasida moslik topilmadi. Xavfsizlik kafolatlanmaydi.';
+
+  @override
+  String get repDisabled => 'Onlayn tekshiruv o‘chirilgan.';
+
+  @override
+  String get repUnavailable =>
+      'Onlayn manba javob bermadi. Mahalliy tahlil bajarildi.';
+
+  @override
+  String get repRateLimited => 'Onlayn so‘rovlar vaqtincha cheklangan.';
+
+  @override
+  String get repInvalidResponse => 'Onlayn manba yaroqsiz javob qaytardi.';
+
+  @override
+  String get repUnconfigured =>
+      'Onlayn manba uchun HTTPS server va kirish tokeni kerak.';
+
+  @override
+  String get webRisk => 'Google Web Risk';
+
+  @override
+  String get webRiskCache => 'Google Web Risk mahalliy keshi';
+
+  @override
+  String get archivePath =>
+      'Arxiv ichida tashqi yo‘lga ishora qiluvchi nom mavjud.';
+
+  @override
+  String get archiveNested =>
+      'Arxiv ichida yana arxiv bor. Uning mazmuni tekshirilmadi.';
+
+  @override
+  String get archiveEmbedded =>
+      'Office hujjatida makros yoki biriktirilgan dastur belgisi mavjud.';
+
+  @override
+  String get pdfUri => 'PDF tashqi manzilga murojaat qilishi mumkin.';
+
+  @override
+  String get scanTimeout => 'Tekshiruv vaqt chegarasiga yetdi.';
+
+  @override
+  String get scanCancelled => 'Tekshiruv bekor qilindi.';
+
+  @override
+  String get signatureUnchecked =>
+      'APK imzosi yaxlitligi tekshirilmadi. Sertifikat izi nashriyotchining ishonchliligini tasdiqlamaydi.';
+
+  @override
+  String get apkExported =>
+      'APK tashqi ilovalarga ochiq, ruxsat bilan himoyalanmagan komponentlarni e’lon qilgan.';
+
+  @override
+  String get testAlert => 'Sinov ogohlantirishini ko‘rsatish';
+
+  @override
+  String get testAlertTitle => 'ShieldGuard sinov ogohlantirishi';
+
+  @override
+  String get testAlertBody =>
+      'Ogohlantirish kanali ishlamoqda. Bu sun’iy sinov.';
+
+  @override
+  String get metadata => 'Fayl metama’lumotlari';
+
+  @override
+  String get cancelScan => 'Tekshiruvni bekor qilish';
+
+  @override
+  String get versionCode => 'Versiya raqami';
+
+  @override
+  String get versionName => 'Versiya';
+
+  @override
+  String get minSdk => 'Eng eski Android API';
+
+  @override
+  String get targetSdk => 'Maqsadli Android API';
+
+  @override
+  String get permissions => 'So‘ralgan ruxsatlar';
+
+  @override
+  String get architecture => 'Protsessor turi kodi';
+
+  @override
+  String get sections => 'PE bo‘limlari soni';
 }

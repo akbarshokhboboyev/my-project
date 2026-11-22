@@ -1,12 +1,13 @@
 name: shieldguard
 description: "Android uchun havola, xabar va fayl xavfini mahalliy tekshirish."
 publish_to: 'none'
-version: 1.0.0+1
+version: 2.0.0+2
 
 environment:
   sdk: ^3.13.5
 
 dependencies:
+  crypto: ^3.0.8
   flutter:
     sdk: flutter
   flutter_localizations:

@@ -11,14 +11,23 @@ internal data class ApkMetadata(
     val packageName: String,
     val permissions: Set<String>,
     val accessibility: Boolean,
-    val signers: List<String>
+    val signers: List<String>,
+    val details: Map<String, Any> = emptyMap(),
+    val unprotectedExports: Boolean = false
 )
 
 internal class FileAnalyzer(
     private val directory: File,
+    private val limits: ScanLimits = ScanLimits(),
+    private val cancelled: () -> Boolean = { false },
     private val readApk: (File) -> ApkMetadata?
 ) {
     fun inspect(displayName: String, open: () -> InputStream): Map<String, Any> {
+        val started = System.nanoTime()
+        fun checkpoint() {
+            if (cancelled() || Thread.currentThread().isInterrupted) throw ScanStopped("scanCancelled")
+            if ((System.nanoTime() - started) / 1_000_000 > limits.maxMillis) throw ScanStopped("scanTimeout")
+        }
         val extension = displayName.lowercase()
         directory.mkdirs()
         val staleBefore = System.currentTimeMillis() - 24L * 60 * 60 * 1000
@@ -39,14 +48,16 @@ internal class FileAnalyzer(
                 temp.outputStream().use { output ->
                     val buffer = ByteArray(64 * 1024)
                     while (true) {
+                        checkpoint()
                         val count = source.read(buffer)
                         if (count < 0) break
                         size += count
-                        if (size > 128L * 1024 * 1024) return result("tooLarge")
+                        if (size > limits.maxFileBytes) return result("tooLarge")
                         if (pdf) {
                             val chunk = overlap + String(buffer, 0, count, Charsets.ISO_8859_1)
                             if (pdfAction.containsMatchIn(chunk)) pdfFindings["pdfAction"] = 25
                             if (pdfEmbedded.containsMatchIn(chunk)) pdfFindings["pdfEmbedded"] = 20
+                            if (Regex("/URI\\b").containsMatchIn(chunk)) pdfFindings["pdfUri"] = 10
                             overlap = chunk.takeLast(64)
                         }
                         digest.update(buffer, 0, count)
@@ -56,6 +67,7 @@ internal class FileAnalyzer(
             }
             val findings = linkedMapOf<String, Int>()
             var complete = true
+            var details = emptyMap<String, Any>()
             val format = RandomAccessFile(temp, "r").use { file ->
                 val header = ByteArray(minOf(64L, size).toInt())
                 file.readFully(header)
@@ -78,6 +90,7 @@ internal class FileAnalyzer(
                         "JPEG"
                     }
                     starts(137, 80, 78, 71, 13, 10, 26, 10) -> {
+                        StructuralInspector.png(file, findings, ::checkpoint)
                         if (size < 45 || !String(tail(12), Charsets.ISO_8859_1).contains("IEND")) findings["structure"] = 30
                         "PNG"
                     }
@@ -87,7 +100,10 @@ internal class FileAnalyzer(
                         if (offset < 64 || offset > size - 4) findings["structure"] = 30
                         else {
                             file.seek(offset)
-                            if (file.readInt() == 0x50450000) findings["executable"] = 50
+                            if (file.readInt() == 0x50450000) {
+                                findings["executable"] = 50
+                                details = StructuralInspector.pe(file, offset, findings)
+                            }
                             else findings["structure"] = 30
                         }
                         if ("executable" in findings) "PE" else "MZ"
@@ -103,9 +119,9 @@ internal class FileAnalyzer(
                             }
                         }
                         if (entries < 0) findings["structure"] = 30
-                        if (entries > 4096) findings["archiveLimit"] = 55
-                        if (entries !in 0..4096 || size > 32L * 1024 * 1024) {
-                            if (size > 32L * 1024 * 1024) findings["archiveLimit"] = 55
+                        if (entries > limits.maxEntries) findings["archiveLimit"] = 55
+                        if (entries !in 0..limits.maxEntries || size > limits.maxArchiveBytes) {
+                            if (size > limits.maxArchiveBytes) findings["archiveLimit"] = 55
                             complete = false
                             "ZIP"
                         } else try {
@@ -114,10 +130,20 @@ internal class FileAnalyzer(
                                 var total = 0L
                                 var count = 0
                                 while (enumeration.hasMoreElements()) {
+                                    checkpoint()
                                     val entry = enumeration.nextElement()
+                                    val path = entry.name.replace('\\', '/')
+                                    if (path.startsWith("/") || Regex("^[A-Za-z]:").containsMatchIn(path) ||
+                                        path.split('/').contains("..")) findings["archivePath"] = 45
+                                    if (Regex("(?i)\\.(zip|apk|jar|7z|rar)$").containsMatchIn(path)) {
+                                        findings["archiveNested"] = 0
+                                        complete = false
+                                    }
+                                    if (Regex("(?i)(vbaproject\\.bin|embeddings/.*\\.(exe|dll|js|vbs))").containsMatchIn(path))
+                                        findings["archiveEmbedded"] = 30
                                     count++
-                                    if (count > 4096 || entry.size !in 0..(256L * 1024 * 1024) ||
-                                        entry.size > (256L * 1024 * 1024) - total ||
+                                    if (count > limits.maxEntries || entry.size !in 0..limits.maxExpandedBytes ||
+                                        entry.size > limits.maxExpandedBytes - total ||
                                         (entry.size > 1024 * 1024 && entry.size / maxOf(1, entry.compressedSize) > 200)) {
                                         findings["archiveLimit"] = 55
                                         complete = false
@@ -160,6 +186,8 @@ internal class FileAnalyzer(
                 } else {
                     packageName = info.packageName
                     signerHashes = info.signers
+                    details = info.details
+                    if (info.unprotectedExports) findings["apkExported"] = 15
                     val requested = info.permissions
                     val sms = requested.any { it in smsPermissions }
                     val accessibility = info.accessibility
@@ -175,8 +203,12 @@ internal class FileAnalyzer(
                 put("findings", findings)
                 put("hash", digest.digest().joinToString("") { "%02x".format(it) })
                 put("signers", signerHashes)
+                put("details", details)
+                put("signatureChecked", false)
                 if (format.isNotEmpty()) put("format", listOfNotNull(format, packageName).joinToString(" · "))
             }
+        } catch (stop: ScanStopped) {
+            return result(stop.code)
         } finally {
             temp.delete()
         }

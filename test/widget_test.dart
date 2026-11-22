@@ -33,6 +33,39 @@ void main() {
     expect(find.text('Himoya o‘chirilgan'), findsOneWidget);
   });
 
+  testWidgets('online scan with missing server preserves local findings', (
+    tester,
+  ) async {
+    protection = {'onlineConsent': true};
+    await launch(tester);
+    await tester.tap(find.text('Havolani tekshirish').first);
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byType(TextField),
+      'https://telegram.example/premium',
+    );
+    await tester.tap(find.widgetWithText(FilledButton, 'Tekshirish'));
+    await tester.pumpAndSettle();
+    expect(find.text('Yuqori xavf'), findsOneWidget);
+    await tester.scrollUntilVisible(find.textContaining('HTTPS server'), 300,
+      scrollable: find.descendant(of: find.byType(ListView), matching: find.byType(Scrollable)).first);
+    expect(find.textContaining('HTTPS server'), findsOneWidget);
+  });
+
+  testWidgets('online settings disclose full URL transfer and hide token', (
+    tester,
+  ) async {
+    await launch(tester);
+    await tester.tap(find.byIcon(Icons.settings_outlined));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('To‘liq URL'), findsOneWidget);
+    final fields = tester
+        .widgetList<TextField>(find.byType(TextField))
+        .toList();
+    expect(fields.length, 2);
+    expect(fields.last.obscureText, true);
+  });
+
   testWidgets('manual phishing scan', (tester) async {
     await launch(tester);
     await tester.tap(find.text('Havolani tekshirish').first);
