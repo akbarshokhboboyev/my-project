@@ -723,4 +723,119 @@ class StringsUz extends Strings {
   @override
   String get sharedAdvice =>
       'Keyingi harakatni o‘zingiz tanlang: hisobotni nusxalash, boshqa faylni tanlash yoki fayl yuborgan ilovaga qaytish.';
+
+  @override
+  String get folderTitle => 'Papkalar xavfsizligi';
+
+  @override
+  String get folderDisclosure =>
+      'Faqat o‘zingiz tanlagan papkalar o‘qish rejimida davriy tekshiriladi. 15 daqiqalik JobScheduler intervali batareya va Android cheklovlari sabab kechikishi mumkin; bu uzluksiz real-time himoya emas. Har yurishda 256 metadata, 8 fayl va 2 darajali ichki papka chegarasi bor. Fayllar serverga yuborilmaydi.';
+
+  @override
+  String get folderOffCleanup =>
+      'Monitoringni o‘chirish tanlangan papkalar ro‘yxati, read ruxsatlari va monitoring keshini tozalaydi. Fayllarning o‘zi o‘zgartirilmaydi.';
+
+  @override
+  String get folderAdd => 'Papka qo‘shish';
+
+  @override
+  String get folderRemove => 'Papkani olib tashlash';
+
+  @override
+  String get folderPeriodic => 'Davriy papka tekshiruvini yoqish';
+
+  @override
+  String get folderNow => 'Hozir tekshirish';
+
+  @override
+  String get folderCancel => 'Joriy papka tekshiruvini bekor qilish';
+
+  @override
+  String get folderLast => 'Oxirgi tekshiruv';
+
+  @override
+  String get folderNever => 'Hali tekshirilmagan';
+
+  @override
+  String get folderCountvisited => 'Ko‘rilgan metadata';
+
+  @override
+  String get folderCountscanned => 'Tahlil qilingan fayllar';
+
+  @override
+  String get folderCountcached => 'O‘zgarmagan metadata: keshdan';
+
+  @override
+  String get folderCountunverified => 'Tekshirilmagan yoki incomplete (kamida)';
+
+  @override
+  String get folderIndicators => 'Xavf indikatorlari turlari';
+
+  @override
+  String get folderCoverageBounded =>
+      'Oxirgi yurishda ruxsatli, chegaralangan qamrov ko‘rildi. Bu xavfsizlik kafolati emas.';
+
+  @override
+  String get folderCoveragePartial =>
+      'Qamrov qisman yoki hali aniqlanmagan. Limitdan tashqari fayllar soni noma’lum bo‘lishi mumkin; xavfsiz deb tasdiqlanmaydi.';
+
+  @override
+  String get folderScheduled => 'Davriy papka job’i rejalashtirilgan.';
+
+  @override
+  String get folderUnscheduled => 'Davriy papka job’i rejalashtirilmagan.';
+
+  @override
+  String get folderGranted => 'O‘qish ruxsati bor.';
+
+  @override
+  String get folderPermission =>
+      'Papka ruxsati yo‘q yoki bu joyni Android tanlashga ruxsat bermaydi. Papkani qayta tanlang.';
+
+  @override
+  String get folderUnnamed => 'Tanlangan papka';
+
+  @override
+  String get folderLimit => 'Ko‘pi bilan 4 ta papka tanlash mumkin.';
+
+  @override
+  String get folderCleanupPending =>
+      'Ruxsatni qaytarish tugallanmagan. Monitoring to‘xtatilgan; keyingi ishga tushishda qayta tekshiriladi.';
+
+  @override
+  String get folderStateidle => 'Papka tekshiruvi kutilmoqda.';
+
+  @override
+  String get folderStaterunning => 'Papka tekshirilmoqda.';
+
+  @override
+  String get folderStatequeued => 'Tekshiruv OS navbatida.';
+
+  @override
+  String get folderStatedone => 'Oxirgi yurish tugadi.';
+
+  @override
+  String get folderStatepartial => 'Oxirgi yurish qisman tugadi.';
+
+  @override
+  String get folderStatedeferred => 'Android tekshiruvni keyinga qoldirdi.';
+
+  @override
+  String get folderStatecancelled => 'Joriy yurish bekor qilindi.';
+
+  @override
+  String get folderStatepermissionLost =>
+      'Ruxsat yo‘qoldi. Monitoring to‘xtatildi; papkani qayta tanlang.';
+
+  @override
+  String get folderStateproviderError =>
+      'DocumentProvider javob bermadi yoki xato qaytardi. Natija aniqlanmagan.';
+
+  @override
+  String get folderStatescheduleFailed =>
+      'Android papka job’ini rejalashtira olmadi.';
+
+  @override
+  String get folderStateinterrupted =>
+      'Oldingi yurish uzilgan; qamrov aniqlanmagan.';
 }

@@ -663,6 +663,7 @@ class _WorkspaceState extends ConsumerState<Workspace>
       ],
     ]),
 
+    ...folderProtection(),
     heading('guide'),
     button(
       'testAlert',
@@ -678,6 +679,107 @@ class _WorkspaceState extends ConsumerState<Workspace>
         ),
       ),
   ];
+
+  List<Widget> folderProtection() {
+    final data = Map<String, dynamic>.from(
+      status['folderSecurity'] as Map? ?? {},
+    );
+    final roots = (data['roots'] as List? ?? []).whereType<Map>().toList();
+    final state = data['state'] as String? ?? 'idle';
+    return [
+      card([
+        heading('folderTitle'),
+        Text(l('folderDisclosure')),
+        Text(l('folderOffCleanup')),
+        button(
+          'folderAdd',
+          () => act(() async {
+            await platform.pickFolder();
+            await refresh();
+          }),
+        ),
+        SwitchListTile(
+          title: Text(l('folderPeriodic')),
+          value: data['enabled'] == true,
+          onChanged: roots.isEmpty && data['enabled'] != true
+              ? null
+              : (value) => act(() async {
+                  await platform.setFolderMonitoring(value);
+                  await refresh();
+                }),
+        ),
+        Text(
+          l(
+            data['scheduled'] == true ? 'folderScheduled' : 'folderUnscheduled',
+          ),
+        ),
+        Text(l('folderState$state')),
+        if (data['cleanupPending'] == true) Text(l('folderCleanupPending')),
+        for (final root in roots)
+          ListTile(
+            title: Text(
+              (root['label'] as String?)?.isNotEmpty == true
+                  ? root['label'] as String
+                  : l('folderUnnamed'),
+            ),
+            subtitle: Text(
+              l(root['granted'] == true ? 'folderGranted' : 'folderPermission'),
+            ),
+            trailing: IconButton(
+              tooltip: l('folderRemove'),
+              icon: const Icon(Icons.remove_circle_outline),
+              onPressed: () => act(() async {
+                await platform.removeFolder(root['id'] as String);
+                await refresh();
+              }),
+            ),
+          ),
+        if (roots.isNotEmpty) ...[
+          button(
+            'folderNow',
+            () => act(() async {
+              await platform.scanFolders();
+              await refresh();
+            }),
+          ),
+          if (['running', 'queued', 'deferred'].contains(state))
+            button(
+              'folderCancel',
+              () => act(() async {
+                await platform.cancelFolders();
+                await refresh();
+              }),
+            ),
+        ],
+        Text(
+          [
+            l('folderLast'),
+            (data['lastScan'] as int? ?? 0) > 0
+                ? stamp(data['lastScan'] as int)
+                : l('folderNever'),
+          ].join(' · '),
+        ),
+        for (final field in ['visited', 'scanned', 'cached', 'unverified'])
+          Text([l('folderCount$field'), data[field] ?? 0].join(' · ')),
+        Text(
+          l(
+            data['partial'] == false
+                ? 'folderCoverageBounded'
+                : 'folderCoveragePartial',
+          ),
+        ),
+        Text(
+          [
+            l('folderIndicators'),
+            (data['indicators'] as List? ?? []).length,
+          ].join(' · '),
+        ),
+        for (final code
+            in (data['indicators'] as List? ?? []).whereType<String>())
+          Text(l(code)),
+      ]),
+    ];
+  }
 
   List<Widget> history() {
     final rows = entries

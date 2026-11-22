@@ -1,3 +1,36 @@
+# ShieldGuard V3.1 — PHASE 3B sinovlari
+
+2026-11-22. `feature/shieldguard-v3-1`, baseline `02c8dc2`. `shieldguard-security` va `shieldguard-testing` qo‘llandi; release skill yuklanmadi. Quyidagilar shu bosqichda kuzatilgan natijalar.
+
+| Tekshiruv | Natija |
+| --- | --- |
+| `flutter test test/folder_monitor_test.dart` | 7/7 |
+| `flutter analyze` | No issues found |
+| `flutter test --coverage` | 196/196; oldingi 189 saqlandi |
+| `test/native/run_tests.ps1 -KotlinLib <Gradle 9.3.1/lib>` | 203 tekshiruv + 387 malformed input; 30 yangi folder holati |
+| `python -m unittest discover -s backend` | 13/13 |
+| Dart line coverage, `coverage/lcov.info` LH/LF yig‘indisi | 1134/1425 = 79,58% |
+| `flutter build apk --debug` | Muvaffaqiyatli; yakuniy build 21,9 s |
+| `:app:assembleDebugAndroidTest -PshieldTestRunner=uz.app.shieldguard.FolderMonitorInstrumentation` | BUILD SUCCESSFUL; runner install alohida rad etildi |
+| Android16 API36 real SAF picker | O‘zimiz yaratgan Download ichidagi test papka tanlandi; grant lokal saqlandi |
+| Android16 UI orqali manual scan, debug lokal summary bilan tasdiq | O‘zgarmagan 3 fayl: 0 scanned / 3 cached; o‘zgargan ZIP: 1 / 2; yangi PDF: 1 / 3; har safar partial=false, unverified=0 |
+| Android16 force-stop → cold launch | Persisted root saqlandi; periodic 7201 waiting holatida qayta yaratildi; manual 0 scanned / 4 cached. Bu fizik reboot sinovi emas |
+| Android16 real UI opt-out | Roots/cache/summary tozalandi, owned persisted grant yo‘q; 7201/7202 job’lari unknown. Faqat o‘zimiz yaratgan 4 benign fayl va bo‘sh test papkasi o‘chirildi |
+| Android16 native folder instrumentation | **unverified**: test APK `INSTALL_FAILED_USER_RESTRICTED` / Install canceled by user; bypass qilinmadi |
+| PHASE 3A kengaytirilgan 25-case E2E | **Ochiq, unverified**; PHASE 3B natijasiga qo‘shilmadi |
+
+30 JVM holati metadata adapterlari va inspect callback mock bilan: yangi PDF/ZIP/APK, o‘zgargan/o‘zgarmagan fayl, duplicate document identity, empty folder, 256 metadata/8 analysis limiti, keyingi batch navbati, depth/cycle, denied/provider exception, disabled/cancel/mid-cancel, unknown va cached incomplete, zaif metadata, TTL/backward clock, per-file error va fake-clock timeout. Bu testlar Android persistable grant yoki real APK signing tekshiruvi emas. Mavjud parser/signature regressiyalari o‘zgarmadi.
+
+7 Flutter testi mocked MethodChannel bilan default-off Uzbek UI, explicit folder selection, Telegramdan mustaqillik, opt-out tozalash, manual/cancel, revoke/partial counts va ID orqali removal’ni qoplaydi. Android scheduler, read-only grant, revoke, process recovery va opt-out uchun alohida native runner yozildi, ammo o‘rnatilmagani sabab uning assertion’lari o‘tdi deb ko‘rsatilmaydi. Yuqoridagi UI va lokal summary tekshiruvlari ushbu runnerdan mustaqil. Haqiqiy telefon reboot, tashqi permission revoke va low-battery OS scheduling hali unverified.
+
+Qurilma helper’ining birinchi UI counter assertion’i o‘tmadi (scroll/selector); lokal summary scan tugaganini ko‘rsatdi. Helper explicit UI trigger + debug private summary tekshiruviga tuzatildi; xom URI/nom/cache chiqarilmaydi. Keyingi urinishda boshqa ilova faol bo‘lgani sabab to‘xtatildi; foydalanuvchi telefonni bo‘sh qoldirishini tasdiqlagach qayta bajarildi. Bu helper xatolari app scanner crash deb baholanmadi.
+
+Benign sintetik plain PDF, readme ZIP va imzolangan hasCode=false APK fayl sifatida ishlatildi; APK execute/install qilinmadi. APK launcher export indikatori zararli hukm deb talqin qilinmaydi. Background interval aniq vaqtli kafolat emas. Incomplete natija safe emas; bloklangan DocumentProvider I/O darhol uzilishi kafolatlanmaydi. Batafsil: `FILE_MONITORING.md`.
+
+Debug artifact: `build/app/outputs/flutter-apk/app-debug.apk`, 191116054 bytes, SHA-256 `255a5e47d62e7039a88ad6f5f1f72831fe6888fc4bd262d3c0e11f346a71c0e6`. APK Git’ga commit qilinmaydi. Yakuniy build queue-rejection/cancel generation guard’ini ham kompilyatsiya qildi va Android16’da muvaffaqiyatli o‘rnatildi; real SAF tekshiruvlari shu himoya qo‘shilishidan oldingi debug build’da bajarildi.
+
+Quyida PHASE 3A va oldingi tarix o‘z holicha saqlangan; ularning davriga tegishli cheklovlar hozirgi implementatsiya bayonoti emas.
+
 # ShieldGuard V3.1 — PHASE 3A sinovlari
 
 2026-11-22. feature/shieldguard-v3-1, PHASE 2 baseline 5215543. shieldguard-security va shieldguard-testing qo‘llandi. Faqat file open/share; folder monitoring va PHASE 4–8 o‘zgartirilmadi.

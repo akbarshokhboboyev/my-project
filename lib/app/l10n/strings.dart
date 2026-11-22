@@ -1370,6 +1370,216 @@ abstract class Strings {
   /// In uz, this message translates to:
   /// **'Keyingi harakatni o‘zingiz tanlang: hisobotni nusxalash, boshqa faylni tanlash yoki fayl yuborgan ilovaga qaytish.'**
   String get sharedAdvice;
+
+  /// No description provided for @folderTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Papkalar xavfsizligi'**
+  String get folderTitle;
+
+  /// No description provided for @folderDisclosure.
+  ///
+  /// In uz, this message translates to:
+  /// **'Faqat o‘zingiz tanlagan papkalar o‘qish rejimida davriy tekshiriladi. 15 daqiqalik JobScheduler intervali batareya va Android cheklovlari sabab kechikishi mumkin; bu uzluksiz real-time himoya emas. Har yurishda 256 metadata, 8 fayl va 2 darajali ichki papka chegarasi bor. Fayllar serverga yuborilmaydi.'**
+  String get folderDisclosure;
+
+  /// No description provided for @folderOffCleanup.
+  ///
+  /// In uz, this message translates to:
+  /// **'Monitoringni o‘chirish tanlangan papkalar ro‘yxati, read ruxsatlari va monitoring keshini tozalaydi. Fayllarning o‘zi o‘zgartirilmaydi.'**
+  String get folderOffCleanup;
+
+  /// No description provided for @folderAdd.
+  ///
+  /// In uz, this message translates to:
+  /// **'Papka qo‘shish'**
+  String get folderAdd;
+
+  /// No description provided for @folderRemove.
+  ///
+  /// In uz, this message translates to:
+  /// **'Papkani olib tashlash'**
+  String get folderRemove;
+
+  /// No description provided for @folderPeriodic.
+  ///
+  /// In uz, this message translates to:
+  /// **'Davriy papka tekshiruvini yoqish'**
+  String get folderPeriodic;
+
+  /// No description provided for @folderNow.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hozir tekshirish'**
+  String get folderNow;
+
+  /// No description provided for @folderCancel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Joriy papka tekshiruvini bekor qilish'**
+  String get folderCancel;
+
+  /// No description provided for @folderLast.
+  ///
+  /// In uz, this message translates to:
+  /// **'Oxirgi tekshiruv'**
+  String get folderLast;
+
+  /// No description provided for @folderNever.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hali tekshirilmagan'**
+  String get folderNever;
+
+  /// No description provided for @folderCountvisited.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ko‘rilgan metadata'**
+  String get folderCountvisited;
+
+  /// No description provided for @folderCountscanned.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tahlil qilingan fayllar'**
+  String get folderCountscanned;
+
+  /// No description provided for @folderCountcached.
+  ///
+  /// In uz, this message translates to:
+  /// **'O‘zgarmagan metadata: keshdan'**
+  String get folderCountcached;
+
+  /// No description provided for @folderCountunverified.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tekshirilmagan yoki incomplete (kamida)'**
+  String get folderCountunverified;
+
+  /// No description provided for @folderIndicators.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xavf indikatorlari turlari'**
+  String get folderIndicators;
+
+  /// No description provided for @folderCoverageBounded.
+  ///
+  /// In uz, this message translates to:
+  /// **'Oxirgi yurishda ruxsatli, chegaralangan qamrov ko‘rildi. Bu xavfsizlik kafolati emas.'**
+  String get folderCoverageBounded;
+
+  /// No description provided for @folderCoveragePartial.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qamrov qisman yoki hali aniqlanmagan. Limitdan tashqari fayllar soni noma’lum bo‘lishi mumkin; xavfsiz deb tasdiqlanmaydi.'**
+  String get folderCoveragePartial;
+
+  /// No description provided for @folderScheduled.
+  ///
+  /// In uz, this message translates to:
+  /// **'Davriy papka job’i rejalashtirilgan.'**
+  String get folderScheduled;
+
+  /// No description provided for @folderUnscheduled.
+  ///
+  /// In uz, this message translates to:
+  /// **'Davriy papka job’i rejalashtirilmagan.'**
+  String get folderUnscheduled;
+
+  /// No description provided for @folderGranted.
+  ///
+  /// In uz, this message translates to:
+  /// **'O‘qish ruxsati bor.'**
+  String get folderGranted;
+
+  /// No description provided for @folderPermission.
+  ///
+  /// In uz, this message translates to:
+  /// **'Papka ruxsati yo‘q yoki bu joyni Android tanlashga ruxsat bermaydi. Papkani qayta tanlang.'**
+  String get folderPermission;
+
+  /// No description provided for @folderUnnamed.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tanlangan papka'**
+  String get folderUnnamed;
+
+  /// No description provided for @folderLimit.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ko‘pi bilan 4 ta papka tanlash mumkin.'**
+  String get folderLimit;
+
+  /// No description provided for @folderCleanupPending.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ruxsatni qaytarish tugallanmagan. Monitoring to‘xtatilgan; keyingi ishga tushishda qayta tekshiriladi.'**
+  String get folderCleanupPending;
+
+  /// No description provided for @folderStateidle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Papka tekshiruvi kutilmoqda.'**
+  String get folderStateidle;
+
+  /// No description provided for @folderStaterunning.
+  ///
+  /// In uz, this message translates to:
+  /// **'Papka tekshirilmoqda.'**
+  String get folderStaterunning;
+
+  /// No description provided for @folderStatequeued.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tekshiruv OS navbatida.'**
+  String get folderStatequeued;
+
+  /// No description provided for @folderStatedone.
+  ///
+  /// In uz, this message translates to:
+  /// **'Oxirgi yurish tugadi.'**
+  String get folderStatedone;
+
+  /// No description provided for @folderStatepartial.
+  ///
+  /// In uz, this message translates to:
+  /// **'Oxirgi yurish qisman tugadi.'**
+  String get folderStatepartial;
+
+  /// No description provided for @folderStatedeferred.
+  ///
+  /// In uz, this message translates to:
+  /// **'Android tekshiruvni keyinga qoldirdi.'**
+  String get folderStatedeferred;
+
+  /// No description provided for @folderStatecancelled.
+  ///
+  /// In uz, this message translates to:
+  /// **'Joriy yurish bekor qilindi.'**
+  String get folderStatecancelled;
+
+  /// No description provided for @folderStatepermissionLost.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ruxsat yo‘qoldi. Monitoring to‘xtatildi; papkani qayta tanlang.'**
+  String get folderStatepermissionLost;
+
+  /// No description provided for @folderStateproviderError.
+  ///
+  /// In uz, this message translates to:
+  /// **'DocumentProvider javob bermadi yoki xato qaytardi. Natija aniqlanmagan.'**
+  String get folderStateproviderError;
+
+  /// No description provided for @folderStatescheduleFailed.
+  ///
+  /// In uz, this message translates to:
+  /// **'Android papka job’ini rejalashtira olmadi.'**
+  String get folderStatescheduleFailed;
+
+  /// No description provided for @folderStateinterrupted.
+  ///
+  /// In uz, this message translates to:
+  /// **'Oldingi yurish uzilgan; qamrov aniqlanmagan.'**
+  String get folderStateinterrupted;
 }
 
 class _StringsDelegate extends LocalizationsDelegate<Strings> {

@@ -1,5 +1,7 @@
 # Maxfiylik siyosati
 
+PHASE 3B: foydalanuvchi SAF orqali tanlagan papkalar uchun faqat persistable read ruxsati olinadi. Davriy monitoring default o'chiq; aniq vaqtdagi himoya emas. Root URI/nom, bounded hashed-document metadata/kontent SHA-256 keshi va oxirgi yurish hisoblagichlari faqat private lokal preferences'da saqlanadi. Fayllar va nom/URI telemetry yoki serverga avtomatik yuborilmaydi. Monitoringni o'chirish shu modul job, ro'yxat, kesh/natija va read grant'larini tozalaydi; grant release muvaffaqiyatsiz bo'lsa UI holat va keyingi recovery retry saqlanadi. Papka ichidagi fayllar o'zgartirilmaydi. Online reputatsiya uchun alohida rozilik talabi saqlanadi. Tafsilot: FILE_MONITORING.md.
+
 PHASE 2’da alohida rozilik bilan installed-app monitoring qo‘shildi. Paket/versiya timestamp keshi, bounded event navbati, oxirgi event, oxirgi scan va alert report private lokal preferences’da saqlanadi. Report ilova label’i, permissions va public signing fingerprint’ni o‘z ichiga olishi mumkin; serverga yuborilmaydi. Opt-out job/receiver’larni to‘xtatib monitoring keshini va alert’ini o‘chiradi. QUERY_ALL_PACKAGES ishlatilmaydi; ko‘rinadigan paketlar qamrovi UI’da tushuntiriladi. Backup o‘chiq. Boshqa mavjud tarix/online consent sozlamalari mustaqil qoladi.
 
 

@@ -1,3 +1,17 @@
+# ShieldGuard V3.1 — PHASE 3B
+
+2026-11-22. Branch `feature/shieldguard-v3-1`, baseline `02c8dc2`. Faqat authorized folder security qo‘shildi; PHASE 4–8 o‘zgartirilmadi.
+
+- `AuthorizedFolderMonitor`: explicit SAF tree picker, persistable read-only grant, 4 lokal root, permission validation/revoke, opt-out cleanup va pending grant-release retry.
+- `FolderScanScheduler`/`FolderScanJobService`: native JobScheduler qayta ishlatildi; 15 daqiqa periodic 7201, manual 7202, battery-not-low, dedup, cooperative cancel va process/boot recovery. Installed-app 7101/7102 mustaqil. Default monitoring o‘chiq.
+- `IncrementalFileScanner`: 256 metadata, 8 analyses, depth 2, bounded queue/cache, hashed document identity, metadata/TTL incremental cache va mavjud SHA-256, per-file isolation, unknown/incomplete saqlanishi. Mavjud PHASE 3A scanner, APK/PDF/ZIP parserlar qayta ishlatildi.
+- Uzbek Himoya UI: papka qo‘shish/olib tashlash, periodic toggle, hozir tekshirish/cancel, oxirgi vaqt, scanned/cached/unverified, indikatorlar va ruxsat. Qamrov partial bo‘lsa ochiq ko‘rsatiladi.
+- Flutter 196/196; Kotlin 203 + 387 malformed; Python 13/13; analyze toza; Dart coverage 79,58%. Debug APK va Android test runner kompilyatsiya qilindi.
+- Android16: real SAF tanlash, unchanged 0/3, changed ZIP 1/2, new PDF 1/3, process cold recovery 0/4 va periodic job qayta yaratilishi tekshirildi. UI opt-out root/cache/natija/grant/job’larni tozaladi; o‘zimiz yaratgan fixture’lar olib tashlandi. Alohida test APK policy bilan rad etildi: native folder instrumentation **unverified**. Fizik reboot/tashqi revoke/low battery va PHASE 3A 25-case E2E hali ochiq.
+- Global storage/Device Admin/accessibility qo‘shilmadi; fayllar read-only, avtomatik upload/execute/install yo‘q. Metadata TTL va bloklangan provider I/O cheklovlari `FILE_MONITORING.md` da; natijalar `TEST_REPORT.md` da.
+
+Quyida oldingi bosqichlar tarixi saqlangan.
+
 # ShieldGuard V3.1 — PHASE 3A
 
 2026-11-22. feature/shieldguard-v3-1. File open/share kodi implementatsiya qilindi; kengaytirilgan E2E qayta sinovi qo‘shimcha tasdiq talab qiladi.

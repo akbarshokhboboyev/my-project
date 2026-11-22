@@ -15,7 +15,10 @@ class ShieldGuardApplication : Application() {
         val processName = if (Build.VERSION.SDK_INT >= 28) getProcessName()
             else getSystemService(android.app.ActivityManager::class.java).runningAppProcesses
                 ?.firstOrNull { it.pid == android.os.Process.myPid() }?.processName
-        if (processName == packageName) InstalledAppMonitor.sync(this)
+        if (processName == packageName) {
+            InstalledAppMonitor.sync(this)
+            AuthorizedFolderMonitor.recover(this)
+        }
     }
 }
 

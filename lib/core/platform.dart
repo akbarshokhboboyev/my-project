@@ -15,6 +15,14 @@ class ShieldPlatform {
   Future<Map<String, dynamic>?> installedReport() =>
       channel.invokeMapMethod<String, dynamic>('installedReport');
 
+  Future<void> pickFolder() => channel.invokeMethod<void>('folderPick');
+  Future<void> setFolderMonitoring(bool value) =>
+      channel.invokeMethod<void>('folderEnabled', {'value': value});
+  Future<void> removeFolder(String id) =>
+      channel.invokeMethod<void>('folderRemove', {'id': id});
+  Future<void> scanFolders() => channel.invokeMethod<void>('folderScan');
+  Future<void> cancelFolders() => channel.invokeMethod<void>('folderCancel');
+
   Future<void> openAccess() => channel.invokeMethod<void>('access');
   Future<void> allowAlerts() => channel.invokeMethod<void>('alerts');
 

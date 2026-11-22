@@ -21,6 +21,8 @@ class MainActivity : FlutterActivity() {
     private lateinit var bridge: MethodChannel
     private var fileJobActive = false
     private var picker: MethodChannel.Result? = null
+    private var folderPicker: MethodChannel.Result? = null
+    private var folderPickerEpoch = 0L
     private var fileCancellation = java.util.concurrent.atomic.AtomicBoolean(false)
     private var nextRebindAt = 0L
     private val inbox = ArrayDeque<Map<String, Any>>()
@@ -48,6 +50,7 @@ class MainActivity : FlutterActivity() {
                     reply.success(mapOf(
                         "access" to access, "connected" to TelegramThreatListener.connected,
                         "enabled" to enabled,
+                        "folderSecurity" to AuthorizedFolderMonitor.status(this),
                         "appMonitoring" to InstalledAppMonitor.enabled(this),
                         "appScheduled" to ScanScheduler.scheduled(this),
                         "appLastState" to InstalledAppMonitor.store(this).getString("state", "none"),
@@ -98,8 +101,33 @@ class MainActivity : FlutterActivity() {
                             .putExtra(Settings.EXTRA_APP_PACKAGE, packageName), reply)
                     }
                 }
+                "folderPick" -> {
+                    if (folderPicker != null || picker != null || fileJobActive) reply.error("busy", null, null)
+                    else {
+                        folderPicker = reply
+                        folderPickerEpoch = AuthorizedFolderMonitor.epoch(this)
+                        try {
+                            @Suppress("DEPRECATION")
+                            startActivityForResult(Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+                                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                                    Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION or Intent.FLAG_GRANT_PREFIX_URI_PERMISSION), 83)
+                        } catch (_: RuntimeException) { folderPicker = null; reply.error("unavailable", null, null) }
+                    }
+                }
+                "folderEnabled" -> {
+                    try {
+                        AuthorizedFolderMonitor.setEnabled(this, call.argument<Boolean>("value") ?: false)
+                        reply.success(null)
+                    } catch (_: SecurityException) { reply.error("folderPermission", null, null) }
+                }
+                "folderRemove" -> { AuthorizedFolderMonitor.remove(this, call.argument<String>("id") ?: ""); reply.success(null) }
+                "folderScan" -> {
+                    try { FolderScanScheduler.manual(this); reply.success(null) }
+                    catch (_: Exception) { reply.error("folderPermission", null, null) }
+                }
+                "folderCancel" -> { AuthorizedFolderMonitor.cancel(this); reply.success(null) }
                 "pick" -> {
-                    if (picker != null || fileJobActive) reply.error("busy", null, null)
+                    if (folderPicker != null || picker != null || fileJobActive) reply.error("busy", null, null)
                     else {
                         picker = reply
                         fileCancellation = java.util.concurrent.atomic.AtomicBoolean(false)
@@ -181,6 +209,7 @@ class MainActivity : FlutterActivity() {
                     runOnUiThread { if (reply != null) reply.success(value) else if (value is Map<*, *>) enqueue(value) }
                 } catch (e: Exception) {
                     val code = when (e) {
+                        is FolderSelectionException -> e.message ?: "folderPermission"
                         is SecurityException -> "filePermission"
                         is FileNotFoundException -> "fileMissing"
                         else -> "failed"
@@ -216,7 +245,7 @@ class MainActivity : FlutterActivity() {
                 Intent.ACTION_VIEW, Intent.ACTION_SEND, Intent.ACTION_SEND_MULTIPLE -> {
                     val request = FileOpenScanHandler.request(intent)
                     if (request != null) {
-                        if (picker != null || fileJobActive) enqueue(mapOf("kind" to "fileRejected", "code" to "busy"))
+                        if (folderPicker != null || picker != null || fileJobActive) enqueue(mapOf("kind" to "fileRejected", "code" to "busy"))
                         else {
                             fileCancellation = java.util.concurrent.atomic.AtomicBoolean(false)
                             scanFiles(request)
@@ -249,6 +278,28 @@ class MainActivity : FlutterActivity() {
     @Deprecated("Used by FlutterActivity's Android result API")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 83) {
+            val reply = folderPicker ?: return
+            folderPicker = null
+            val uri = data?.data
+            val epoch = folderPickerEpoch
+            if (resultCode != RESULT_OK || uri == null) { reply.success(null); return }
+            background(reply) {
+                val registeredEpoch = try { AuthorizedFolderMonitor.add(this, uri, data.flags, epoch) }
+                catch (error: IllegalStateException) { throw FolderSelectionException(error.message ?: "folderPermission") }
+                catch (_: SecurityException) { throw FolderSelectionException("folderPermission") }
+                val label = runCatching {
+                    val document = android.provider.DocumentsContract.buildDocumentUriUsingTree(uri,
+                        android.provider.DocumentsContract.getTreeDocumentId(uri))
+                    contentResolver.query(document, arrayOf(android.provider.OpenableColumns.DISPLAY_NAME), null, null, null)
+                        ?.use { if (it.moveToFirst()) it.getString(0) else "" }.orEmpty()
+                }.getOrDefault("")
+                AuthorizedFolderMonitor.updateLabel(this, uri.toString(), label, registeredEpoch)
+                null
+            }
+            return
+        }
+
         if (requestCode != 81) return
         val reply = picker ?: return
         picker = null
@@ -310,3 +361,5 @@ class MainActivity : FlutterActivity() {
         internal const val SHOW_ALERT = "uz.app.shieldguard.SHOW_ALERT"
     }
 }
+
+internal class FolderSelectionException(code: String) : RuntimeException(code)
