@@ -1,5 +1,7 @@
 # ShieldGuard V3.1 — PHASE 4 bosqichma-bosqich sinovlari
 
+4B: native runner **231 + 387 malformed** o‘tdi (28 yangi discovery/risk/gate). Mock launch callback orqali blocked no-forward, strict incomplete, auto-block off, explicit user approval va benign false-positive tekshirildi. Debug build muvaffaqiyatli. Bu Android installer ishga tushdi yoki boshqa ilovaning install’i bloklandi degan dalil emas.
+
 2026-11-22. Baseline `1641653`. 4A: native runner yangi 17 risk/discovery assertion bilan **220 + 387 malformed** o‘tdi. Signature success/failure/unchecked, no findings, single heuristic, sensitive combination, incomplete, spoofed reputation va actual-format ajratish synthetic map bilan tekshirildi. Bu real Telegram/device sinovi emas. Flutter va Android adapter regressiyalari keyingi kichik bosqichlarda qayta bajariladi. PHASE 2 install/update, PHASE 3A 25-case, PHASE 3B native instrumentation va real Telegram notification ochiq qoladi.
 
 # ShieldGuard V3.1 — PHASE 3B sinovlari

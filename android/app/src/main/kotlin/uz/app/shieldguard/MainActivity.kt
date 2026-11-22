@@ -164,7 +164,7 @@ class MainActivity : FlutterActivity() {
                         reply.success(null)
                     }
                 }
-                "cancelScan" -> { fileCancellation.set(true); reply.success(null) }
+                "cancelScan" -> { fileCancellation.set(true); InstallProtectionCoordinator.clear(this); reply.success(null) }
                 "cacheRead" -> background(reply) {
                     ThreatCache(this).use { it.read(call.argument<String>("key") ?: "") }
                 }
@@ -324,7 +324,7 @@ class MainActivity : FlutterActivity() {
         try {
             worker.execute {
                 val report = try {
-                    FileOpenScanHandler.scanner(applicationContext).scan(request) { cancellation.get() }
+                    FileOpenScanHandler.scanner(applicationContext, stageForward = true).scan(request) { cancellation.get() }
                 } catch (_: Exception) { mapOf("batch" to listOf(SharedFileScanner.error("failed"))) }
                 runOnUiThread {
                     fileJobActive = false

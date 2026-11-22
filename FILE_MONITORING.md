@@ -32,4 +32,3 @@ Android primary references: [SAF](https://developer.android.com/training/data-st
 # PHASE 4A APK discovery
 
 Folder scan mavjud NativeFileInspector orqali APK assessment oladi: actual format, imzo, permission va mavjud DEX/ELF/split indikatorlari. URI yoki fayl nomi yangi risk metadata’siga kiritilmaydi; avtomatik online hash so‘rovi yo‘q. 4A’da yangi background threat notification hali yoqilmadi.
-

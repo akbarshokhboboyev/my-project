@@ -21,6 +21,7 @@ internal class FileAnalyzer(
     private val limits: ScanLimits = ScanLimits(),
     private val cancelled: () -> Boolean = { false },
     private val inspectPdf: ((File) -> Pair<Map<String, Int>, Boolean>)? = null,
+    private val onAnalyzed: (File, Map<String, Any>) -> Map<String, Any> = { _, report -> report },
     private val readApk: (File) -> ApkMetadata?
 ) {
     fun inspect(displayName: String, open: () -> InputStream): Map<String, Any> {
@@ -204,7 +205,7 @@ internal class FileAnalyzer(
                     findings.putAll(ApkRiskAnalyzer.inspect(info))
                 }
             }
-            return buildMap {
+            val report = buildMap<String, Any> {
                 put("kind", "file")
                 put("complete", complete && "structure" !in findings)
                 put("findings", findings)
@@ -214,6 +215,7 @@ internal class FileAnalyzer(
                 put("signatureChecked", details["signatureStatus"] in setOf("signatureVerified", "signatureFailed"))
                 if (format.isNotEmpty()) put("format", listOfNotNull(format, packageName).joinToString(" · "))
             }
+            return onAnalyzed(temp, report)
         } catch (stop: ScanStopped) {
             return result(stop.code)
         } finally {

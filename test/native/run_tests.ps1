@@ -4,7 +4,7 @@ $root = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
 $output = Join-Path $root 'build/native-tests.jar'
 $null = New-Item -ItemType Directory -Force -Path (Join-Path $root 'build')
 $sourceRoot = Join-Path $root 'android/app/src/main/kotlin/uz/app/shieldguard'
-$sources = @('FileAnalyzer.kt', 'NotificationAnalyzer.kt', 'ScanLimits.kt', 'StructuralInspector.kt', 'AlertGate.kt', 'ApkContentInspector.kt', 'SplitApkAnalyzer.kt', 'InstalledAppPolicy.kt', 'SharedFileScanner.kt', 'IncrementalFileScanner.kt', 'ApkRiskPolicy.kt') |
+$sources = @('FileAnalyzer.kt', 'NotificationAnalyzer.kt', 'ScanLimits.kt', 'StructuralInspector.kt', 'AlertGate.kt', 'ApkContentInspector.kt', 'SplitApkAnalyzer.kt', 'InstalledAppPolicy.kt', 'SharedFileScanner.kt', 'IncrementalFileScanner.kt', 'ApkRiskPolicy.kt', 'AutomaticBlockEngine.kt') |
     ForEach-Object { Join-Path $sourceRoot $_ }
 $tests = @('FileAnalyzerTest.kt', 'NotificationAnalyzerTest.kt', 'AdvancedFileTest.kt', 'V3StaticTest.kt', 'TelegramPhishingTest.kt', 'InstalledAppTest.kt', 'SharedFileScannerTest.kt', 'IncrementalFileScannerTest.kt', 'ApkGuardTest.kt') |
     ForEach-Object { Join-Path $PSScriptRoot $_ }

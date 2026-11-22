@@ -1,6 +1,6 @@
 # ShieldGuard V3.1 — PHASE 4 (davom etmoqda)
 
-4A: `ApkDiscoveryCoordinator` / `ApkRiskPolicy` mavjud share va authorized folder scanner’iga ulandi. Risk/confidence/completeness alohida; tasdiqlanmagan Telegram provenance yoki avtomatik online lookup yo‘q. Native 220 + 387 malformed o‘tdi. 4B–4D hali yakunlanmagan. Tafsilot: AUTO_BLOCK_PROTECTION.md.
+4A–4B: `ApkDiscoveryCoordinator` / `ApkRiskPolicy` mavjud share va authorized folder scanner’iga ulandi. `AutomaticBlockEngine` va private snapshot/hash/generation gate qo‘shildi. Native 231 + 387 malformed o‘tdi; debug kompilyatsiya muvaffaqiyatli. 4C–4D hali yakunlanmagan. Tafsilot: AUTO_BLOCK_PROTECTION.md.
 
 # ShieldGuard V3.1 — PHASE 3B
 

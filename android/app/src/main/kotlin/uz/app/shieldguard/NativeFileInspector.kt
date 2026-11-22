@@ -9,7 +9,7 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.security.MessageDigest
 
-internal class NativeFileInspector(private val context: Context) {
+internal class NativeFileInspector(private val context: Context, private val stageForward: Boolean = false) {
     fun inspect(uri: Uri, cancelled: () -> Boolean = { false }): Map<String, Any> {
         require(uri.scheme == "content")
         var oversized = false
@@ -25,7 +25,10 @@ internal class NativeFileInspector(private val context: Context) {
         val analyzer = FileAnalyzer(File(context.cacheDir, "shield-scans"), cancelled = cancelled,
             inspectPdf = { file ->
                 PdfInspector(context).inspect(file, cancelled).let { it.findings to it.complete }
-            }, readApk = ::readApk)
+            }, readApk = ::readApk, onAnalyzed = { file, report ->
+                val decorated = ApkDiscoveryCoordinator.decorate(report, displayName)
+                if (stageForward) InstallProtectionCoordinator.stage(context, file, decorated, cancelled) else decorated
+            })
         val report = analyzer.inspect(displayName) {
             context.contentResolver.openInputStream(uri) ?: throw FileNotFoundException()
         }
