@@ -1,8 +1,12 @@
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart'
+    show GlobalCupertinoLocalizations;
+import 'package:material_ui/material_ui.dart';
 
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart'
+    show GlobalWidgetsLocalizations;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -61,7 +65,14 @@ class ShieldApp extends ConsumerWidget {
     debugShowCheckedModeBanner: false,
     locale: const Locale('uz'),
     supportedLocales: Strings.supportedLocales,
-    localizationsDelegates: Strings.localizationsDelegates,
+    // gen-l10n still emits the deprecated flutter_localizations delegates;
+    // use the material_ui / cupertino_ui replacements directly.
+    localizationsDelegates: const [
+      Strings.delegate,
+      GlobalMaterialLocalizations.delegate,
+      GlobalCupertinoLocalizations.delegate,
+      GlobalWidgetsLocalizations.delegate,
+    ],
     theme: theme(Brightness.light),
     darkTheme: theme(Brightness.dark),
     themeMode: ref.watch(darkProvider) ? ThemeMode.dark : ThemeMode.light,
