@@ -227,6 +227,10 @@ class StringsUz extends Strings {
   String get urgent => 'Xabar zudlik bilan harakat qilishga undaydi.';
 
   @override
+  String get bot =>
+      'Xabarda bot nomidan maxfiy ma’lumot so‘rovi yoki shubhali havola bor. Botning haqiqiyligi matndan tasdiqlanmaydi.';
+
+  @override
   String get support =>
       'Xabar o‘zini yordam xizmati deb tanishtirib, maxfiy ma’lumot so‘raydi.';
 

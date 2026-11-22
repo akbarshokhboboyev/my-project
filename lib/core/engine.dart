@@ -79,8 +79,9 @@ class ScanResult {
 
 class ThreatEngine {
   static final _links = RegExp(
-    r'(?:https?://|www\.)[^\s<>"«»]+',
+    r'''(?:https?://|www\.)[^\s<>"«»]+|(?<![\p{L}\p{N}_@./-])(?:[\p{L}\p{N}](?:[\p{L}\p{N}-]{0,61}[\p{L}\p{N}])?\.)+(?:[\p{L}]{2,63}|xn--[a-z0-9-]{2,59})(?::\d{1,5})?(?:[/?#][^\s<>"«»]*)?''',
     caseSensitive: false,
+    unicode: true,
   );
   static final _domain = RegExp(
     r'^(?:[\p{L}\p{N}](?:[\p{L}\p{N}-]{0,61}[\p{L}\p{N}])?\.)+[\p{L}\p{N}-]{1,63}$',
@@ -160,8 +161,9 @@ class ThreatEngine {
     final isOfficial = official(host);
     final context = [host, uri.path, uri.query].join(' ').toLowerCase();
     final hostSkeleton = host.split('').map((c) => _lookalikes[c] ?? c).join();
-    final brand = RegExp(r'telegram|te1egram|teiegram|teleqram|(?:^|\.)t\.me\.')
-        .hasMatch(hostSkeleton);
+    final brand = RegExp(
+      r'telegram|te1egram|teiegram|teleqram|(?:^|\.)t\.me(?:[.-]|$)',
+    ).hasMatch(hostSkeleton);
     final sensitive = RegExp(
       r'login|verify|verification|confirm|premium|gift|bonus|password|signin',
     ).hasMatch(context);
@@ -187,47 +189,63 @@ class ThreatEngine {
     ], subject: host);
   }
 
+  // A warning in one clause must not hide a later demand.
+  static final _clauses = RegExp(
+    r'[\n.!?;,]+|(?:^|\s)(?:but|ammo|lekin|но|однако)(?=\s|$)',
+  );
   static final _request = RegExp(
-    r'yubor|kiriting|bering|ayting|jo.nat|tasdiqlang|send|enter|provide|share|submit|введ|отправ|пришл|сообщ|подтверд',
+    r'yubor|kiriting|bering|ayting|jo.nat|tasdiqlang|\b(?:send|enter|provide|share|submit)\b|введ|отправ|пришл|сообщ|подтверд|переда',
   );
   static final _secret = RegExp(
-    r'tasdiqlash kodi|sms.kod|telegram kodi|parol|otp|verification code|confirmation code|security code|password|passcode|код|парол',
+    r'tasdiqlash kod|kirish kod|sms[ -]?kod|telegram kod|\bkodni\b|[4-8][ -]*(?:xonali|raqamli|digit)[ -]+(?:kod|code)|parol|\botp\b|(?:login|verification|confirmation|security) code|password|passcode|код|парол',
   );
   static final _warning = RegExp(
-    r'hech kimga|yubormang|bermang|do not share|never share|никому|не сообщайте',
+    r'yubormang|bermang|aytmang|jo.natmang|kiritmang|o.rnatmang|(?:do not|don.t|never) (?:share|send|enter|provide|install)|не (?:сообщ|отправ|присыл|ввод|переда|делит|устанав)',
   );
   static final _urgent = RegExp(
     r'zudlik|bloklan|darhol|shoshil|urgent|suspend|blocked|срочно|блокир',
   );
   static final _gift = RegExp(r'premium|sovg.a|gift|подар');
-  static final _support = RegExp(r'q.ollab.quvvatlash|support|поддержк');
+  static final _support = RegExp(
+    r'qo.llab.quvvatlash|texnik yordam|support|поддержк',
+  );
+  static final _bot = RegExp(
+    r'\bbot\b|бот(?=$|[\s:,.!?])|@[a-z0-9_]{5,32}bot\b',
+  );
   static final _install = RegExp(r'install|o.rnat|установ');
 
   ScanResult message(String input) {
     final text = input.substring(0, input.length.clamp(0, 32000)).toLowerCase();
     final urls = extract(text).map(link).toList();
-    final requestsSecret = text
-        .split(RegExp(r'[\n.!?;]+'))
-        .any(
-          (clause) =>
-              _secret.hasMatch(clause) &&
-              _request.hasMatch(clause) &&
-              !_warning.hasMatch(clause),
-        );
+    final clauses = text.split(_clauses);
+    final requestsSecret = clauses.any(
+      (clause) =>
+          _secret.hasMatch(clause) &&
+          _request.hasMatch(clause) &&
+          !_warning.hasMatch(clause),
+    );
+    final suspicious = urls.any((r) => r.score >= 45);
+    final requestsAction = clauses.any(
+      (clause) => _request.hasMatch(clause) && !_warning.hasMatch(clause),
+    );
     return ScanResult(ThreatType.message, [
       if (requestsSecret) const Finding('secret', 55),
       if (_gift.hasMatch(text) &&
           (requestsSecret || urls.any((r) => r.score >= 25)))
         const Finding('gift', 22),
-      if (_urgent.hasMatch(text) &&
-          (_request.hasMatch(text) || urls.isNotEmpty))
+      if (_urgent.hasMatch(text) && (requestsAction || suspicious))
         const Finding('urgent', 23),
-      if (_support.hasMatch(text) && requestsSecret)
+      if (_support.hasMatch(text) && (requestsSecret || suspicious))
         const Finding('support', 20),
-      if (_install.hasMatch(text) && (urls.isNotEmpty || text.contains('.apk')))
+      if (_bot.hasMatch(text) && (requestsSecret || suspicious))
+        const Finding('bot', 20),
+      if (clauses.any(
+            (clause) => _install.hasMatch(clause) && !_warning.hasMatch(clause),
+          ) &&
+          (urls.isNotEmpty || text.contains('.apk')))
         const Finding('install', 30),
-      if (urls.any((r) => r.score >= 50))
-        const Finding('messageLink', 45)
+      if (suspicious)
+        const Finding('messageLink', 50)
       else if (urls.any((r) => r.score >= 25))
         const Finding('messageLink', 25),
     ], complete: input.length <= 32000);

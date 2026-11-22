@@ -501,6 +501,12 @@ abstract class Strings {
   /// **'Xabar zudlik bilan harakat qilishga undaydi.'**
   String get urgent;
 
+  /// No description provided for @bot.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xabarda bot nomidan maxfiy ma’lumot so‘rovi yoki shubhali havola bor. Botning haqiqiyligi matndan tasdiqlanmaydi.'**
+  String get bot;
+
   /// No description provided for @support.
   ///
   /// In uz, this message translates to:

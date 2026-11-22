@@ -1,3 +1,28 @@
+# ShieldGuard V3.1 — PHASE 1 sinovlari
+
+2026-11-22, Windows, Flutter 3.47.6 / Dart 3.13.5 / JDK 17. Branch: feature/shieldguard-v3-1. Faqat Telegram anti-phishing bosqichi; 2–8 bosqichlar bajarilmadi. shieldguard-security va shieldguard-testing skill’lari qo‘llandi.
+
+| Buyruq / tekshiruv | Shu bosqichda kuzatilgan natija |
+| --- | --- |
+| flutter test test/engine_test.dart test/telegram_phishing_test.dart | Dastlab 116/116 o‘tdi; ikki port ssenariysi qo‘shilgach telegram_phishing_test.dart 58/58 o‘tdi |
+| flutter analyze | No issues found; avval test nomidagi bitta interpolation lint tuzatildi |
+| flutter test --coverage | 179/179 o‘tdi |
+| test/native/run_tests.ps1 -KotlinLib <Gradle 9.3.1/lib> | Oldingi 54 + yangi 54 umumiy ssenariy + 7 bound/cooldown = 115 tekshiruv, 387 malformed input o‘tdi |
+| flutter build apk --debug | Muvaffaqiyatli, yakuniy incremental build 19,6 s; dastlabki 69,7 s build’da SDK XML versiyasi haqida ogohlantirish bor |
+| Android 16 ACTION_SEND | Bajarilmadi: adb install -r INSTALL_FAILED_USER_RESTRICTED (Install canceled by user) bilan rad etildi; yangi build uchun share testi ishga tushmadi |
+
+Noto‘g‘ri Unicode-host portlari (65536 va bad) ikkala detector’da ham riskli link sifatida baholanmasligi qo‘shimcha regressiyada tekshirildi.
+
+Yangi testlar: test/fixtures/telegram_phishing.tsv dagi 54 benign/sintetik xabarni Dart va Kotlin bir xil finding ID hamda ball bo‘yicha tekshiradi. test/telegram_phishing_test.dart yana 4 ta extraction, dedup va lokalizatsiya holatini tekshiradi. Native testlar 8192 belgili limit, takroriy domen, 30 soniyalik cooldown va 5 daqiqalik dedup chegaralarini tekshiradi. Mavjud native fayl regressiyalari ham qayta o‘tdi.
+
+Coverage: coverage/lcov.info dagi LH/LF yig‘indisi 899/1188 = 75,67%; generated l10n ham kiradi. Kotlin/Android qamrovi bu foizga kirmaydi. Bu yorliqlangan real malware korpusi emas; precision/recall da’vo qilinmaydi.
+
+Yangi debug APK SHA-256: 54f6f8ac2e4f706287faf7f033ba37c8a777f5c6ffa4fce7a8f64ff2e4a24a2a. APK Git’ga kiritilmaydi; source version hozircha 3.0.0+3, bu V3.1 PHASE 1 development build’i.
+
+Jonli Telegram akkaunti/bildirishnomasi, notification ruxsatini qayta yoqish/revoke qilish, Android integration_test to‘plami, Python gateway, SAF va release bu bosqichda qayta sinovdan o‘tkazilmadi. Quyidagi V3 natijalari tarixiy baseline, yangi branch natijalari emas. Eski artefakt izlari tarixiy V3 build’lariga tegishli.
+
+---
+
 # ShieldGuard V3 sinov hisoboti
 
 2026-11-22. Windows, Flutter 3.47.6, Dart 3.13.5, JDK 17. V2 boshlang‘ich regressiya 95/95 o‘tdi. Bu hujjat V3 natijalarini ajratadi; V2 artefakt izlari Git tarixida.

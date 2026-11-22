@@ -1,5 +1,11 @@
-# Telegram V3
+# Telegram V3.1 — PHASE 1
 
-V2 NotificationListenerService va lokal qoidalar saqlandi. Xom matn, OTP va parollar tarixga yoki tashqi xizmatga yozilmaydi. Avtomatik tahlil Android ko‘rsatgan Telegram bildirishnomalari bilan chegaralangan.
+Flutter ThreatEngine va Kotlin NotificationAnalyzer umumiy sintetik TSV korpus bilan tekshiriladi. t.me-premium.uz va t.me.evil.example kabi soxta hostlar, matn ichidagi protokolsiz domenlar, Unicode o‘xshash harflar va Punycode indikatorlari baholanadi. URL ochilmaydi, DNS yoki bot identity so‘rovi bajarilmaydi. Official host rasmiy bot yoki xabarning haqiqiyligini kafolatlamaydi.
 
-Faol seanslar, ikki bosqichli himoya va begona qurilmalarni uzish bo‘yicha mavjud qo‘llanma saqlandi. ShieldGuard hisobni bevosita boshqarmaydi. V3 jonli test akkaunti yo‘q, real Telegram xabarini yuborish sinovi bajarilmadi.
+Kod/parolni yuborish yoki kiritish so‘rovlari o‘zbek, rus va ingliz tilida tekshiriladi, jumladan 5 xonali kod va login code. Bot/yordam xizmati belgisi faqat maxfiy ma’lumot so‘rovi yoki kuchli shubhali havola bilan birga ball oladi. Oddiy “Premium sovg‘angiz tayyor” va “Hech kimga tasdiqlash kodini yubormang” alohida xavf belgisi emas. Ogohlantirishdan keyingi comma/contrast bilan ajratilgan yangi talab mustaqil baholanadi; bu to‘liq tabiiy til tushunish emas.
+
+Mahalliy link score kamida 45 bo‘lsa messageLink 50, kamida 25 bo‘lsa 25 ball oladi. Secret so‘rovi 55, bot/support 20, gift 22. Kuchli soxta domenning o‘zi alert uchun yetadi; oddiy IDN/shortener ehtiyotkor belgidir. t.me-premium.uz va telegram.example/premium misollari xabarda 72 ball, rasmiy https://t.me/premium esa 0 ball beradi. Statik ball malware yoki bot shaxsini tasdiqlamaydi.
+
+NotificationListenerService Android ko‘rsatgan Telegram matniga mavjud opt-in va notification access bilan ishlaydi. Android yashirgan xabarlar olinmaydi. Input 8192 belgi va 24 link bilan cheklangan. 50 ball alert chegarasi, 30 soniya cooldown, 5 daqiqa salted-hash dedup va 128 yozuvli xotira limiti saqlandi. Xom matn, OTP va parollar tarix, log yoki tashqi xizmatga yozilmaydi.
+
+Faol seanslar, ikki bosqichli himoya va begona qurilmalarni uzish bo‘yicha mavjud qo‘llanma saqlandi. ShieldGuard hisobni bevosita boshqarmaydi. Jonli Telegram akkaunt/bildirishnoma sinovi bu bosqichda bajarilmadi; unit fixture yoki ACTION_SEND bunday sinovni almashtirmaydi.

@@ -1,0 +1,55 @@
+# Synthetic message	exact finding IDs	score
+https://tеlegrаm.example:65536/login	-	0
+https://tеlegrаm.example:bad/login	-	0
+t.me-premium.uz	gift,messageLink	72
+Sovg‘ani oling: t.me-premium.uz	gift,messageLink	72
+Ochish (https://t.me-premium.uz).	gift,messageLink	72
+Login: telegram.example/login	messageLink	50
+telegram.example/docs	messageLink	50
+t.me.evil.example	messageLink	50
+https://t.me@evil.example/login	messageLink	50
+www.telegram.example/login	messageLink	50
+tеlegrаm.example/login	messageLink	50
+https://tеlegrаm.example/premium	gift,messageLink	72
+https://xn--e1afmkfd.example/premium	gift,messageLink	72
+https://тест.example/docs	messageLink	25
+https://bit.ly/sample	messageLink	25
+5 xonali kodni yuboring	secret	55
+6-digit code: send it	secret	55
+Kirish kodini kiriting	secret	55
+Send your login code	secret	55
+Пришлите код подтверждения	secret	55
+Tasdiqlash kodini jo‘nating	secret	55
+Texnik yordam: 5 xonali kodni yuboring	secret,support	75
+Support bot: send your login code	bot,secret,support	95
+Бот поддержки: пришлите код подтверждения	bot,secret,support	95
+@premium_help_bot: send your login code	bot,gift,secret	97
+Premium bot: t.me-premium.uz	bot,gift,messageLink	92
+Hech kimga kodni yubormang, ammo 5 xonali kodni bizga yuboring	secret	55
+Never share your password but send your login code	secret	55
+Никому не сообщайте код, но пришлите код подтверждения	secret	55
+Urgent: send your login code	secret,urgent	78
+Never share your password. Premium: t.me-premium.uz	gift,messageLink	72
+Install example.apk	install	30
+https://t.me/premium	-	0
+t.me/premium	-	0
+https://core.telegram.org/login	-	0
+https://telegram.me/gift	-	0
+Premium sovg‘angiz tayyor	-	0
+Hech kimga tasdiqlash kodini yubormang	-	0
+5 xonali kodni yubormang	-	0
+Never share your login code	-	0
+Никому код не сообщайте	-	0
+Срочно: никому не сообщайте код	-	0
+Darhol: parolni hech kimga yubormang	-	0
+Urgent: never share your password	-	0
+Do not install example.apk	-	0
+example.apk faylini o‘rnatmang	-	0
+Не устанавливайте example.apk	-	0
+Support bot: never share your login code	-	0
+@help_support_bot: salom, qanday yordam kerak?	-	0
+https://t.me/UnverifiedExampleBot	-	0
+Dastur kodini yuboring	-	0
+support@telegram.example	-	0
+Qo‘llanma: example.com/docs	-	0
+qo‘llab-quvvatlash: parolni yuboring	secret,support	75

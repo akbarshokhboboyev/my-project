@@ -1,3 +1,21 @@
+# ShieldGuard V3.1 — PHASE 1
+
+2026-11-22. feature/shieldguard-v3-1. Faqat Telegram anti-phishing bosqichi implementatsiya qilindi.
+
+- Protokolsiz domen, t.me-prefiksli soxta host, Unicode/homograph va Punycode indikatorlari Flutter/Kotlin’da tekshiriladi.
+- O‘zbek/rus/ingliz kod/parol so‘rovlari, bot va texnik yordam bahonalari baholanadi. Matn bot identity’sini tasdiqlamaydi.
+- Oddiy ogohlantirish, rasmiy havola, emailni URL deb qabul qilmaslik va mustaqil Premium taklifi uchun false-positive qarshi testlari bor.
+- NotificationListener mavjud NotificationAnalyzer yo‘lida yangi qoidalarni ishlatadi. Package filtri, opt-in, permission tekshiruvi, 50 ball alert chegarasi va AlertGate saqlandi.
+- Flutter 179/179, Kotlin 115 tekshiruv + 387 malformed input o‘tdi; analyze toza; debug build tayyor.
+- Android 16 ACTION_SEND: Bajarilmadi: adb install -r INSTALL_FAILED_USER_RESTRICTED (Install canceled by user) bilan rad etildi; yangi build uchun share testi ishga tushmadi. Jonli Telegram notification holati unverified.
+- Holat: lokal detector ishlaydi va sintetik testlardan o‘tgan; jonli Telegram transporti qo‘shimcha sinov talab qiladi.
+- Keyingi bosqichlar: installed-app monitoring, file/folder monitoring, advanced malware, dashboard, device-admin evaluation, kengaytirilgan test/release hozircha boshlanmagan. Ular uchun alohida topshiriq kutiladi.
+- Web Risk/hash production API, signing lineage, MID, signed APK/AAB va Play internal testing ochiq qoladi.
+
+Quyida tarixiy V3 holati saqlangan; Phase 1’da bajarilgan ish deb talqin qilinmaydi.
+
+---
+
 # ShieldGuard V3 holati
 
 2026-11-22. V2 saqlandi; ish feature/shieldguard-v3 tarmog‘ida. Sinov dalillari TEST_REPORT.md da.

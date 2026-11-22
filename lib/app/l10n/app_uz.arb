@@ -68,6 +68,7 @@
   "secret": "Xabar maxfiy kod yoki parolni yuborish yoki kiritishni so‘raydi.",
   "gift": "Sovg‘a va’dasi maxfiy ma’lumot so‘rovi yoki shubhali havola bilan birga kelgan.",
   "urgent": "Xabar zudlik bilan harakat qilishga undaydi.",
+  "bot": "Xabarda bot nomidan maxfiy ma’lumot so‘rovi yoki shubhali havola bor. Botning haqiqiyligi matndan tasdiqlanmaydi.",
   "support": "Xabar o‘zini yordam xizmati deb tanishtirib, maxfiy ma’lumot so‘raydi.",
   "install": "Xabar havola orqali dastur o‘rnatishga undashi mumkin.",
   "messageLink": "Xabarda firibgarlik belgilariga ega havola bor.",

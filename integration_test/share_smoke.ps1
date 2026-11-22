@@ -30,7 +30,7 @@ try {
             $y = [int](([int]$Matches[2] + [int]$Matches[4]) / 2)
             $null = & $Adb @serialArgs shell input tap $x $y
         }
-        if ($nodes | Where-Object { $_.text -match '67/100' -or $_.'content-desc' -match '67/100' }) {
+        if ($nodes | Where-Object { $_.text -match '72/100' -or $_.'content-desc' -match '72/100' }) {
             Write-Output 'ACTION_SEND cold-start URL test passed.'
             exit 0
         }

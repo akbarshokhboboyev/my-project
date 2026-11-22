@@ -7,6 +7,7 @@ extension ShieldLabels on BuildContext {
 }
 
 String label(Strings strings, String key) => switch (key) {
+  'bot' => strings.bot,
   'pdfParsed' => strings.pdfParsed,
   'pdfEncrypted' => strings.pdfEncrypted,
   'pdfParseIncomplete' => strings.pdfParseIncomplete,
