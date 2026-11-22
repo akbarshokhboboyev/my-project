@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+
+import 'dart:convert';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../core/engine.dart';
 import '../core/intelligence.dart';
+import '../core/hash_reputation.dart';
 import '../core/platform.dart';
 import 'labels.dart';
 import 'l10n/strings.dart';
@@ -89,6 +93,8 @@ class _WorkspaceState extends ConsumerState<Workspace>
   final gateway = TextEditingController();
   final gatewayToken = TextEditingController();
   ThreatIntelligenceEngine? intelligence;
+  final hashResults = <String, HashLookupResult>{};
+  final hashPending = <String>{};
   final checklist = <String>{};
   Map<String, dynamic> status = {};
   List<Map<String, dynamic>> entries = [];
@@ -211,7 +217,12 @@ class _WorkspaceState extends ConsumerState<Workspace>
         if (mode == 'file') {
           final value = await platform.pick();
           if (value != null) {
-            await present([platform.decode(value)]);
+            final batch = value['batch'];
+            await present(
+              batch is List
+                  ? batch.whereType<Map>().map(platform.decode).toList()
+                  : [platform.decode(value)],
+            );
           } else if (mounted) {
             setState(() => notice = 'cancelled');
           }
@@ -515,9 +526,47 @@ class _WorkspaceState extends ConsumerState<Workspace>
     for (final f in result.findings) Text('• ${l(f.code)}'),
     if (result.complete && result.findings.isEmpty) Text(l('noFindings')),
     heading('limits'),
+    if (result.hash != null) ...[
+      TextButton(
+        onPressed: hashPending.contains(result.hash)
+            ? null
+            : () => lookupHash(result.hash!),
+        child: Text(l('hashLookup')),
+      ),
+      if (hashResults[result.hash] case final HashLookupResult remote) ...[
+        Text(l('hashStatus${remote.status.name}')),
+        if (remote.status == HashLookupStatus.reported)
+          Text(context.l.hashCounts(remote.malicious, remote.suspicious)),
+      ],
+    ],
+    TextButton(
+      onPressed: () => Clipboard.setData(
+        ClipboardData(
+          text: jsonEncode({
+            l('result'): l(result.verdict),
+            l('date'): result.time.toUtc().toIso8601String(),
+            l('done'): result.complete,
+            l('score'): result.score,
+            l('confidence'): l(result.confidence.name),
+            l('why'): result.findings.map((f) => l(f.code)).toList(),
+            'SHA-256': result.hash,
+            l('source'): l(result.source),
+          }),
+        ),
+      ),
+      child: Text(l('exportReport')),
+    ),
+    heading(result.verdict),
     if (result.signatureUnchecked) Text(l('signatureUnchecked')),
     for (final entry in result.details.entries)
-      Text([l(entry.key), entry.value.toString()].join(' · ')),
+      Text(
+        [
+          l(entry.key),
+          entry.key == 'signatureStatus'
+              ? l(entry.value.toString())
+              : entry.value.toString(),
+        ].join(' · '),
+      ),
     Text(
       result.reputation == 'disabled'
           ? l('online')
@@ -725,6 +774,39 @@ class _WorkspaceState extends ConsumerState<Workspace>
         onTap: () => info(key, '${key}Body'),
       ),
   ];
+
+  Future<void> lookupHash(String hash) async {
+    final allowed = await showDialog<bool>(
+      context: context,
+      builder: (dialog) => AlertDialog(
+        title: Text(l('hashLookup')),
+        content: Text(l('hashDisclosure')),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialog, false),
+            child: Text(l('later')),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(dialog, true),
+            child: Text(l('hashAllow')),
+          ),
+        ],
+      ),
+    );
+    if (allowed != true || !mounted) return;
+    setState(() => hashPending.add(hash));
+    final configured = Uri.tryParse(gateway.text.trim()) ?? Uri();
+    final result = await FileHashReputationProvider(
+      configured.replace(path: '/v1/hash', query: '', fragment: ''),
+      gatewayToken.text.trim(),
+    ).check(hash, consent: true);
+    if (mounted) {
+      setState(() {
+        hashResults[hash] = result;
+        hashPending.remove(hash);
+      });
+    }
+  }
 
   Future<void> info(String title, String content, {String action = 'close'}) =>
       showDialog<void>(

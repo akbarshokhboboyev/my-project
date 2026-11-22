@@ -49,6 +49,11 @@ class ScanResult {
   final String reputation;
   final Map<String, dynamic> details;
   final bool signatureUnchecked;
+  String get verdict => !complete
+      ? 'verdictUnknown'
+      : score >= 25
+      ? 'verdictPossible'
+      : 'verdictNoFindings';
   int get score =>
       {for (final f in findings) f.code: f.weight}.values
           .fold<int>(0, (sum, weight) => sum + weight)
@@ -62,7 +67,8 @@ class ScanResult {
           : score < 75
           ? 2
           : 3];
-  Confidence get confidence => !complete || findings.isEmpty
+  Confidence get confidence =>
+      !complete || findings.every((finding) => finding.weight == 0)
       ? Confidence.limited
       : findings.any((f) => f.code == 'reputationMatch')
       ? Confidence.strong

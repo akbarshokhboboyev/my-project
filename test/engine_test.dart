@@ -4,6 +4,21 @@ import 'package:shieldguard/core/platform.dart';
 
 void main() {
   final engine = ThreatEngine();
+  test('unknown format never receives a clean verdict', () {
+    expect(
+      ScanResult(ThreatType.file, [], complete: false).verdict,
+      'verdictUnknown',
+    );
+  });
+  test('static indicators produce a qualified verdict', () {
+    expect(
+      ScanResult(ThreatType.file, [const Finding('dexDynamic', 30)]).verdict,
+      'verdictPossible',
+    );
+  });
+  test('no findings keeps a limited verdict', () {
+    expect(ScanResult(ThreatType.file, []).verdict, 'verdictNoFindings');
+  });
   test('notification result retains the original scan time', () {
     const time = 1700000000000;
     final result = ShieldPlatform().decode({

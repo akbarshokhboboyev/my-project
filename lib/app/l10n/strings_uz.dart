@@ -374,7 +374,7 @@ class StringsUz extends Strings {
 
   @override
   String get aboutBody =>
-      'ShieldGuard havola, xabar va fayllarda shubhali belgilarni mahalliy qoidalar bilan aniqlaydi. Versiya 2.0.0, yig‘ilish 2. Onlayn manba — alohida sozlanadigan Google Web Risk.';
+      'ShieldGuard havola, xabar va fayllarda shubhali belgilarni mahalliy qoidalar bilan aniqlaydi. Versiya 3.0.0, yig‘ilish 3. Onlayn manba — alohida sozlanadigan Google Web Risk.';
 
   @override
   String get help => 'Yordam';
@@ -516,4 +516,119 @@ class StringsUz extends Strings {
 
   @override
   String get sections => 'PE bo‘limlari soni';
+
+  @override
+  String get archiveDuplicate => 'Arxivda takroriy nomli elementlar bor.';
+
+  @override
+  String get contentLimit =>
+      'Tanlangan kontentning bir qismi resurs chegarasi sabab tekshirilmadi.';
+
+  @override
+  String get dexMalformed =>
+      'DEX tuzilishi buzilgan yoki qo‘llab-quvvatlanmaydi.';
+
+  @override
+  String get dexDynamic =>
+      'DEX ichida dinamik kod yuklashga oid statik havola bor.';
+
+  @override
+  String get dexInstaller =>
+      'DEX ichida ilova o‘rnatish API’siga statik havola bor.';
+
+  @override
+  String get dexAccessibility =>
+      'DEX ichida maxsus imkoniyatlar xizmatiga statik havola bor.';
+
+  @override
+  String get dexNotification =>
+      'DEX ichida bildirishnomalarga kirish xizmatiga statik havola bor.';
+
+  @override
+  String get elfMalformed => 'Native kutubxona ELF tuzilishi buzilgan.';
+
+  @override
+  String get signatureVerified =>
+      'APK imzosi yaxlitligi tasdiqlandi. Bu ishlab chiquvchi ishonchliligini tasdiqlamaydi.';
+
+  @override
+  String get signatureFailed =>
+      'APK imzosi yaxlitligini tekshirish muvaffaqiyatsiz.';
+
+  @override
+  String get signatureStatus => 'APK imzosi holati';
+
+  @override
+  String get verdictUnknown => 'Aniqlab bo‘lmadi';
+
+  @override
+  String get verdictPossible => 'Xavfli bo‘lishi mumkin';
+
+  @override
+  String get verdictNoFindings => 'Muhim xavf belgilari topilmadi';
+
+  @override
+  String get splitUnchecked =>
+      'Ichki APK komponentining imzosi yoki metama’lumoti tekshirilmadi.';
+
+  @override
+  String get splitMismatch =>
+      'Ichki APK komponentlarining paket yoki sertifikatlari mos kelmaydi.';
+
+  @override
+  String get unknownContainer => 'Fayl konteyneri to‘liq tekshirilmadi.';
+
+  @override
+  String get exportReport => 'Hisobotni nusxalash';
+
+  @override
+  String get hashLookup => 'Fayl xeshini onlayn tekshirish';
+
+  @override
+  String get hashDisclosure =>
+      'Faylning SHA-256 izi serveringiz va VirusTotal xizmatiga yuboriladi. Fayl yuborilmaydi. Xeshni so‘rash ushbu faylga qiziqishingizni oshkor qilishi mumkin. Bu so‘rovga rozimisiz?';
+
+  @override
+  String get hashAllow => 'Roziman, xeshni tekshirish';
+
+  @override
+  String get hashStatusreported =>
+      'VirusTotal tahlil hisoblari olindi. Ular zararli faoliyat tasdig‘i yoki ehtimol foizi emas.';
+
+  @override
+  String get hashStatusnoMatch =>
+      'Reputatsiya bazasida fayl topilmadi. Xavfsizlik kafolatlanmaydi.';
+
+  @override
+  String get hashStatusdisabled => 'Xesh tekshiruvi o‘chirilgan.';
+
+  @override
+  String get hashStatusunconfigured =>
+      'Xesh manbasi server credentiallari va mos litsenziyani talab qiladi.';
+
+  @override
+  String get hashStatusunavailable => 'Xesh manbasiga ulanish bajarilmadi.';
+
+  @override
+  String get hashStatusrateLimited => 'Xesh so‘rovlari vaqtincha cheklangan.';
+
+  @override
+  String get hashStatusinvalidResponse =>
+      'Xesh manbasi yaroqsiz javob qaytardi.';
+
+  @override
+  String hashCounts(int malicious, int suspicious) {
+    return 'Zararli deb belgilagan manbalar $malicious, shubhali deb belgilagan manbalar $suspicious.';
+  }
+
+  @override
+  String get pdfEncrypted =>
+      'PDF shifrlangan. Parol so‘ralmaydi, ichki tarkib tekshirilmadi.';
+
+  @override
+  String get pdfParseIncomplete =>
+      'PDF obyektlarini to‘liq tahlil qilib bo‘lmadi.';
+
+  @override
+  String get pdfParsed => 'PDF obyektlari alohida jarayonda tahlil qilindi.';
 }
