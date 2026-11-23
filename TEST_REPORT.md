@@ -1,5 +1,7 @@
 # ShieldGuard V3.1 — final verification (2026-11-23)
 
+**Subsequent activation recovery:** user requested activation after this report. The existing listener grant was cycled using visible Android settings/confirmation. Final checks: ShieldGuard present in **Live notification listeners**, `TelegramThreatListener` service record present, local Telegram `enabled=true`; the live-listener check passed twice. This supersedes the earlier paused/unbound observation for runtime activation only. No fresh Telegram notification or Home-label assertion was established; no source change, ADB permission override, reinstall or new permission was required.
+
 Current version **3.1.0+4**, branch `feature/shieldguard-v3-1`. The sections below this final record are historical and must not be counted as reruns. Detailed scope, artifact identity and limitations: `FINAL_RELEASE_REPORT.md`.
 
 | Current command/check | Observed outcome |

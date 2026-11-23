@@ -1,5 +1,7 @@
 # ShieldGuard V3.1 — final hardening status
 
+**Activation follow-up, 2026-11-23:** the user requested activation; after cycling the existing notification-access grant in visible Android settings, the OS live-listener list and service record confirmed `TelegramThreatListener` bound, with local monitoring enabled. The earlier paused runtime state below is resolved. Fresh Telegram threat delivery and Home-label verification remain untested in this follow-up; no product code changed.
+
 2026-11-23 · `feature/shieldguard-v3-1` · **3.1.0+4**. Source implementation and automated regressions are complete; **production release remains blocked by missing user-owned signing credentials**, and complete device E2E acceptance remains unverified.
 
 - Four bounded static threat-family assessments are integrated with existing file, installed-app and authorized-folder analysis. Confidence/completeness and fixed evidence IDs are retained; rule-version changes invalidate monitoring caches without enabling monitoring.

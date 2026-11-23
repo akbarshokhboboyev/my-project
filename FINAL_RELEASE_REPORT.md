@@ -2,6 +2,8 @@
 
 2026-11-23 · `feature/shieldguard-v3-1` · version **3.1.0+4**.
 
+**Later activation recovery, 2026-11-23:** at the user's request, the existing notification-access grant was cycled through Android's visible settings and confirmation flow. Android subsequently listed ShieldGuard under live notification listeners and its service record was present; local Telegram monitoring remained enabled. This resolves the earlier unbound-service observation below. A fresh Telegram threat notification and the Home status label were not verified in this recovery check. No code or privileged permission override was needed.
+
 Implementation and automated regression are complete. **Production release is blocked by unavailable user-owned signing credentials.** No production APK/AAB was generated or published; the release guard remains enforced. Device verification is qualified below, rather than represented as full acceptance.
 
 ## Implemented behavior
