@@ -26,6 +26,10 @@ internal class InstalledAppScanner(private val context: Context) {
             .filterNot { it.isISOControl() || it in '\u202a'..'\u202e' || it in '\u2066'..'\u2069' }.take(64)
         val details = mapOf<String, Any>(
             "installedPackage" to name, "installedLabel" to label,
+            "familyMetadataChecked" to true,
+            "keyboardService" to info.services.orEmpty().any { it.permission == "android.permission.BIND_INPUT_METHOD" },
+            "notificationService" to info.services.orEmpty().any { it.permission == "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE" },
+            "declaredService" to info.services.orEmpty().isNotEmpty(),
             "versionCode" to (if (Build.VERSION.SDK_INT >= 28) info.longVersionCode else info.versionCode.toLong()),
             "versionName" to (info.versionName ?: ""), "minSdk" to app.minSdkVersion,
             "targetSdk" to app.targetSdkVersion, "permissions" to info.requestedPermissions.orEmpty().toList(),
@@ -41,12 +45,14 @@ internal class InstalledAppScanner(private val context: Context) {
         val sources = listOfNotNull(app.sourceDir) + app.splitSourceDirs.orEmpty()
         var complete = sources.isNotEmpty() && sources.size <= 8
         var contentRead = false
+        val staticEvidence = ThreatFamilyAnalyzer.metadata(metadata).toMutableSet()
+        var familyCoverage = complete
         var verified = complete
         for (source in sources.take(8)) {
             if (cancelled()) return unavailable("scanCancelled")
             val file = File(source)
             if (!file.isFile || !file.canRead() || file.length() !in 1..(32L * 1024 * 1024)) {
-                complete = false; verified = false; continue
+                complete = false; verified = false; familyCoverage = false; continue
             }
             val report = try {
                 FileAnalyzer(File(context.cacheDir, "shield-scans"),
@@ -54,7 +60,10 @@ internal class InstalledAppScanner(private val context: Context) {
                     cancelled, readApk = NativeFileInspector(context)::readApk)
                     .inspect("base.apk") { file.inputStream() }
             } catch (_: Exception) { null }
-            if (report == null) { complete = false; verified = false; continue }
+            if (report == null) { complete = false; verified = false; familyCoverage = false; continue }
+            val sourceDetails = report["details"] as? Map<*, *>
+            staticEvidence.addAll((sourceDetails?.get("staticEvidence") as? List<*>)?.filterIsInstance<String>().orEmpty())
+            familyCoverage = familyCoverage && sourceDetails?.get("familyCoverage") == true
             contentRead = true
             complete = complete && report["complete"] == true
             verified = verified && report["signatureChecked"] == true &&
@@ -65,13 +74,14 @@ internal class InstalledAppScanner(private val context: Context) {
         }
         if (!complete) findings["installedMetadataOnly"] = 0
         if (cancelled()) return unavailable("scanCancelled")
-        return mapOf("kind" to "file", "format" to ("APK · " + name), "signers" to signers,
+        val report = mapOf("kind" to "file", "format" to ("APK · " + name), "signers" to signers,
             "signatureChecked" to (verified || "signatureFailed" in findings), "findings" to findings, "complete" to complete,
             "time" to System.currentTimeMillis(),
             "details" to (details + mapOf("installedCoverage" to
                 (if (complete) "installedContent" else if (contentRead) "installedPartial" else "installedMetadataOnly"),
                 "signatureStatus" to if ("signatureFailed" in findings) "signatureFailed"
-                    else if (verified) "signatureVerified" else "installedPlatformSignature")))
+                    else if (verified) "signatureVerified" else "installedPlatformSignature", "familyCoverage" to familyCoverage)))
+        return ThreatFamilyAnalyzer.decorate(report, staticEvidence, familyCoverage && complete)
     }
 
     private fun unavailable(reason: String = "installedUnavailable"): Map<String, Any> =

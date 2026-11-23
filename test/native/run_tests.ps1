@@ -6,8 +6,10 @@ $null = New-Item -ItemType Directory -Force -Path (Join-Path $root 'build')
 $sourceRoot = Join-Path $root 'android/app/src/main/kotlin/uz/app/shieldguard'
 $sources = @('FileAnalyzer.kt', 'NotificationAnalyzer.kt', 'ScanLimits.kt', 'StructuralInspector.kt', 'AlertGate.kt', 'ApkContentInspector.kt', 'SplitApkAnalyzer.kt', 'InstalledAppPolicy.kt', 'SharedFileScanner.kt', 'IncrementalFileScanner.kt', 'ApkRiskPolicy.kt', 'AutomaticBlockEngine.kt') |
     ForEach-Object { Join-Path $sourceRoot $_ }
+$sources += Join-Path $sourceRoot 'ThreatFamilyAnalyzer.kt'
 $tests = @('FileAnalyzerTest.kt', 'NotificationAnalyzerTest.kt', 'AdvancedFileTest.kt', 'V3StaticTest.kt', 'TelegramPhishingTest.kt', 'InstalledAppTest.kt', 'SharedFileScannerTest.kt', 'IncrementalFileScannerTest.kt', 'ApkGuardTest.kt') |
     ForEach-Object { Join-Path $PSScriptRoot $_ }
+$tests += Join-Path $PSScriptRoot 'ThreatFamilyTest.kt'
 if ($KotlinLib) {
     $stdlib = (Get-ChildItem -LiteralPath $KotlinLib -Filter 'kotlin-stdlib-*.jar' | Select-Object -First 1).FullName
     & java -cp "$KotlinLib/*" org.jetbrains.kotlin.cli.jvm.K2JVMCompiler -no-stdlib -no-reflect -classpath $stdlib -d $output @sources @tests
@@ -22,4 +24,6 @@ foreach ($main in @('FileAnalyzerTestKt', 'NotificationAnalyzerTestKt', 'Advance
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }
 & java -cp $runtime 'uz.app.shieldguard.TelegramPhishingTestKt' (Join-Path $root 'test/fixtures/telegram_phishing.tsv')
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+& java -cp $runtime 'uz.app.shieldguard.ThreatFamilyTestKt'
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

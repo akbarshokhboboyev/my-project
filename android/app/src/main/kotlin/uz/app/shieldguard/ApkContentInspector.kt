@@ -37,8 +37,9 @@ internal object ApkContentInspector {
             }
             budget -= bytes.size
             if (CRC32().apply { update(bytes) }.value != entry.crc) findings["structure"] = 30
-            if (dex) inspectDex(bytes, findings) else inspectElf(bytes, findings)
+            if (dex) inspectDex(bytes, findings) else { inspectElf(bytes, findings); findings["sxNativeOpaque"] = 0 }
         }
+        if (zip.getEntry("AndroidManifest.xml") != null) findings["sxCodeChecked"] = 0
     }
 
     fun inspectDex(bytes: ByteArray, findings: MutableMap<String, Int>) {
@@ -63,6 +64,9 @@ internal object ApkContentInspector {
         if ("Landroid/content/pm/PackageInstaller;" in text) findings["dexInstaller"] = 10
         if ("Landroid/accessibilityservice/AccessibilityService;" in text) findings["dexAccessibility"] = 15
         if ("Landroid/service/notification/NotificationListenerService;" in text) findings["dexNotification"] = 10
+        val evidence = ThreatFamilyAnalyzer.dexEvidence(bytes)
+        if (evidence == null) findings["sxIncomplete"] = 0
+        else evidence.forEach { findings["sx$it"] = 0 }
     }
 
     fun inspectElf(bytes: ByteArray, findings: MutableMap<String, Int>) {

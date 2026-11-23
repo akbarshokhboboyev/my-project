@@ -191,6 +191,7 @@ internal class FileAnalyzer(
                 findings["doubleExtension"] = 45
             }
             var packageName: String? = null
+            var familyMetadata: ApkMetadata? = null
             if ("contentLimit" in findings || "dexMalformed" in findings || "elfMalformed" in findings) complete = false
             var signerHashes = emptyList<String>()
             if (format == "APK" && "structure" !in findings && "archiveLimit" !in findings) {
@@ -199,6 +200,7 @@ internal class FileAnalyzer(
                     findings["apkUnreadable"] = 30
                     complete = false
                 } else {
+                    familyMetadata = info
                     packageName = info.packageName
                     signerHashes = info.signers
                     details = info.details
@@ -215,7 +217,14 @@ internal class FileAnalyzer(
                 put("signatureChecked", details["signatureStatus"] in setOf("signatureVerified", "signatureFailed"))
                 if (format.isNotEmpty()) put("format", listOfNotNull(format, packageName).joinToString(" · "))
             }
-            return onAnalyzed(temp, report)
+            val finalReport = if (format == "APK") {
+                val static = findings.keys.filter { it.startsWith("sx") && it !in setOf("sxCodeChecked", "sxIncomplete", "sxNativeOpaque") }.map { it.removePrefix("sx") }.toSet() +
+                    (familyMetadata?.let { ThreatFamilyAnalyzer.metadata(it) } ?: emptySet())
+                val coverage = familyMetadata?.details?.get("familyMetadataChecked") == true &&
+                    "sxCodeChecked" in findings && "sxIncomplete" !in findings && "sxNativeOpaque" !in findings
+                ThreatFamilyAnalyzer.decorate(report + mapOf("details" to (details + mapOf("familyCoverage" to coverage))), static, coverage)
+            } else report + mapOf("findings" to findings.filterKeys { !it.startsWith("sx") })
+            return onAnalyzed(temp, finalReport)
         } catch (stop: ScanStopped) {
             return result(stop.code)
         } finally {

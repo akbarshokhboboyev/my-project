@@ -47,6 +47,6 @@ internal object InstalledAppPolicy {
     fun shouldAlert(findings: Map<String, Int>, notificationsAllowed: Boolean): Boolean =
         notificationsAllowed && findings.values.sum() >= 50 &&
             ("installedCombo" in findings || "signatureFailed" in findings ||
-                findings.filterKeys { it !in setOf("apkSms", "apkCombo", "apkExported",
+                findings.filterKeys { !(it.startsWith("family") && it.endsWith("Possible")) && it !in setOf("apkSms", "apkCombo", "apkExported",
                     "apkAccess", "apkInstall", "installedTrustUnknown") }.values.sum() >= 50)
 }

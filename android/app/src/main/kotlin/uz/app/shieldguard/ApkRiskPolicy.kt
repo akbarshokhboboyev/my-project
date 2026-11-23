@@ -17,14 +17,16 @@ internal object ApkRiskPolicy {
             .mapNotNull { it.key as? String }.take(64)
         val details = (report["details"] as? Map<*, *>).orEmpty()
         val checked = report["signatureChecked"] == true && details["signatureStatus"] in setOf("signatureVerified", "signatureFailed")
-        val complete = report["complete"] == true && checked
+        val familyRows = (details["threatFamilies"] as? List<*>).orEmpty().filterIsInstance<Map<*, *>>()
+        val complete = report["complete"] == true && checked && familyRows.all { it["complete"] == true }
+        val familyStrong = familyRows.any { it["status"] == "strongIndicators" }
         val score = findings.values.sumOf { (it as? Int ?: 0).coerceIn(0, 100) }.coerceAtMost(100)
         val integrity = report["signatureChecked"] == true && details["signatureStatus"] == "signatureFailed"
         val sensitiveCombo = "apkAccess" in evidence && "apkInstall" in evidence &&
             ("apkSms" in evidence || evidence.any { it.startsWith("dex") && it !in setOf("dexMalformed", "dexHeader") })
         val risk = when {
             knownMalicious -> "confirmedHighConfidenceThreat"
-            integrity || sensitiveCombo -> "strongSuspicion"
+            integrity || sensitiveCombo || familyStrong -> "strongSuspicion"
             !complete -> "unknown"
             evidence.isNotEmpty() -> "heuristicWarning"
             else -> "noFindings"
@@ -44,9 +46,12 @@ internal object ApkDiscoveryCoordinator {
         val format = (report["format"] as? String).orEmpty().substringBefore(" · ")
         val candidate = format == "APK" || displayName.lowercase().endsWith(".apk")
         if (!candidate) return report
-        val assessment = ApkRiskPolicy.assess(report)
+        val sourceDetails = (report["details"] as? Map<*, *>).orEmpty()
+        val qualified = if (sourceDetails["threatFamilies"] is List<*>) ThreatFamilyAnalyzer.decorate(report,
+            (sourceDetails["staticEvidence"] as? List<*>)?.filterIsInstance<String>()?.toSet().orEmpty(), sourceDetails["familyCoverage"] == true) else report
+        val assessment = ApkRiskPolicy.assess(qualified)
         // Filename and URI are neither returned nor persisted as detection evidence.
-        return report + mapOf("details" to ((report["details"] as? Map<*, *>).orEmpty() +
+        return qualified + mapOf("details" to ((qualified["details"] as? Map<*, *>).orEmpty() +
             mapOf("apkAssessment" to assessment.asMap(), "apkActualFormat" to (format == "APK"))))
     }
 }
