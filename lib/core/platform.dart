@@ -35,6 +35,8 @@ class ShieldPlatform {
       channel.invokeMapMethod<String, dynamic>('apkReport', {'id': id});
   Future<Map<String, dynamic>?> forwardApk(String token) =>
       channel.invokeMapMethod<String, dynamic>('apkForward', {'token': token});
+  Future<void> discardApk(String token) =>
+      channel.invokeMethod<void>('apkDiscard', {'token': token});
 
   Future<void> openAccess() => channel.invokeMethod<void>('access');
   Future<void> allowAlerts() => channel.invokeMethod<void>('alerts');
@@ -83,6 +85,10 @@ class ShieldPlatform {
       final int time when time > 0 => DateTime.fromMillisecondsSinceEpoch(time),
       _ => null,
     },
-    complete: value['complete'] == true,
+    complete:
+        value['complete'] == true &&
+        ((value['details'] as Map?)?['apkAssessment'] is! Map ||
+            ((value['details'] as Map)['apkAssessment'] as Map)['complete'] ==
+                true),
   );
 }

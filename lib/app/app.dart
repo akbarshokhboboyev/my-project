@@ -18,6 +18,7 @@ import 'labels.dart';
 import 'l10n/strings.dart';
 
 part 'apk_guard_ui.dart';
+part 'apk_dialog.dart';
 
 final platformProvider = Provider((ref) => ShieldPlatform());
 final engineProvider = Provider((ref) => ThreatEngine());
@@ -45,7 +46,12 @@ final routerProvider = Provider((ref) {
     errorBuilder: (context, state) => const RouteRecoveryPage(),
     routes: [
       ShellRoute(
-        builder: (context, state, child) => Workspace(path: state.uri.path),
+        // Workspace renders the existing tab content itself. Still mount the
+        // router's empty child Navigator so Android Back can safely pop dialogs.
+        builder: (context, state, child) => Stack(
+          fit: StackFit.expand,
+          children: [child, Workspace(path: state.uri.path)],
+        ),
         routes: [
           for (final key in tabs)
             GoRoute(path: route(key), builder: (_, _) => const SizedBox()),
@@ -184,6 +190,7 @@ class _WorkspaceState extends ConsumerState<Workspace>
   List<Map<String, dynamic>> entries = [];
   List<Map<String, dynamic>> apkEntries = [];
   final apkDialogs = <String>{};
+  final finishedApkTokens = <String>{};
   Map<String, dynamic>? deferredApkDialog;
   List<ScanResult> results = [];
   String mode = 'link';
@@ -191,11 +198,13 @@ class _WorkspaceState extends ConsumerState<Workspace>
   DateTime? date;
   bool riskOnly = false;
   bool busy = false;
+  bool apkScanning = false;
   bool draining = false;
   String? notice;
   ShieldPlatform get platform => ref.read(platformProvider);
   ThreatEngine get engine => ref.read(engineProvider);
   String l(String key) => label(context.l, key);
+  void updateApkUi(VoidCallback update) => setState(update);
 
   @override
   void initState() {
@@ -280,6 +289,7 @@ class _WorkspaceState extends ConsumerState<Workspace>
           } else if (value['kind'] == 'fileProgress') {
             setState(() {
               busy = value['busy'] == true;
+              apkScanning = busy && value['apk'] == true;
               if (busy) {
                 mode = 'file';
                 results = [];
@@ -382,9 +392,16 @@ class _WorkspaceState extends ConsumerState<Workspace>
       notice = null;
     });
     context.go('/scan');
+    // Let the shell Navigator attach before presenting a modal. Immediate cold-start
+    // dialogs otherwise leave Android Back racing GoRouter's navigator lookup.
+    await WidgetsBinding.instance.endOfFrame;
+    if (!mounted) return;
     for (final result in next) {
       if (result.details['apkGate'] is Map) {
-        await showApkGate(result.details);
+        await showApkGate({
+          ...result.details,
+          'apkScanReasons': result.findings.map((f) => f.code).toList(),
+        });
       }
     }
     if (record && status['history'] == true) {
@@ -608,6 +625,7 @@ class _WorkspaceState extends ConsumerState<Workspace>
         busy ? null : runScan,
       ),
       if (busy) const LinearProgressIndicator(),
+      if (busy && apkScanning) Text(l('apkScanning')),
       if (busy && mode == 'file')
         TextButton(
           onPressed: () => act(platform.cancelFileScan),
@@ -632,7 +650,10 @@ class _WorkspaceState extends ConsumerState<Workspace>
     if (result.hash != null) SelectableText('SHA-256\n${result.hash!}'),
     if (result.findings.isNotEmpty) heading('why'),
     for (final f in result.findings) Text('• ${l(f.code)}'),
-    if (result.complete && result.findings.isEmpty) Text(l('noFindings')),
+    if (result.complete &&
+        result.findings.isEmpty &&
+        result.details['apkAssessment'] is! Map)
+      Text(l('noFindings')),
     heading('limits'),
     if (result.hash != null) ...[
       TextButton(
@@ -664,7 +685,7 @@ class _WorkspaceState extends ConsumerState<Workspace>
       ),
       child: Text(l('exportReport')),
     ),
-    heading(result.verdict),
+    if (result.details['apkAssessment'] is! Map) heading(result.verdict),
     if (result.signatureUnchecked) Text(l('signatureUnchecked')),
     for (final entry in result.details.entries.where(
       (entry) => ![
@@ -673,6 +694,13 @@ class _WorkspaceState extends ConsumerState<Workspace>
         'apkAssessment',
         'apkGate',
         'apkActualFormat',
+        'staticEvidence',
+        'threatFamilies',
+        'familyCoverage',
+        'familyMetadataChecked',
+        'keyboardService',
+        'notificationService',
+        'declaredService',
       ].contains(entry.key),
     ))
       Text(

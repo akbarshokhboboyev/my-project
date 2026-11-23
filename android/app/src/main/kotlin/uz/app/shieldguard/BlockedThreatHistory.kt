@@ -18,6 +18,16 @@ internal object BlockedThreatHistory {
                 put("score", row.getInt("score")); put("complete", row.getBoolean("complete")); put("time", row.getLong("time"))
                 val codes = row.getJSONArray("evidence")
                 put("evidence", (0 until minOf(codes.length(), 64)).map { codes.getString(it) })
+                val families = row.optJSONArray("families") ?: JSONArray()
+                put("families", (0 until minOf(families.length(), 4)).map { index ->
+                    val family = families.getJSONObject(index)
+                    buildMap<String, Any> {
+                        for (key in listOf("family", "status", "severity", "confidence", "method", "explanation")) put(key, family.getString(key))
+                        put("complete", family.getBoolean("complete"))
+                        val ids = family.getJSONArray("evidence")
+                        put("evidence", (0 until minOf(ids.length(), 32)).map { ids.getString(it) })
+                    }
+                })
             }
         }.getOrNull() }
     }
@@ -32,6 +42,7 @@ internal object BlockedThreatHistory {
         if (known.has(key) && age in 0 until 10 * 60 * 1000L) return null
         val id = UUID.randomUUID().toString()
         val row = ApkRiskPolicy.assess(report).asMap() + mapOf("id" to id, "time" to now,
+            "families" to (((report["details"] as? Map<*, *>)?.get("threatFamilies") as? List<*>)?.take(4).orEmpty()),
             "outcome" to outcome, "advice" to "apkAdvice")
         val next = (listOf(row) + entries(context)).take(50)
         val dedup = JSONObject()
@@ -45,7 +56,7 @@ internal object BlockedThreatHistory {
         val row = entries(context).firstOrNull { it["id"] == id } ?: return null
         return mapOf("kind" to "file", "format" to "APK", "complete" to row.getValue("complete"),
             "time" to row.getValue("time"), "findings" to (row["evidence"] as List<*>).associate { it.toString() to 0 },
-            "details" to mapOf("apkAssessment" to row, "apkGate" to mapOf("blocked" to (row["outcome"] == "blockedByShieldGuard"),
+            "details" to mapOf("apkAssessment" to row, "threatFamilies" to row.getValue("families"), "apkGate" to mapOf("blocked" to (row["outcome"] == "blockedByShieldGuard"),
                 "outcome" to row.getValue("outcome"))))
     }
     fun clear(context: Context) = synchronized(lock) {

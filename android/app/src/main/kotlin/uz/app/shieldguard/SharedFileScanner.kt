@@ -6,7 +6,8 @@ import java.io.FileNotFoundException
 internal data class SharedFileRequest(
     val uris: List<String>,
     val readGranted: Boolean,
-    val truncated: Boolean = false
+    val truncated: Boolean = false,
+    val apkHint: Boolean = false
 )
 
 internal class SharedFileScanner(

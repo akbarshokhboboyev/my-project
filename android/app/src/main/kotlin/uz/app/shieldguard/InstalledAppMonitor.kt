@@ -45,6 +45,14 @@ internal object InstalledAppMonitor {
     fun sync(context: Context) = synchronized(lock) {
         val app = context.applicationContext
         if (enabled(app)) {
+            val prefs = store(app)
+            if (prefs.getInt("rulesVersion", 0) != ThreatFamilyAnalyzer.rulesVersion) {
+                context.options().edit().putLong("appGeneration", generation(context) + 1).commit()
+                ScanScheduler.cancel(app)
+                prefs.edit().remove("known").remove("report").remove("alertReport")
+                    .putInt("rulesVersion", ThreatFamilyAnalyzer.rulesVersion).commit()
+                app.getSystemService(NotificationManager::class.java).cancel("installed", 1)
+            }
             if (receiver == null) {
                 val listener = object : BroadcastReceiver() {
                     override fun onReceive(context: Context, intent: Intent) {

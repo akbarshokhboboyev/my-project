@@ -769,7 +769,7 @@ abstract class Strings {
   /// No description provided for @aboutBody.
   ///
   /// In uz, this message translates to:
-  /// **'ShieldGuard havola, xabar va fayllarda shubhali belgilarni mahalliy qoidalar bilan aniqlaydi. Versiya 3.0.0, yig‘ilish 3. Onlayn manba — alohida sozlanadigan Google Web Risk.'**
+  /// **'ShieldGuard havola, xabar, APK va ruxsatli papkalarda shubhali statik belgilarni mahalliy tekshiradi. Versiya 3.1.0, yig‘ilish 4. Bu universal antivirus yoki zararsizlik kafolati emas. Onlayn tekshiruv alohida rozilik va sozlangan provider bilan ishlaydi.'**
   String get aboutBody;
 
   /// No description provided for @help.
@@ -1827,6 +1827,372 @@ abstract class Strings {
   /// In uz, this message translates to:
   /// **'Avval APK uzatish himoyasini yoqing.'**
   String get apkDisabled;
+
+  /// No description provided for @apkScanning.
+  ///
+  /// In uz, this message translates to:
+  /// **'APK tekshirilmoqda...'**
+  String get apkScanning;
+
+  /// No description provided for @apkUnavailableSnapshot.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xavfsiz uzatish nusxasi mavjud emas. Ruxsat va cheklovlarni tekshirib, faylni qayta skanerlang.'**
+  String get apkUnavailableSnapshot;
+
+  /// No description provided for @apkDialogBlockedTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'APK BLOKLANDI'**
+  String get apkDialogBlockedTitle;
+
+  /// No description provided for @apkDialogBlockedBody.
+  ///
+  /// In uz, this message translates to:
+  /// **'ShieldGuard ushbu APK’ni o‘rnatish jarayoniga uzatishni to‘xtatdi. Aniqlangan kuchli statik yoki yaxlitlik dalillari sabab uni o‘rnatmang.'**
+  String get apkDialogBlockedBody;
+
+  /// No description provided for @apkDialogClearTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tekshiruvda xavf belgisi topilmadi'**
+  String get apkDialogClearTitle;
+
+  /// No description provided for @apkDialogClearBody.
+  ///
+  /// In uz, this message translates to:
+  /// **'ShieldGuard mavjud tekshiruvlarda shubhali belgi aniqlamadi. Bu faylning mutlaq xavfsizligini kafolatlamaydi.'**
+  String get apkDialogClearBody;
+
+  /// No description provided for @apkDialogWarningTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Shubhali APK'**
+  String get apkDialogWarningTitle;
+
+  /// No description provided for @apkDialogWarningBody.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ayrim shubhali indikatorlar bor, ammo bu malware tasdig‘i emas. Tavsiya etilgan xavfsiz amal — o‘rnatmaslik. Davom etish alohida ogohlantirish tasdig‘ini talab qiladi.'**
+  String get apkDialogWarningBody;
+
+  /// No description provided for @apkDialogUnknownTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tekshiruv yakunlanmadi'**
+  String get apkDialogUnknownTitle;
+
+  /// No description provided for @apkDialogUnknownBody.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bu APK’ni yetarli darajada tekshirib bo‘lmadi. Ruxsat, vaqt yoki tahlil cheklovlarini tekshiring. Natija xavfsizlik tasdig‘i emas; qat’iy rejimda uzatish to‘xtatiladi.'**
+  String get apkDialogUnknownBody;
+
+  /// No description provided for @apkDialogBoundary.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bu himoya faqat ShieldGuard orqali uzatishga tegishli. Boshqa manbadan Android installer’ga bevosita o‘tishni universal bloklay olmaydi. Fayl avtomatik o‘rnatilmaydi.'**
+  String get apkDialogBoundary;
+
+  /// No description provided for @apkDoNotInstall.
+  ///
+  /// In uz, this message translates to:
+  /// **'O‘rnatmaslik'**
+  String get apkDoNotInstall;
+
+  /// No description provided for @apkCancel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bekor qilish'**
+  String get apkCancel;
+
+  /// No description provided for @apkInstallContinue.
+  ///
+  /// In uz, this message translates to:
+  /// **'O‘rnatishga davom etish'**
+  String get apkInstallContinue;
+
+  /// No description provided for @apkHandoffRequested.
+  ///
+  /// In uz, this message translates to:
+  /// **'Android tanlov oynasiga uzatish so‘raldi. Bu APK muvaffaqiyatli o‘rnatildi degani emas.'**
+  String get apkHandoffRequested;
+
+  /// No description provided for @familyransomware.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ransomware statik indikatorlari'**
+  String get familyransomware;
+
+  /// No description provided for @familyspyware.
+  ///
+  /// In uz, this message translates to:
+  /// **'Keylogger / spyware statik indikatorlari'**
+  String get familyspyware;
+
+  /// No description provided for @familybanking.
+  ///
+  /// In uz, this message translates to:
+  /// **'Banking Trojan statik indikatorlari'**
+  String get familybanking;
+
+  /// No description provided for @familyrat.
+  ///
+  /// In uz, this message translates to:
+  /// **'RAT statik indikatorlari'**
+  String get familyrat;
+
+  /// No description provided for @familyStatusstrongIndicators.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kuchli indikatorlar kombinatsiyasi'**
+  String get familyStatusstrongIndicators;
+
+  /// No description provided for @familyStatuspossibleIndicators.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ehtimoliy indikatorlar; malware tasdig‘i emas'**
+  String get familyStatuspossibleIndicators;
+
+  /// No description provided for @familyStatusinsufficientEvidence.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yetarli dalil yoki qamrov yo‘q'**
+  String get familyStatusinsufficientEvidence;
+
+  /// No description provided for @familyStatusnoIndicatorsObserved.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mavjud tekshiruvda indikator kuzatilmadi'**
+  String get familyStatusnoIndicatorsObserved;
+
+  /// No description provided for @familyLimit.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bu faqat statik kod reference va manifest bahosi. Haqiqiy xatti-harakat yoki zararsizlik kafolati emas.'**
+  String get familyLimit;
+
+  /// No description provided for @familyIncomplete.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ushbu baholash qamrovi tugallanmagan.'**
+  String get familyIncomplete;
+
+  /// No description provided for @familyRansomwareExplanation.
+  ///
+  /// In uz, this message translates to:
+  /// **'Crypto, fayl yozish/aylanib chiqish, keng storage, xizmat va to‘lov talabi belgilari birgalikda baholanadi. Crypto kutubxonasi yolg‘iz yetarli emas.'**
+  String get familyRansomwareExplanation;
+
+  /// No description provided for @familySpywareExplanation.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kiritish hodisalari, accessibility/klaviatura, tarmoq va ma’lumot uzatish belgilarining birikmasi. Haqiqiy tugma bosishlari kuzatilmagan.'**
+  String get familySpywareExplanation;
+
+  /// No description provided for @familyBankingExplanation.
+  ///
+  /// In uz, this message translates to:
+  /// **'Accessibility, overlay, credential/OTP, bank nishoni va uzatish belgilarining birikmasi. Bank nomi yoki login oynasi yolg‘iz yetarli emas.'**
+  String get familyBankingExplanation;
+
+  /// No description provided for @familyRatExplanation.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ekran boshqaruvi, process/remote command, tarmoq va yashirish belgilarining birikmasi. Qonuniy remote support funksiyasi yolg‘iz hukm emas.'**
+  String get familyRatExplanation;
+
+  /// No description provided for @familyRansomware.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ransomware bilan mos kuchli statik kombinatsiya aniqlandi.'**
+  String get familyRansomware;
+
+  /// No description provided for @familySpyware.
+  ///
+  /// In uz, this message translates to:
+  /// **'Keylogger/spyware bilan mos kuchli statik kombinatsiya aniqlandi.'**
+  String get familySpyware;
+
+  /// No description provided for @familyBanking.
+  ///
+  /// In uz, this message translates to:
+  /// **'Banking Trojan bilan mos kuchli statik kombinatsiya aniqlandi.'**
+  String get familyBanking;
+
+  /// No description provided for @familyRat.
+  ///
+  /// In uz, this message translates to:
+  /// **'RAT bilan mos kuchli statik kombinatsiya aniqlandi.'**
+  String get familyRat;
+
+  /// No description provided for @familyRansomwarePossible.
+  ///
+  /// In uz, this message translates to:
+  /// **'Crypto va fayl operatsiyalari kombinatsiyasi bor; ransomware tasdig‘i emas.'**
+  String get familyRansomwarePossible;
+
+  /// No description provided for @familySpywarePossible.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kiritish/tarmoq kombinatsiyasi bor; spyware tasdig‘i emas.'**
+  String get familySpywarePossible;
+
+  /// No description provided for @familyBankingPossible.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sezgir UI/tarmoq kombinatsiyasi bor; banking trojan tasdig‘i emas.'**
+  String get familyBankingPossible;
+
+  /// No description provided for @familyRatPossible.
+  ///
+  /// In uz, this message translates to:
+  /// **'Remote-support bilan ham mos belgilar bor; RAT tasdig‘i emas.'**
+  String get familyRatPossible;
+
+  /// No description provided for @evidencecryptoReference.
+  ///
+  /// In uz, this message translates to:
+  /// **'Shifrlash API reference’i'**
+  String get evidencecryptoReference;
+
+  /// No description provided for @evidencefileWriteReference.
+  ///
+  /// In uz, this message translates to:
+  /// **'Fayl yozish API reference’i'**
+  String get evidencefileWriteReference;
+
+  /// No description provided for @evidencefileEnumerationReference.
+  ///
+  /// In uz, this message translates to:
+  /// **'Fayllarni aylanib chiqish reference’i'**
+  String get evidencefileEnumerationReference;
+
+  /// No description provided for @evidenceransomDemandString.
+  ///
+  /// In uz, this message translates to:
+  /// **'Shifrlash/to‘lov talabi bilan mos statik satr'**
+  String get evidenceransomDemandString;
+
+  /// No description provided for @evidencebroadStoragePermission.
+  ///
+  /// In uz, this message translates to:
+  /// **'Keng storage imkoniyati manifestda e’lon qilingan'**
+  String get evidencebroadStoragePermission;
+
+  /// No description provided for @evidencedeclaredService.
+  ///
+  /// In uz, this message translates to:
+  /// **'Manifestda xizmat e’lon qilingan; fonda ishlayotgani tasdiqlanmagan'**
+  String get evidencedeclaredService;
+
+  /// No description provided for @evidenceaccessibilityService.
+  ///
+  /// In uz, this message translates to:
+  /// **'Accessibility xizmati e’lon qilingan'**
+  String get evidenceaccessibilityService;
+
+  /// No description provided for @evidencekeyboardService.
+  ///
+  /// In uz, this message translates to:
+  /// **'Klaviatura xizmati e’lon qilingan'**
+  String get evidencekeyboardService;
+
+  /// No description provided for @evidencenotificationService.
+  ///
+  /// In uz, this message translates to:
+  /// **'Notification listener xizmati e’lon qilingan'**
+  String get evidencenotificationService;
+
+  /// No description provided for @evidenceoverlayPermission.
+  ///
+  /// In uz, this message translates to:
+  /// **'Overlay ruxsati so‘ralgan'**
+  String get evidenceoverlayPermission;
+
+  /// No description provided for @evidencesmsPermission.
+  ///
+  /// In uz, this message translates to:
+  /// **'SMS o‘qish/qabul qilish ruxsati so‘ralgan'**
+  String get evidencesmsPermission;
+
+  /// No description provided for @evidenceinputCaptureReference.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kiritish hodisalariga mos API reference’lari'**
+  String get evidenceinputCaptureReference;
+
+  /// No description provided for @evidencenetworkPermission.
+  ///
+  /// In uz, this message translates to:
+  /// **'Internet ruxsati so‘ralgan'**
+  String get evidencenetworkPermission;
+
+  /// No description provided for @evidencenetworkCodeReference.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tarmoq API reference’i'**
+  String get evidencenetworkCodeReference;
+
+  /// No description provided for @evidencecredentialCaptureStrings.
+  ///
+  /// In uz, this message translates to:
+  /// **'Credential/OTP kiritishga mos statik satrlar'**
+  String get evidencecredentialCaptureStrings;
+
+  /// No description provided for @evidencecaptureUploadString.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kiritilgan ma’lumotni uzatishga mos statik marker'**
+  String get evidencecaptureUploadString;
+
+  /// No description provided for @evidencebankTargetStrings.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bank login/credential nishoniga mos statik marker'**
+  String get evidencebankTargetStrings;
+
+  /// No description provided for @evidencescreenControlReference.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ekran/gesture boshqaruviga mos API reference’i'**
+  String get evidencescreenControlReference;
+
+  /// No description provided for @evidenceprocessExecutionReference.
+  ///
+  /// In uz, this message translates to:
+  /// **'Process ishga tushirish API reference’i'**
+  String get evidenceprocessExecutionReference;
+
+  /// No description provided for @evidenceremoteCommandString.
+  ///
+  /// In uz, this message translates to:
+  /// **'Masofaviy buyruqqa mos statik marker'**
+  String get evidenceremoteCommandString;
+
+  /// No description provided for @evidenceconcealmentString.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yashirish/himoyani o‘chirishga mos statik marker'**
+  String get evidenceconcealmentString;
+
+  /// No description provided for @evidencecameraPermission.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kamera ruxsati so‘ralgan'**
+  String get evidencecameraPermission;
+
+  /// No description provided for @evidencemicrophonePermission.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mikrofon ruxsati so‘ralgan'**
+  String get evidencemicrophonePermission;
+
+  /// No description provided for @knownMaliciousHash.
+  ///
+  /// In uz, this message translates to:
+  /// **'Alohida rozilik bilan ishonchli provider bergan zararli xesh dalili'**
+  String get knownMaliciousHash;
 
   /// No description provided for @routeErrorTitle.
   ///

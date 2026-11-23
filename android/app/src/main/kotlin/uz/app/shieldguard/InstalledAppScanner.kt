@@ -81,7 +81,7 @@ internal class InstalledAppScanner(private val context: Context) {
                 (if (complete) "installedContent" else if (contentRead) "installedPartial" else "installedMetadataOnly"),
                 "signatureStatus" to if ("signatureFailed" in findings) "signatureFailed"
                     else if (verified) "signatureVerified" else "installedPlatformSignature", "familyCoverage" to familyCoverage)))
-        return ThreatFamilyAnalyzer.decorate(report, staticEvidence, familyCoverage && complete)
+        return ApkDiscoveryCoordinator.decorate(ThreatFamilyAnalyzer.decorate(report, staticEvidence, familyCoverage && complete), "")
     }
 
     private fun unavailable(reason: String = "installedUnavailable"): Map<String, Any> =

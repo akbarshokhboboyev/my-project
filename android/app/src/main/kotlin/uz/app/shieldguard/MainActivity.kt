@@ -104,6 +104,7 @@ class MainActivity : FlutterActivity() {
                 "apkHistoryClear" -> { BlockedThreatHistory.clear(this); reply.success(null) }
                 "apkReport" -> reply.success(BlockedThreatHistory.report(this, call.argument<String>("id") ?: ""))
                 "apkForward" -> forwardApk(call.argument<String>("token") ?: "", reply)
+                "apkDiscard" -> { InstallProtectionCoordinator.discard(this, call.argument<String>("token") ?: ""); reply.success(null) }
                 "installSourceSettings" -> {
                     try { startActivity(Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES)); reply.success(null) }
                     catch (_: android.content.ActivityNotFoundException) { settings(Intent(Settings.ACTION_SECURITY_SETTINGS), reply) }
@@ -347,12 +348,12 @@ class MainActivity : FlutterActivity() {
         fileJobActive = true
         val cancellation = fileCancellation
         val apkEpoch = InstallProtectionCoordinator.epoch()
-        if (reply == null) enqueue(mapOf("kind" to "fileProgress", "busy" to true))
+        if (reply == null) enqueue(mapOf("kind" to "fileProgress", "busy" to true, "apk" to request.apkHint))
         try {
             worker.execute {
                 val report = try {
                     InstallProtectionCoordinator.finalizeBatch(this,
-                        FileOpenScanHandler.scanner(applicationContext, stageForward = true, expectedEpoch = apkEpoch).scan(request) { cancellation.get() })
+                        FileOpenScanHandler.scanner(applicationContext, stageForward = true, expectedEpoch = apkEpoch).scan(request) { cancellation.get() }, request.apkHint)
                 } catch (_: Exception) { mapOf("batch" to listOf(SharedFileScanner.error("failed"))) }
                 runOnUiThread {
                     fileJobActive = false

@@ -67,6 +67,13 @@ class ApkGuardInstrumentation : Instrumentation() {
                 InstallProtectionCoordinator.validate(ctx, token(tampered))
                 val blocked = InstallProtectionCoordinator.forward(ctx, token(tampered), true) { launches++ }
                 verify(blocked.blocked && launches == 0, "Real coordinator must not launch for blocked APK")
+                val blockedToken = token(tampered)
+                InstallProtectionCoordinator.discard(ctx, blockedToken)
+                verify(!File(ctx.cacheDir, "apk-forward/$blockedToken.apk").exists(), "Do-not-install removes only its private snapshot")
+                var discarded = false
+                try { InstallProtectionCoordinator.validate(ctx, blockedToken) } catch (_: Exception) { discarded = true }
+                verify(discarded, "Discarded token cannot forward")
+                verify((details(benign)["threatFamilies"] as? List<*>)?.size == 4, "All static family assessments attached")
                 InstallProtectionCoordinator.validate(ctx, token(benign))
                 InstallProtectionCoordinator.forward(ctx, token(benign), false) { launches++ }
                 verify(launches == 0, "Explicit approval required")

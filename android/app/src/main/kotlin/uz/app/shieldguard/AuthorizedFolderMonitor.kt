@@ -121,6 +121,11 @@ internal object AuthorizedFolderMonitor {
         InstalledAppMonitor.notifyChanged()
     }
     fun recover(context: Context) = synchronized(lock) {
+        if (store(context).getInt("rulesVersion", 0) != ThreatFamilyAnalyzer.rulesVersion) {
+            FolderScanScheduler.cancel(context)
+            store(context).edit().remove("cache").remove("summary").putLong("epoch", epoch(context) + 1)
+                .putInt("rulesVersion", ThreatFamilyAnalyzer.rulesVersion).putString("state", "idle").commit()
+        }
         releaseAll(context, emptyList())
         if (!validate(context)) { permissionLost(context); return@synchronized }
         if (enabled(context) && rows(context).isNotEmpty()) FolderScanScheduler.ensure(context)

@@ -11,6 +11,7 @@ internal data class FamilyAssessment(val family: String, val status: String, val
 
 /** Static combinations only. Neither API references nor permissions prove execution or intent. */
 internal object ThreatFamilyAnalyzer {
+    const val rulesVersion = 1
     val families = listOf("ransomware", "spyware", "banking", "rat")
     fun metadata(info: ApkMetadata): Set<String> = buildSet {
         fun permission(name: String) = "android.permission.$name" in info.permissions

@@ -19,6 +19,13 @@ internal object InstallProtectionCoordinator {
     private fun directory(context: Context) = File(context.cacheDir, "apk-forward").apply { mkdirs() }
     fun enabled(context: Context) = context.options().getBoolean("apkAutoBlock", true)
     fun strict(context: Context) = context.options().getBoolean("apkStrict", false)
+    fun discard(context: Context, token: String) = synchronized(lock) {
+        pending.remove(token)?.file?.let { file ->
+            runCatching { context.revokeUriPermission(androidx.core.content.FileProvider.getUriForFile(context,
+                "${context.packageName}.apkforward", file), android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION) }
+            file.delete()
+        }
+    }
     fun setEnabled(context: Context, value: Boolean) = synchronized(lock) {
         val edit = context.options().edit().putBoolean("apkAutoBlock", value)
         if (!value) edit.putBoolean("apkStrict", false).putBoolean("apkAlerts", false)
@@ -77,12 +84,21 @@ internal object InstallProtectionCoordinator {
 
     // SharedFileScanner may downgrade completeness after its cooperative batch deadline.
     // The native gate must use that final verdict, not the earlier single-file verdict.
-    fun finalizeBatch(context: Context, batch: Map<String, Any>): Map<String, Any> = synchronized(lock) {
+    fun finalizeBatch(context: Context, batch: Map<String, Any>, apkHint: Boolean = false): Map<String, Any> = synchronized(lock) {
         val rows = (batch["batch"] as? List<*>).orEmpty().map { value ->
             @Suppress("UNCHECKED_CAST")
             val row = value as? Map<String, Any> ?: return@map value
-            val details = row["details"] as? Map<*, *> ?: return@map row
-            val token = details["apkToken"] as? String ?: return@map row
+            val details = (row["details"] as? Map<*, *>).orEmpty()
+            val token = details["apkToken"] as? String
+            if (token == null) {
+                if (!apkHint && details["apkAssessment"] !is Map<*, *>) return@map row
+                val unavailable = ApkDiscoveryCoordinator.decorate(row + mapOf("complete" to false,
+                    "findings" to ((row["findings"] as? Map<*, *>).orEmpty() + mapOf("apkUnavailableSnapshot" to 0))), "candidate.apk")
+                val policy = decision(context, unavailable)
+                val gate = if (policy.blocked) policy else GateDecision(true, "scanIncomplete")
+                BlockedThreatHistory.record(context, unavailable, gate.outcome)
+                return@map unavailable + mapOf("details" to ((unavailable["details"] as? Map<*, *>).orEmpty() + mapOf("apkGate" to gate.asMap())))
+            }
             val qualified = ApkDiscoveryCoordinator.decorate(row, "")
             val snapshot = pending[token]
             val findings = (row["findings"] as? Map<*, *>).orEmpty()

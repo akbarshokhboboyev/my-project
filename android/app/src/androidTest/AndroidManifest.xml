@@ -1,5 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <permission android:name="uz.app.shieldguard.test.FIXTURE_READ" android:protectionLevel="signature" />
+    <instrumentation android:name="uz.app.shieldguard.ApkGuardInstrumentation" android:targetPackage="uz.app.shieldguard" />
+    <instrumentation android:name="uz.app.shieldguard.InstalledMonitorInstrumentation" android:targetPackage="uz.app.shieldguard" />
+    <instrumentation android:name="uz.app.shieldguard.FileShareInstrumentation" android:targetPackage="uz.app.shieldguard" />
+    <instrumentation android:name="uz.app.shieldguard.FolderMonitorInstrumentation" android:targetPackage="uz.app.shieldguard" />
     <application android:name="android.app.Application">
         <activity android:name="uz.app.shieldguard.FileShareTestSender" android:exported="true"
             android:label="ShieldGuard sintetik fayl sinovi" />

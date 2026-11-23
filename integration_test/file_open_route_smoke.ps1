@@ -17,7 +17,17 @@ function OwnText {
         ForEach-Object {$_.text; $_.'content-desc'}) -join "`n"
 }
 function ReturnHome {
-    $null = OwnText
+    $own = OwnText
+    if ($own -match 'Tekshiruv yakunlanmadi') {
+        [xml]$modalTree = (& $Adb -s $Serial shell cat $dumpPath) -join ''
+        $discardNode = $modalTree.SelectNodes('//node') | Where-Object {
+            $_.package -eq $package -and ($_.text -match '^O.rnatmaslik$' -or $_.'content-desc' -match '^O.rnatmaslik$')
+        } | Select-Object -First 1
+        if (!$discardNode) {throw 'Unknown APK dialog cancel action missing.'}
+        $bounds = [regex]::Match([string]$discardNode.bounds, '\[(\d+),(\d+)\]\[(\d+),(\d+)\]')
+        $null = & $Adb -s $Serial shell input tap ([int](([int]$bounds.Groups[1].Value+[int]$bounds.Groups[3].Value)/2)) ([int](([int]$bounds.Groups[2].Value+[int]$bounds.Groups[4].Value)/2))
+        $null = OwnText
+    }
     [xml]$tree = (& $Adb -s $Serial shell cat $dumpPath) -join ''
     $homeNode = $tree.SelectNodes('//node') | Where-Object {
         $_.package -eq $package -and ($_.text -match '^Bosh sahifa' -or $_.'content-desc' -match '^Bosh sahifa')
@@ -56,7 +66,7 @@ try {
             if ($own -match 'GoException|No routes for location' -or $own.Contains($uri)) {
                 throw "Raw route/URI error was displayed: $scenario"
             }
-            if ($own -match 'Tekshiruv natijasi' -and $own -match 'qish.*ruxsat|ruxsat.*qish') {
+            if ($own -match 'Tekshiruv natijasi|Tekshiruv yakunlanmadi' -and $own -match 'qish.*ruxsat|ruxsat.*qish') {
                 $passed = $true; break
             }
             Start-Sleep -Milliseconds 300

@@ -380,7 +380,7 @@ class StringsUz extends Strings {
 
   @override
   String get aboutBody =>
-      'ShieldGuard havola, xabar va fayllarda shubhali belgilarni mahalliy qoidalar bilan aniqlaydi. Versiya 3.0.0, yig‘ilish 3. Onlayn manba — alohida sozlanadigan Google Web Risk.';
+      'ShieldGuard havola, xabar, APK va ruxsatli papkalarda shubhali statik belgilarni mahalliy tekshiradi. Versiya 3.1.0, yig‘ilish 4. Bu universal antivirus yoki zararsizlik kafolati emas. Onlayn tekshiruv alohida rozilik va sozlangan provider bilan ishlaydi.';
 
   @override
   String get help => 'Yordam';
@@ -983,6 +983,228 @@ class StringsUz extends Strings {
 
   @override
   String get apkDisabled => 'Avval APK uzatish himoyasini yoqing.';
+
+  @override
+  String get apkScanning => 'APK tekshirilmoqda...';
+
+  @override
+  String get apkUnavailableSnapshot =>
+      'Xavfsiz uzatish nusxasi mavjud emas. Ruxsat va cheklovlarni tekshirib, faylni qayta skanerlang.';
+
+  @override
+  String get apkDialogBlockedTitle => 'APK BLOKLANDI';
+
+  @override
+  String get apkDialogBlockedBody =>
+      'ShieldGuard ushbu APK’ni o‘rnatish jarayoniga uzatishni to‘xtatdi. Aniqlangan kuchli statik yoki yaxlitlik dalillari sabab uni o‘rnatmang.';
+
+  @override
+  String get apkDialogClearTitle => 'Tekshiruvda xavf belgisi topilmadi';
+
+  @override
+  String get apkDialogClearBody =>
+      'ShieldGuard mavjud tekshiruvlarda shubhali belgi aniqlamadi. Bu faylning mutlaq xavfsizligini kafolatlamaydi.';
+
+  @override
+  String get apkDialogWarningTitle => 'Shubhali APK';
+
+  @override
+  String get apkDialogWarningBody =>
+      'Ayrim shubhali indikatorlar bor, ammo bu malware tasdig‘i emas. Tavsiya etilgan xavfsiz amal — o‘rnatmaslik. Davom etish alohida ogohlantirish tasdig‘ini talab qiladi.';
+
+  @override
+  String get apkDialogUnknownTitle => 'Tekshiruv yakunlanmadi';
+
+  @override
+  String get apkDialogUnknownBody =>
+      'Bu APK’ni yetarli darajada tekshirib bo‘lmadi. Ruxsat, vaqt yoki tahlil cheklovlarini tekshiring. Natija xavfsizlik tasdig‘i emas; qat’iy rejimda uzatish to‘xtatiladi.';
+
+  @override
+  String get apkDialogBoundary =>
+      'Bu himoya faqat ShieldGuard orqali uzatishga tegishli. Boshqa manbadan Android installer’ga bevosita o‘tishni universal bloklay olmaydi. Fayl avtomatik o‘rnatilmaydi.';
+
+  @override
+  String get apkDoNotInstall => 'O‘rnatmaslik';
+
+  @override
+  String get apkCancel => 'Bekor qilish';
+
+  @override
+  String get apkInstallContinue => 'O‘rnatishga davom etish';
+
+  @override
+  String get apkHandoffRequested =>
+      'Android tanlov oynasiga uzatish so‘raldi. Bu APK muvaffaqiyatli o‘rnatildi degani emas.';
+
+  @override
+  String get familyransomware => 'Ransomware statik indikatorlari';
+
+  @override
+  String get familyspyware => 'Keylogger / spyware statik indikatorlari';
+
+  @override
+  String get familybanking => 'Banking Trojan statik indikatorlari';
+
+  @override
+  String get familyrat => 'RAT statik indikatorlari';
+
+  @override
+  String get familyStatusstrongIndicators =>
+      'Kuchli indikatorlar kombinatsiyasi';
+
+  @override
+  String get familyStatuspossibleIndicators =>
+      'Ehtimoliy indikatorlar; malware tasdig‘i emas';
+
+  @override
+  String get familyStatusinsufficientEvidence =>
+      'Yetarli dalil yoki qamrov yo‘q';
+
+  @override
+  String get familyStatusnoIndicatorsObserved =>
+      'Mavjud tekshiruvda indikator kuzatilmadi';
+
+  @override
+  String get familyLimit =>
+      'Bu faqat statik kod reference va manifest bahosi. Haqiqiy xatti-harakat yoki zararsizlik kafolati emas.';
+
+  @override
+  String get familyIncomplete => 'Ushbu baholash qamrovi tugallanmagan.';
+
+  @override
+  String get familyRansomwareExplanation =>
+      'Crypto, fayl yozish/aylanib chiqish, keng storage, xizmat va to‘lov talabi belgilari birgalikda baholanadi. Crypto kutubxonasi yolg‘iz yetarli emas.';
+
+  @override
+  String get familySpywareExplanation =>
+      'Kiritish hodisalari, accessibility/klaviatura, tarmoq va ma’lumot uzatish belgilarining birikmasi. Haqiqiy tugma bosishlari kuzatilmagan.';
+
+  @override
+  String get familyBankingExplanation =>
+      'Accessibility, overlay, credential/OTP, bank nishoni va uzatish belgilarining birikmasi. Bank nomi yoki login oynasi yolg‘iz yetarli emas.';
+
+  @override
+  String get familyRatExplanation =>
+      'Ekran boshqaruvi, process/remote command, tarmoq va yashirish belgilarining birikmasi. Qonuniy remote support funksiyasi yolg‘iz hukm emas.';
+
+  @override
+  String get familyRansomware =>
+      'Ransomware bilan mos kuchli statik kombinatsiya aniqlandi.';
+
+  @override
+  String get familySpyware =>
+      'Keylogger/spyware bilan mos kuchli statik kombinatsiya aniqlandi.';
+
+  @override
+  String get familyBanking =>
+      'Banking Trojan bilan mos kuchli statik kombinatsiya aniqlandi.';
+
+  @override
+  String get familyRat => 'RAT bilan mos kuchli statik kombinatsiya aniqlandi.';
+
+  @override
+  String get familyRansomwarePossible =>
+      'Crypto va fayl operatsiyalari kombinatsiyasi bor; ransomware tasdig‘i emas.';
+
+  @override
+  String get familySpywarePossible =>
+      'Kiritish/tarmoq kombinatsiyasi bor; spyware tasdig‘i emas.';
+
+  @override
+  String get familyBankingPossible =>
+      'Sezgir UI/tarmoq kombinatsiyasi bor; banking trojan tasdig‘i emas.';
+
+  @override
+  String get familyRatPossible =>
+      'Remote-support bilan ham mos belgilar bor; RAT tasdig‘i emas.';
+
+  @override
+  String get evidencecryptoReference => 'Shifrlash API reference’i';
+
+  @override
+  String get evidencefileWriteReference => 'Fayl yozish API reference’i';
+
+  @override
+  String get evidencefileEnumerationReference =>
+      'Fayllarni aylanib chiqish reference’i';
+
+  @override
+  String get evidenceransomDemandString =>
+      'Shifrlash/to‘lov talabi bilan mos statik satr';
+
+  @override
+  String get evidencebroadStoragePermission =>
+      'Keng storage imkoniyati manifestda e’lon qilingan';
+
+  @override
+  String get evidencedeclaredService =>
+      'Manifestda xizmat e’lon qilingan; fonda ishlayotgani tasdiqlanmagan';
+
+  @override
+  String get evidenceaccessibilityService =>
+      'Accessibility xizmati e’lon qilingan';
+
+  @override
+  String get evidencekeyboardService => 'Klaviatura xizmati e’lon qilingan';
+
+  @override
+  String get evidencenotificationService =>
+      'Notification listener xizmati e’lon qilingan';
+
+  @override
+  String get evidenceoverlayPermission => 'Overlay ruxsati so‘ralgan';
+
+  @override
+  String get evidencesmsPermission =>
+      'SMS o‘qish/qabul qilish ruxsati so‘ralgan';
+
+  @override
+  String get evidenceinputCaptureReference =>
+      'Kiritish hodisalariga mos API reference’lari';
+
+  @override
+  String get evidencenetworkPermission => 'Internet ruxsati so‘ralgan';
+
+  @override
+  String get evidencenetworkCodeReference => 'Tarmoq API reference’i';
+
+  @override
+  String get evidencecredentialCaptureStrings =>
+      'Credential/OTP kiritishga mos statik satrlar';
+
+  @override
+  String get evidencecaptureUploadString =>
+      'Kiritilgan ma’lumotni uzatishga mos statik marker';
+
+  @override
+  String get evidencebankTargetStrings =>
+      'Bank login/credential nishoniga mos statik marker';
+
+  @override
+  String get evidencescreenControlReference =>
+      'Ekran/gesture boshqaruviga mos API reference’i';
+
+  @override
+  String get evidenceprocessExecutionReference =>
+      'Process ishga tushirish API reference’i';
+
+  @override
+  String get evidenceremoteCommandString =>
+      'Masofaviy buyruqqa mos statik marker';
+
+  @override
+  String get evidenceconcealmentString =>
+      'Yashirish/himoyani o‘chirishga mos statik marker';
+
+  @override
+  String get evidencecameraPermission => 'Kamera ruxsati so‘ralgan';
+
+  @override
+  String get evidencemicrophonePermission => 'Mikrofon ruxsati so‘ralgan';
+
+  @override
+  String get knownMaliciousHash =>
+      'Alohida rozilik bilan ishonchli provider bergan zararli xesh dalili';
 
   @override
   String get routeErrorTitle => 'ShieldGuard’ga qaytish';
