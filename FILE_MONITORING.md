@@ -1,5 +1,7 @@
 # ShieldGuard V3.1 - PHASE 3B: papkalar xavfsizligi
 
+Final 3.1.0+4: authorized APK’lar to‘rtta static threat-family bahosini oladi. Strong natija mavjud consent/POST_NOTIFICATIONS/channel va dedup bilan warning beradi; scan/install block deb soxtalashtirilmaydi. Qoidalar versiyasi yangilanganda faqat monitor cache/summary bekor qilinib epoch oshadi; root grant’lari saqlanadi, opt-out bekor qilinmaydi. Qolgan 256 metadata/8 file/depth2, periodic15min/battery va cooperative I/O chegaralari saqlanadi. Hech qanday yangi global storage huquqi yoki file write/delete ishlatilmaydi.
+
 2026-11-22. Branch: `feature/shieldguard-v3-1`; baseline: `02c8dc2`.
 
 ## Rozilik va ruxsat

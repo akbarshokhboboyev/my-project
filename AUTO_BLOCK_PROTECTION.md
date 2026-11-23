@@ -1,5 +1,11 @@
 # ShieldGuard PHASE 4 — APK qo‘riqchi
 
+## Final 3.1.0+4 (2026-11-23)
+
+Quyidagi final oqim oldingi 4A–4D UI tavsiflarini yangilaydi: APK ochilganda progress/cancel; strong dalilda qizil block dialog; heuristic’da sariq warning; to‘liq no-findings’da yashil, kafolat bermaydigan natija; incomplete’da kulrang/noaniq dialog. “O‘rnatmaslik”/“Bekor qilish” faqat o‘sha tokenning private snapshot’ini bekor qiladi. Dialogni Back bilan yopish ham discard; “Tafsilotlar” natija sahifasini saqlaydi. No-findings’da “O‘rnatishga davom etish” explicit click; warning/unknown’da qo‘shimcha acknowledgement kerak. Strict incomplete yoki strong block uchun forward callback yo‘q. Snapshot SHA-256/expiry/generation native’da qayta tekshiriladi; Android chooser’ga handoff installed deb yozilmaydi. Ruxsat/snapshot yo‘q bo‘lsa install amali mavjud emas, sabab alohida tushuntiriladi.
+
+Threat-family typed natijalari umumiy ApkRiskPolicy’ga ulangan; dalil IDs, confidence va coverage UI’da ko‘rsatiladi. Background folder topilmasi warning notification bo‘lib qoladi, install bloklangani da’vosi yo‘q. Universal Telegram/private storage yoki tashqi installer veto yo‘q. ShellRoute child Navigator endi mounted; Back pop GoRouter null lookup bermasligi uchun cold modal route frame’dan keyin ochiladi. Manifest file URI’ni Flutter deeplink deb qabul qilmaydi.
+
 2026-11-22, `feature/shieldguard-v3-1`, boshlang‘ich commit `1641653`.
 
 ## 4A — discovery va risk policy

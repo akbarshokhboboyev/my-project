@@ -1,5 +1,7 @@
 # O‘rnatilgan ilovalar himoyasi — PHASE 2
 
+Final 3.1.0+4: mavjud metadata/visible-package va bounded base/split tahlili threat-family assessment beradi. O‘qilmagan content, native opaque kod yoki cheklangan budget insufficient/incomplete; safe deb tasdiqlanmaydi. Strong family summary post-install warning’ga ulanadi, possible indikatorlar o‘zi avtomatik alarm uchun yetarli emas. Qoidalar versiyasi o‘zgarsa local known/report cache bekor qilinadi; keyingi ruxsatli bounded yurish yangi qoidalar bilan tekshiradi. Opt-in/out, generation/cancellation, launcher visibility va 7101/7102 job’lari saqlandi; bu universal pre-install blokirovka emas.
+
 2026-11-22. Monitoring standart holatda o‘chiq. Himoya ekranidagi alohida switch orqali rozilik beriladi; Telegram notification access bundan mustaqil.
 
 ## Hodisalar va fon ishlari

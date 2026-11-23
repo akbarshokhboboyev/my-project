@@ -64,9 +64,10 @@ android {
 }
 
 gradle.taskGraph.whenReady {
-    if (allTasks.any { it.name in setOf("assembleRelease", "bundleRelease") } && !hasSigning &&
-        !project.hasProperty("shieldAllowUnsigned") && System.getenv("SHIELD_ALLOW_UNSIGNED") != "true") {
-        throw GradleException("Release imzolash sozlanmagan. RELEASE_GUIDE.md hujjatini ko‘ring.")
+    if (allTasks.any { it.name in setOf("assembleRelease", "bundleRelease") }) {
+        if (!hasSigning) throw GradleException("Release imzolash sozlanmagan. RELEASE_GUIDE.md hujjatini ko‘ring.")
+        if (releaseAlias.equals("androiddebugkey", ignoreCase = true) || releaseStore?.replace('\\', '/')?.substringAfterLast('/') == "debug.keystore")
+            throw GradleException("Debug imzo production release uchun ishlatilmaydi.")
     }
 }
 

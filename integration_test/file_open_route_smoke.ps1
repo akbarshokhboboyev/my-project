@@ -21,12 +21,17 @@ function ReturnHome {
     if ($own -match 'Tekshiruv yakunlanmadi') {
         [xml]$modalTree = (& $Adb -s $Serial shell cat $dumpPath) -join ''
         $discardNode = $modalTree.SelectNodes('//node') | Where-Object {
-            $_.package -eq $package -and ($_.text -match '^O.rnatmaslik$' -or $_.'content-desc' -match '^O.rnatmaslik$')
+            $_.package -eq $package -and ($_.text -match '^O.rnatmaslik(\r?\n|$)' -or $_.'content-desc' -match '^O.rnatmaslik(\r?\n|$)')
         } | Select-Object -First 1
-        if (!$discardNode) {throw 'Unknown APK dialog cancel action missing.'}
-        $bounds = [regex]::Match([string]$discardNode.bounds, '\[(\d+),(\d+)\]\[(\d+),(\d+)\]')
-        $null = & $Adb -s $Serial shell input tap ([int](([int]$bounds.Groups[1].Value+[int]$bounds.Groups[3].Value)/2)) ([int](([int]$bounds.Groups[2].Value+[int]$bounds.Groups[4].Value)/2))
-        $null = OwnText
+        if ($discardNode) {
+            $bounds = [regex]::Match([string]$discardNode.bounds, '\[(\d+),(\d+)\]\[(\d+),(\d+)\]')
+            $null = & $Adb -s $Serial shell input tap ([int](([int]$bounds.Groups[1].Value+[int]$bounds.Groups[3].Value)/2)) ([int](([int]$bounds.Groups[2].Value+[int]$bounds.Groups[4].Value)/2))
+            $null = OwnText
+        } elseif ($own -notmatch 'Bosh sahifa') {
+            throw 'Unknown APK dialog cancel action missing.'
+        }
+        # The same incomplete title remains on the result page after dismissal.
+        # Home navigation distinguishes that page from the active modal.
     }
     [xml]$tree = (& $Adb -s $Serial shell cat $dumpPath) -join ''
     $homeNode = $tree.SelectNodes('//node') | Where-Object {

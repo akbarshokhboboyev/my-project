@@ -1,4 +1,20 @@
-# ShieldGuard V3.1 — PHASE 4
+# ShieldGuard V3.1 — final hardening status
+
+2026-11-23 · `feature/shieldguard-v3-1` · **3.1.0+4**. Source implementation and automated regressions are complete; **production release remains blocked by missing user-owned signing credentials**, and complete device E2E acceptance remains unverified.
+
+- Four bounded static threat-family assessments are integrated with existing file, installed-app and authorized-folder analysis. Confidence/completeness and fixed evidence IDs are retained; rule-version changes invalidate monitoring caches without enabling monitoring.
+- Uzbek APK gate has real scoped discard, explicit no-findings handoff, separate warning confirmation and strict unknown protection. Native snapshot/hash/expiry/generation checks remain authoritative. Router navigator mounting fixes Back while the modal is open.
+- Current checks: Flutter **214/214**, native **275 + 387 malformed**, Python **13/13**, analyze clean; Dart line coverage **1497/1887 = 79.33%**. Debug build, signature, ZIP16KiB alignment and separate R8 compilation audit passed. Unsigned/debug production release is guarded; no production artifact or Play upload was made.
+- Physical Android16 final APK installed. Real SAF benign no-findings dialog → explicit Android chooser verified. Strong synthetic static indicators → blocked modal, no Continue, explicit discard removes only its own staged snapshot **2→1**. Fixtures were not installed or executed. Full phone instrumentation/background/reboot checks remain unverified.
+- Final cold VIEW / warm VIEW / warm SEND inaccessible-URI smoke **3/3 PASS**; harness handles already-dismissed incomplete results. Warning phone E2E remains unverified. Notification access is granted but the listener was not live-bound after update and user toggles; the final phone's live Telegram protection remains paused/unverified.
+- Separate API37/16KiB emulator native runner failed after24 checks amid Launcher/SystemUI ANRs; retry returned process crash. Not a full device pass. PHASE3A expanded25-case E2E remains open.
+- Static strings are not a call graph or proof of behavior. Real-corpus precision/recall and live reputation remain unverified. Consumer Android permits only ShieldGuard-owned forwarding control, post-install visible-app warnings and user-authorized periodic SAF scans.
+
+See `FINAL_RELEASE_REPORT.md` and `TEST_REPORT.md` for observed evidence, debug SHA-256, dependency review and remaining release blockers. The material below is historical.
+
+---
+
+# Historical PHASE 4 implementation
 
 **APK open UI, jismoniy Android16 (2026-11-23):** Telefondagi eski build yangilandi; manifest’da file URI uchun Flutter auto-deeplink o‘chiq. Windows’da route/share/APK testlari 17/17, full Flutter 208/208, analyze toza, coverage 80,73%; debug build/install muvaffaqiyatli. Haqiqiy qurilmada cold VIEW / warm VIEW / warm SEND sintetik inaccessible URI bilan 3/3 o‘tdi — GoException o‘rniga qualified read-permission natijasi. Bu APK parser yoki Telegram E2E sinovi emas. Update’dan keyin foydalanuvchi notification-access ruxsatini qayta yoqqach service bound va bosh sahifada “Himoya faol” tasdiqlandi. Tafsilot va artifact xeshi TEST_REPORT.md da; yangi qayta bajarish skripti `integration_test/file_open_route_smoke.ps1`.
 

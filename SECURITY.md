@@ -1,5 +1,7 @@
 # Xavfsizlik
 
+Final 3.1.0+4: threat-family policy bounded DEX string-table va manifest kombinatsiyalarini statik baholaydi; string/code reference execution isboti emas. Kuchli dalil va noaniqlik alohida; corpus accuracy/penetration-test unverified. Fixed evidence IDsgina report/history’ga chiqadi, extracted string/OTP/path/URI yuborilmaydi. No-findings dialog automatic launch qilmaydi, warning ikki explicit action, blocked/strict native gate callback’ni ushlab turadi. Discard token scope’da private nusxani bekor qiladi, source file o‘chirilmaydi. Root/installed cache rules-version bilan eskiradi. Background launch/overlay/accessibility/admin yoki yangi sensitive permission qo‘shilmadi. Release guard unsigned/debug bypass’ni qabul qilmaydi; R8 alohida compile task, production artifact kalitsiz blocked.
+
 V3 apksig APK yaxlitligi verifikatorini qo‘shadi. PDF parseri exported=false isolated UID jarayonida ishlaydi. DEX va ELF elementlari 8 MiB dan, jami 16 MiB kontent byudjeti bilan o‘qiladi. Split komponentlar tasodifiy vaqtinchalik nomlar bilan olinadi, tashqi arxiv yo‘llari ishlatilmaydi.
 
 URL sahifalari va redirect nishonlari yuklanmaydi. HTTPS gateway adapteri redirect kuzatmaydi. Web Risk API kaliti server muhiti orqali olinadi. So‘rov hajmi, javob hajmi, timeout, tezlik va retry cheklovlari mavjud. Minimal gateway faqat nazoratli o‘rnatish uchun mo‘ljallangan. Ommaviy xizmat uchun autentifikatsiya va deployment konfiguratsiyasi THREAT_INTELLIGENCE.md hujjatida.

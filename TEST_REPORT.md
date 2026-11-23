@@ -1,4 +1,43 @@
-# ShieldGuard V3.1 — PHASE 4 bosqichma-bosqich sinovlari
+# ShieldGuard V3.1 — final verification (2026-11-23)
+
+Current version **3.1.0+4**, branch `feature/shieldguard-v3-1`. The sections below this final record are historical and must not be counted as reruns. Detailed scope, artifact identity and limitations: `FINAL_RELEASE_REPORT.md`.
+
+| Current command/check | Observed outcome |
+| --- | --- |
+| `flutter analyze` | PASS, no issues |
+| `flutter test --coverage` | **214/214 PASS**; LCOV LH/LF **1497/1887 = 79.33%**, summed across source records |
+| `powershell -NoProfile -ExecutionPolicy RemoteSigned -File test/native/run_tests.ps1 -KotlinLib <cached Gradle Kotlin lib>` | **275 checks + 387 malformed inputs PASS**; new family suite 37 checks |
+| `python -m unittest discover -s backend` | **13/13 PASS** |
+| Targeted APK dialog / system Back / family tests | PASS before the full suites; counts included above |
+| `flutter build apk --debug` | PASS, 155.8s |
+| Android debug test APK build | PASS; four instrumentation runners registered |
+| Gradle `:app:minifyReleaseWithR8` | PASS, 2m48s; no release APK/AAB produced |
+| `flutter build apk --release` | Expected failure: missing production signing credentials; guard enforced |
+| Final debug signature / `zipalign -c -P 16 4` | PASS, v2 debug signature / exit0 |
+| Packaged ELF libraries | Four libraries; minimum PT_LOAD alignment65536 each |
+
+Environment: Windows, Flutter3.47.6/Dart3.13.5, JDK17/AGP9.1.1, compile/target36/min26. Existing Telegram, package-monitor, incremental-folder, shared-file, malformed-parser and backend regressions are included. Family tests use synthetic DEX strings and mocked manifest/signature evidence, not actual malware or measured runtime behavior. UI tests verify all decision states, explicit approval, native discard calls, strict unknown, Auto Block disabled, second warning confirmation, small screen, cancellation and Back navigation. Coverage is not malware precision/recall.
+
+### Current physical Android16
+
+- Final debug APK `adb install -r`: **Success**, PackageManager3.1.0/code4.
+- Real SAF selection of benign signed codeless APK: **PASS**, Uzbek no-findings dialog, Continue and Cancel visible. Explicit Continue opened Android chooser; no APK installed/executed. This is handoff, not successful installation.
+- Strong ransomware static-indicator synthetic APK through SAF: **PASS on retry from Home**, real “APK BLOKLANDI” and “O‘rnatmaslik”/details controls, no Continue button. Explicit discard reduced private snapshot files **2→1**, leaving the unrelated previously handed-off snapshot intact; Android chooser did not open.
+- `integration_test/file_open_route_smoke.ps1`: **3/3 PASS** after a harness-only fix distinguishing an incomplete result page from an active dialog and accepting the recommended-action text merged into button semantics. Cold VIEW, warm VIEW and warm SEND use inaccessible synthetic URIs without a grant; they verify qualified Uzbek errors and no raw URI/GoException, not successful APK parsing or real Telegram sharing. An initial run stopped after two passes on the harness's missing-cancel assertion.
+- First strong SAF automation attempt did not observe the expected result (an old PDF result was present). First warning automation attempt could not find the file tile while the blocked modal was still open. These harness attempts failed; they are not counted as detection passes. Subsequent checks start from an explicitly selected Home tab. No product permission or device-policy bypass was used.
+- Further warning SAF attempts also failed to observe the expected warning (one missing-tile result, then incomplete UI). **Warning/second-confirmation physical E2E remains unverified**; its behavior passed Flutter/native policy tests. No fixture was installed.
+- Notification access remains granted and Telegram monitoring enabled. After the update and two user-confirmed permission toggles, Android still did not list the listener as a live bound service at the final check. The paused state is reported honestly; **live Telegram notification protection is not verified on this final phone build**. No ADB permission override was applied.
+- Full native runners, new package installation/update, fresh folder changes/reboot, background alerts and live Telegram sender verification have not been established on the final physical build. They remain **unverified**, regardless of historical passes.
+
+### Current emulator, separate from phone
+
+Dedicated API37/Android17 x86_64 emulator reported PAGE_SIZE16384. Two APK-guard runs reached **24 checks before failure** at the foreground Uzbek blocked modal while Pixel Launcher/SystemUI ANRs were observed. After a restart with4096MiB runtime RAM, instrumentation returned **Process crashed** without a completed check count. No full runner pass is claimed. The dedicated emulator was stopped without wiping data. This does not verify Android16 or complete16KiB runtime compatibility. The historical PHASE3A expanded25-case E2E gap remains open.
+
+Debug artifact: `build/final/3.1.0+4/shieldguard-3.1.0-debug.apk`, **200428032 bytes**, SHA-256 `ff0a8684006af77ad51f8cd725a84d826bc3f924e4bdb12b5f430d056502a9a8`. Production signing, signed release runtime, Play review and real-corpus malware accuracy remain unverified/blocked. Local ignored logs and the full qualification matrix are described in FINAL_RELEASE_REPORT.md.
+
+---
+
+# Historical PHASE 4 verification
 
 ## APK open route — Windows va jismoniy Android16 (2026-11-23)
 
