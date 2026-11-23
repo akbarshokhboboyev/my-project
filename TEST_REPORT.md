@@ -1,5 +1,26 @@
 # ShieldGuard V3.1 — PHASE 4 bosqichma-bosqich sinovlari
 
+## APK open route — Windows va jismoniy Android16 (2026-11-23)
+
+Lokal HEAD `45de1a3` dagi route tuzatishi qayta tekshirilib, telefonga o‘rnatildi. Qurilmada oldingi `31c3878f...` APK qolgan edi; unda `flutter_deeplinking_enabled=false` va keyingi route/channel tuzatishlari yo‘q. Amaldagi kod `3c231d6`/`84d9b5e` tuzatishlarini o‘z ichiga oladi: file URI native handler’da qoladi, recovery sahifasidan keyin ham native natija yo‘qolmaydi.
+
+| Tekshiruv | Shu sessiyadagi kuzatilgan natija |
+| --- | --- |
+| Windows Flutter 3.47.6 / Dart 3.13.5, JDK17 / AGP9.1.1 | Joriy kod analyze/test/debug build bilan ishladi; macOS 3.50.1 natijasi quyida alohida tarix |
+| `flutter test test/file_open_route_test.dart test/file_share_test.dart test/apk_guard_test.dart` | 17/17 PASS |
+| `flutter analyze` | No issues found |
+| `flutter test --coverage` | 208/208; LH/LF 1349/1671 = 80,73% |
+| `flutter build apk --debug` | PASS, 317,2 s; yangi APK adb install -r: Success |
+| Packaged AndroidManifest audit | `flutter_deeplinking_enabled=false` haqiqiy APK ichida tasdiqlandi |
+| `integration_test/file_open_route_smoke.ps1` | Jismoniy Android16 API36: cold VIEW, warm VIEW, warm SEND — 3/3 PASS |
+| Himoya holati | Update’dan keyin listener ulanmagan; foydalanuvchi mavjud notification-access ruxsatini off/on qildi. Android service bound va real bosh sahifada “Himoya faol” tasdiqlandi |
+
+Yangi smoke skript mavjud bo‘lmagan sintetik `content:` APK URI’sini **read grant’siz** yuboradi. Kutilgan natija — o‘zbekcha o‘qish ruxsati yo‘qligi va scan result; raw URI/GoException ko‘rsatilmasligi. Bu haqiqiy APK kontent/signature parsing, Telegram sender yoki installer sinovi emas. Har warm intent oldidan bosh sahifa alohida tekshiriladi, shuning uchun oldingi natija yangisi sifatida qabul qilinmaydi. Cold holat Activity/task’ni qayta yaratadi, app force-stop qilinmaydi. Sinov APK o‘rnatmaydi/execute qilmaydi, fayl yaratmaydi; faqat o‘z UUID UI XML dump’ini tozalaydi.
+
+Artifact: `build/app/outputs/flutter-apk/app-debug.apk`, 173321034 bytes; SHA-256 `5da0f5b6c1da40af7b32a55b880108135f9d6677d5d545f10ef50b367d13e3c5`. Windows SDK sabab oldindan mavjud `pubspec.lock` test_api 0.7.12 o‘zgarishi bu verification commit’iga kiritilmadi. Kotlin/Python/native runner bu route-only tekshiruvda takrorlanmadi; quyidagi natijalar o‘z muhitiga tegishli.
+
+Qayta bajarish: `powershell -NoProfile -ExecutionPolicy RemoteSigned -File integration_test/file_open_route_smoke.ps1 -Adb <adb.exe> -Serial <qurilma-id>`. Telefon qulfdan ochiq bo‘lishi kerak. Bildirishnomaga kirish ruxsati Android’da qolgan bo‘lsa ham, app update’dan keyin service ulanishi alohida tekshiriladi; “faol” holat faqat haqiqiy ulanishda ko‘rsatiladi.
+
 ## 4D-R — `3c231d6` dan keyingi regressiya, emulator va build (2026-11-23)
 
 Muhit: macOS, Flutter 3.50.1 (stable), JDK 17, Kotlin compiler 2.2.21 (Gradle keshidan), AGP 9.1.1, Android emulator `Pixel_8` AVD (API 36, arm64). Barcha device natijalari **emulator**da olingan; jismoniy telefon va haqiqiy Telegram ilovasi ishlatilmagan. Faqat o‘zimiz yaratgan benign/sintetik fixture’lar; scanned APK install/execute qilinmadi (PHASE 2 uchun o‘zimizning kodsiz `hasCode=false` fixture’i o‘rnatilib, keyin o‘chirildi).
