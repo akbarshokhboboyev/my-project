@@ -1840,6 +1840,30 @@ abstract class Strings {
   /// **'Xavfsiz uzatish nusxasi mavjud emas. Ruxsat va cheklovlarni tekshirib, faylni qayta skanerlang.'**
   String get apkUnavailableSnapshot;
 
+  /// No description provided for @apkNotActualFormat.
+  ///
+  /// In uz, this message translates to:
+  /// **'Fayl APK sifatida ochilgan, ammo aniqlangan ichki format APK emas. Fayl qayta nomlangan yoki buzilgan bo‘lishi mumkin; uni APK sifatida o‘rnatishga uzatib bo‘lmaydi.'**
+  String get apkNotActualFormat;
+
+  /// No description provided for @scannedBytes.
+  ///
+  /// In uz, this message translates to:
+  /// **'O‘qilgan fayl hajmi (bayt)'**
+  String get scannedBytes;
+
+  /// No description provided for @apkNativeCoverage.
+  ///
+  /// In uz, this message translates to:
+  /// **'APK ichidagi native kutubxonalar tuzilishi tekshirildi, ammo ularning xatti-harakati ushbu statik tahlilda to‘liq baholanmaydi.'**
+  String get apkNativeCoverage;
+
+  /// No description provided for @apkDexCoverage.
+  ///
+  /// In uz, this message translates to:
+  /// **'DEX kodining dalillar jadvali to‘liq o‘qilmadi yoki tahlil chegarasiga yetdi. Imzo tekshiruvi natijasi bundan alohida ko‘rsatiladi.'**
+  String get apkDexCoverage;
+
   /// No description provided for @apkDialogBlockedTitle.
   ///
   /// In uz, this message translates to:

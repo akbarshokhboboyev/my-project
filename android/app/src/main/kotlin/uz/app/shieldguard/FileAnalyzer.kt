@@ -132,12 +132,18 @@ internal class FileAnalyzer(
                         }
                         if (entries < 0) findings["structure"] = 30
                         if (entries > limits.maxEntries) findings["archiveLimit"] = 0
-                        if (entries !in 0..limits.maxEntries || size > limits.maxArchiveBytes) {
-                            if (size > limits.maxArchiveBytes) findings["archiveLimit"] = 0
+                        if (entries !in 0..limits.maxEntries) {
                             complete = false
                             "ZIP"
                         } else try {
                             ZipFile(temp).use { zip ->
+                                // Recognize APK before applying the smaller generic archive budget.
+                                // The stream/file, entry, expansion and code inspection bounds still apply.
+                                if (size > limits.maxArchiveBytes && zip.getEntry("AndroidManifest.xml") == null) {
+                                    findings["archiveLimit"] = 0
+                                    complete = false
+                                    return@use "ZIP"
+                                }
                                 ApkContentInspector.inspect(zip, findings, ::checkpoint)
                                 findings.putAll(SplitApkAnalyzer.inspect(zip, directory, readApk, ::checkpoint))
                                 val enumeration = zip.entries()
@@ -185,7 +191,8 @@ internal class FileAnalyzer(
                 "png" to "PNG", "apk" to "APK", "exe" to "PE", "zip" to "ZIP",
                 "docx" to "DOCX", "xlsx" to "XLSX")
             val suffix = extension.substringAfterLast('.', "")
-            if (format.isNotEmpty() && expected[suffix]?.let { it != format } == true) findings["mismatch"] = 55
+            if (format.isNotEmpty() && !(format == "ZIP" && "archiveLimit" in findings) &&
+                expected[suffix]?.let { it != format } == true) findings["mismatch"] = 55
             if (extension.any { it in '\u202a'..'\u202e' || it in '\u2066'..'\u2069' } ||
                 Regex("""\.(pdf|jpg|jpeg|png|mp4|mp3|docx|xlsx|zip)\.(apk|exe|scr|bat|cmd|js)$""").containsMatchIn(extension)) {
                 findings["doubleExtension"] = 45
@@ -193,6 +200,8 @@ internal class FileAnalyzer(
             var packageName: String? = null
             var familyMetadata: ApkMetadata? = null
             if ("contentLimit" in findings || "dexMalformed" in findings || "elfMalformed" in findings) complete = false
+            if ("sxNativeOpaque" in findings) findings["apkNativeCoverage"] = 0
+            if ("sxIncomplete" in findings) findings["apkDexCoverage"] = 0
             var signerHashes = emptyList<String>()
             if (format == "APK" && "structure" !in findings && "archiveLimit" !in findings) {
                 val info = readApk(temp)
@@ -213,7 +222,7 @@ internal class FileAnalyzer(
                 put("findings", findings)
                 put("hash", digest.digest().joinToString("") { "%02x".format(it) })
                 put("signers", signerHashes)
-                put("details", details)
+                put("details", details + mapOf("scannedBytes" to size))
                 put("signatureChecked", details["signatureStatus"] in setOf("signatureVerified", "signatureFailed"))
                 if (format.isNotEmpty()) put("format", listOfNotNull(format, packageName).joinToString(" · "))
             }
@@ -222,7 +231,7 @@ internal class FileAnalyzer(
                     (familyMetadata?.let { ThreatFamilyAnalyzer.metadata(it) } ?: emptySet())
                 val coverage = familyMetadata?.details?.get("familyMetadataChecked") == true &&
                     "sxCodeChecked" in findings && "sxIncomplete" !in findings && "sxNativeOpaque" !in findings
-                ThreatFamilyAnalyzer.decorate(report + mapOf("details" to (details + mapOf("familyCoverage" to coverage))), static, coverage)
+                ThreatFamilyAnalyzer.decorate(report + mapOf("details" to (details + mapOf("familyCoverage" to coverage, "scannedBytes" to size))), static, coverage)
             } else report + mapOf("findings" to findings.filterKeys { !it.startsWith("sx") })
             return onAnalyzed(temp, finalReport)
         } catch (stop: ScanStopped) {

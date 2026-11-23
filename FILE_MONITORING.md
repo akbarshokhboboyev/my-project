@@ -20,7 +20,7 @@ Metadata enumeration: 256 hujjat/yurish, 2 daraja rekursiya, 256 bounded directo
 
 Tree authority + document ID SHA-256 kaliti overlap/duplicate URI'ni birlashtiradi. Musbat modified + ma'lum size o'zgarmasa metadata kesh ko'pi bilan 1 soat ishlatiladi. Eski/zaif/noma'lum metadata qayta tahlil qilinadi; eng eski tekshirilgan pending fayllar oldin olinadi. SHA-256 mavjud scanner'dan olinib lokal yoziladi; kontent hashini olishning o'zi faylni o'qishni talab qiladi. Bir xil size/mtime bilan yashirin o'zgarish TTL tugamaguncha sezilmasligi mumkin; metadata kriptografik kafolat emas. Unknown/incomplete kesh ham incomplete qoladi.
 
-PHASE 3A `SharedFileScanner` -> `NativeFileInspector` -> `FileAnalyzer`, PDF/apksig qayta ishlatiladi. Fayl actual format'i, APK signing va mavjud indikatorlar tekshiriladi. Mavjud 128 MiB stream, ZIP/decompression va parser limitlari saqlanadi. Fayl ochilmaydi/ishga tushirilmaydi/o'rnatilmaydi/o'zgartirilmaydi. Android DocumentProvider query/read bloklansa cooperative timeout uni darhol uzishni kafolatlamaydi. Incomplete hech qachon 'xavfsiz' tasdiq emas; indikator zararli dastur isboti emas.
+PHASE 3A `SharedFileScanner` -> `NativeFileInspector` -> `FileAnalyzer`, PDF/apksig qayta ishlatiladi. Fayl actual format'i, APK signing va mavjud indikatorlar tekshiriladi. Mavjud 256 MiB stream, ZIP/decompression va parser limitlari saqlanadi. Fayl ochilmaydi/ishga tushirilmaydi/o'rnatilmaydi/o'zgartirilmaydi. Android DocumentProvider query/read bloklansa cooperative timeout uni darhol uzishni kafolatlamaydi. Incomplete hech qachon 'xavfsiz' tasdiq emas; indikator zararli dastur isboti emas.
 
 ## Maxfiylik va sinov
 

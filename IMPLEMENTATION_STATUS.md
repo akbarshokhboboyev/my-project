@@ -1,5 +1,7 @@
 # ShieldGuard V3.1 — final hardening status
 
+**3.1.1+5 follow-up:** corrected APK recognition before the generic32MiB archive cap, aligned256MiB stream/staging budgets with512MiB retained cache, added metadata-query fallback and clearer Uzbek non-APK/native/DEX-limit reasons plus scanned byte count. Strict blocking, signing verification and snapshot/hash/expiry gates remain intact. Current checks: Flutter215/215, native303+387 malformed, analyze clean, debug build/signature/alignment pass. Physical update and a user-authorized retry were both denied by Android user restriction; the phone remains on3.1.0/code4 and new-build device E2E is unverified. See the top of TEST_REPORT.md; earlier3.1.0 results below are historical.
+
 **Activation follow-up, 2026-11-23:** the user requested activation; after cycling the existing notification-access grant in visible Android settings, the OS live-listener list and service record confirmed `TelegramThreatListener` bound, with local monitoring enabled. The earlier paused runtime state below is resolved. Fresh Telegram threat delivery and Home-label verification remain untested in this follow-up; no product code changed.
 
 2026-11-23 · `feature/shieldguard-v3-1` · **3.1.0+4**. Source implementation and automated regressions are complete; **production release remains blocked by missing user-owned signing credentials**, and complete device E2E acceptance remains unverified.

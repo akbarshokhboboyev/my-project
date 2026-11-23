@@ -1,5 +1,25 @@
 # ShieldGuard V3.1 — final verification (2026-11-23)
 
+## 3.1.1+5 — APK read-budget fix
+
+Observed code defect: generic32MiB archive rejection occurred before APK recognition, so larger valid APKs could be labeled ZIP/mismatch without reaching PackageManager/apksig. Recognize the manifest before applying the generic archive cap; stream/snapshot budgets now256MiB, retained snapshot cache512MiB/8 files, per-file cooperative checkpoints30s. Expansion/count/DEX/ELF/batch bounds, strict unknown and explicit install approval remain enforced. Optional provider metadata-query failure no longer blocks an authorized stream; actual open permission failure still does. Misnamed non-APK content and incomplete native/DEX coverage receive explicit Uzbek explanations; byte count is visible in details.
+
+| Current command | Result |
+| --- | --- |
+| `flutter test test/apk_guard_test.dart` | **16/16 PASS**, including non-APK reason/no forwarding |
+| `test/native/run_tests.ps1 -KotlinLib <cached lib>` | **303 checks +387 malformed PASS**;28 new archive/snapshot budget assertions |
+| `flutter analyze` after final localization generation | PASS; no issues |
+| `flutter test --coverage` after final source changes | **215/215 PASS**; LCOV1502/1901 = **79.01%** |
+| `flutter build apk --debug` | PASS,107s;3.1.1/code5 |
+| Final APK `apksigner verify` / `zipalign -c -P 16 4` | PASS/exit0 |
+| Physical update and user-authorized retry | Both **INSTALL_FAILED_USER_RESTRICTED: Install canceled by user**; no policy override |
+
+New tests model APKs exceeding a small injected generic ZIP budget, preserved signature/manifest callbacks, oversized unknown ZIP without false mismatch, PDF masquerading as APK, archive-entry cap, snapshot byte/overflow limits and native-code unknown coverage. Native metadata/signature in JVM fixtures is mocked. A separate signed, codeless, benign **34611617-byte** APK was prepared for real-device size regression; not installed/executed. After the user explicitly authorized retry, a second update was also rejected with INSTALL_FAILED_USER_RESTRICTED / Install canceled by user. No further retry or policy override was performed. The phone still reports3.1.0/code4, so new-build Android validation and the33MiB device regression are **unverified**. The original user-selected file was not retained or executed; its exact failure is not established solely from the screenshot. Backend source is unchanged; Python was not rerun for this fix.
+
+Debug artifact: `build/final/3.1.1+5/shieldguard-3.1.1-debug.apk`, **173360778 bytes**, SHA-256 `861f929f1e25ab87a24086c5e0670b1dba2ecf4f3cdd8d4642bbd477d414ef88`. Local ignored evidence: `apk-read-focused.log`, `apk-read-native.log`, `apk-read-analyze.log`, `apk-read-flutter.log`, `apk-read-debug.log`. Production signing/release was not attempted for this fix.
+
+The remaining sections describe earlier builds and their observations.
+
 **Subsequent activation recovery:** user requested activation after this report. The existing listener grant was cycled using visible Android settings/confirmation. Final checks: ShieldGuard present in **Live notification listeners**, `TelegramThreatListener` service record present, local Telegram `enabled=true`; the live-listener check passed twice. This supersedes the earlier paused/unbound observation for runtime activation only. No fresh Telegram notification or Home-label assertion was established; no source change, ADB permission override, reinstall or new permission was required.
 
 Current version **3.1.0+4**, branch `feature/shieldguard-v3-1`. The sections below this final record are historical and must not be counted as reruns. Detailed scope, artifact identity and limitations: `FINAL_RELEASE_REPORT.md`.

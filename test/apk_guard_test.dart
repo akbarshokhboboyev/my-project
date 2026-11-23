@@ -334,6 +334,22 @@ void main() {
       expect(calls.where((c) => c.method == 'apkForward'), isEmpty);
     },
   );
+  testWidgets('non APK content explains the format problem without forwarding', (
+    tester,
+  ) async {
+    final report = apk('scanIncomplete', 'unknown');
+    report['format'] = 'PDF';
+    report['findings'] = {'apkNotActualFormat': 0, 'mismatch': 55};
+    (report['details'] as Map).remove('apkToken');
+    pending.add(report);
+    await launch(tester);
+    expect(find.textContaining('aniqlangan ichki format APK emas'), findsWidgets);
+    expect(find.text('O‘rnatishga davom etish'), findsNothing);
+    expect(calls.where((c) => c.method == 'apkForward'), isEmpty);
+    await tester.tap(find.text('O‘rnatmaslik'));
+    await tester.pumpAndSettle();
+    expect(calls.where((c) => c.method == 'apkForward'), isEmpty);
+  });
   testWidgets('APK progress has cancel and never starts a handoff', (
     tester,
   ) async {

@@ -992,6 +992,21 @@ class StringsUz extends Strings {
       'Xavfsiz uzatish nusxasi mavjud emas. Ruxsat va cheklovlarni tekshirib, faylni qayta skanerlang.';
 
   @override
+  String get apkNotActualFormat =>
+      'Fayl APK sifatida ochilgan, ammo aniqlangan ichki format APK emas. Fayl qayta nomlangan yoki buzilgan bo‘lishi mumkin; uni APK sifatida o‘rnatishga uzatib bo‘lmaydi.';
+
+  @override
+  String get scannedBytes => 'O‘qilgan fayl hajmi (bayt)';
+
+  @override
+  String get apkNativeCoverage =>
+      'APK ichidagi native kutubxonalar tuzilishi tekshirildi, ammo ularning xatti-harakati ushbu statik tahlilda to‘liq baholanmaydi.';
+
+  @override
+  String get apkDexCoverage =>
+      'DEX kodining dalillar jadvali to‘liq o‘qilmadi yoki tahlil chegarasiga yetdi. Imzo tekshiruvi natijasi bundan alohida ko‘rsatiladi.';
+
+  @override
   String get apkDialogBlockedTitle => 'APK BLOKLANDI';
 
   @override

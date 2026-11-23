@@ -41,7 +41,7 @@ internal object InstallProtectionCoordinator {
         if (!(report["format"] as? String).orEmpty().startsWith("APK") || cancelled()) return report
         val epoch = expectedEpoch
         synchronized(lock) { if (generation != epoch) return report }
-        if (source.length() > 32L * 1024 * 1024) return report
+        if (source.length() > ApkSnapshotBudget.maxFileBytes) return report
         val token = UUID.randomUUID().toString()
         val file = File(directory(context), "$token.apk")
         if (!staging.tryAcquire()) return report
@@ -54,7 +54,7 @@ internal object InstallProtectionCoordinator {
                     val count = input.read(buffer)
                     if (count < 0) break
                     total += count
-                    check(total <= 32L * 1024 * 1024)
+                    check(total <= ApkSnapshotBudget.maxFileBytes)
                     output.write(buffer, 0, count)
                 }
             } }
@@ -65,11 +65,13 @@ internal object InstallProtectionCoordinator {
                 // Bound disk snapshots too, including already handed-off files and process orphans.
                 val existing = directory(context).listFiles().orEmpty().filter { it != file &&
                     Regex("[a-f0-9-]{36}\\.apk").matches(it.name) }.sortedBy { it.lastModified() }.toMutableList()
-                while (existing.size >= 8) {
+                while (existing.isNotEmpty() && (existing.size >= 8 ||
+                    !ApkSnapshotBudget.fits(existing.sumOf { it.length() }, file.length()))) {
                     val oldest = existing.removeAt(0)
                     check(oldest.delete())
                     pending.entries.removeAll { it.value.file == oldest }
                 }
+                check(ApkSnapshotBudget.fits(existing.sumOf { it.length() }, file.length()))
                 while (pending.size >= 8) { val first = pending.keys.first(); pending.remove(first)?.file?.delete() }
                 check(file.setReadOnly())
                 pending[token] = Snapshot(file, report, hash, android.os.SystemClock.elapsedRealtime() + ttl, epoch)
@@ -92,8 +94,7 @@ internal object InstallProtectionCoordinator {
             val token = details["apkToken"] as? String
             if (token == null) {
                 if (!apkHint && details["apkAssessment"] !is Map<*, *>) return@map row
-                val unavailable = ApkDiscoveryCoordinator.decorate(row + mapOf("complete" to false,
-                    "findings" to ((row["findings"] as? Map<*, *>).orEmpty() + mapOf("apkUnavailableSnapshot" to 0))), "candidate.apk")
+                val unavailable = ApkDiscoveryCoordinator.unavailable(row)
                 val policy = decision(context, unavailable)
                 val gate = if (policy.blocked) policy else GateDecision(true, "scanIncomplete")
                 BlockedThreatHistory.record(context, unavailable, gate.outcome)
@@ -129,7 +130,7 @@ internal object InstallProtectionCoordinator {
             while (true) {
                 val count = input.read(bytes)
                 if (count < 0) break
-                total += count; check(total <= 32L * 1024 * 1024)
+                total += count; check(total <= ApkSnapshotBudget.maxFileBytes)
                 hash.update(bytes, 0, count)
             }
         }

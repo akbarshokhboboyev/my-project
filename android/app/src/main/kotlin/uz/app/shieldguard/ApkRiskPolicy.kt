@@ -42,6 +42,14 @@ internal object ApkRiskPolicy {
 }
 
 internal object ApkDiscoveryCoordinator {
+    fun unavailable(report: Map<String, Any>): Map<String, Any> {
+        val findings = (report["findings"] as? Map<*, *>).orEmpty()
+        val format = (report["format"] as? String).orEmpty().substringBefore(" · ")
+        val reason = if (format.isNotEmpty() && format != "APK" && "archiveLimit" !in findings)
+            "apkNotActualFormat" else "apkUnavailableSnapshot"
+        return decorate(report + mapOf("complete" to false, "findings" to (findings + mapOf(reason to 0))), "candidate.apk")
+    }
+
     fun decorate(report: Map<String, Any>, displayName: String): Map<String, Any> {
         val format = (report["format"] as? String).orEmpty().substringBefore(" · ")
         val candidate = format == "APK" || displayName.lowercase().endsWith(".apk")

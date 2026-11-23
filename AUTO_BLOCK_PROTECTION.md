@@ -1,5 +1,7 @@
 # ShieldGuard PHASE 4 — APK qo‘riqchi
 
+3.1.1 follow-up: staged APK size is aligned with the256MiB stream budget. At most8 snapshots and512MiB retained cache are allowed; the oldest owned snapshots/grants are invalidated as needed. One cooperative copy can temporarily add at most256MiB before pruning.10-minute expiry, readonly snapshots, SHA-256 revalidation, generation and explicit user approval remain required. This expands supported size, not detection guarantees.
+
 ## Final 3.1.0+4 (2026-11-23)
 
 Quyidagi final oqim oldingi 4A–4D UI tavsiflarini yangilaydi: APK ochilganda progress/cancel; strong dalilda qizil block dialog; heuristic’da sariq warning; to‘liq no-findings’da yashil, kafolat bermaydigan natija; incomplete’da kulrang/noaniq dialog. “O‘rnatmaslik”/“Bekor qilish” faqat o‘sha tokenning private snapshot’ini bekor qiladi. Dialogni Back bilan yopish ham discard; “Tafsilotlar” natija sahifasini saqlaydi. No-findings’da “O‘rnatishga davom etish” explicit click; warning/unknown’da qo‘shimcha acknowledgement kerak. Strict incomplete yoki strong block uchun forward callback yo‘q. Snapshot SHA-256/expiry/generation native’da qayta tekshiriladi; Android chooser’ga handoff installed deb yozilmaydi. Ruxsat/snapshot yo‘q bo‘lsa install amali mavjud emas, sabab alohida tushuntiriladi.
@@ -22,7 +24,7 @@ Telegram manbasi Intent nomidan ishonchli tasdiqlanmaydi. Boshqa ilovaning priva
 
 `AutomaticBlockEngine` strong/confirmed dalilda auto-block yoqilgan bo‘lsa `blockedByShieldGuard`, strict incomplete holatda `scanIncomplete` beradi. So‘nggi holat malware tasdig‘i emas. Auto-block o‘chiq bo‘lsa ogohlantirish saqlanadi. Gate explicit tasdiqsiz hech qanday launch callback chaqirmaydi.
 
-`InstallProtectionCoordinator` faqat foreground file-open/share yo‘lida skanerlangan byte’lardan private snapshot oladi; original URI qayta ochilib boshqa byte’lar forward qilinmaydi. Random token, ko‘pi bilan 8 × 32 MiB snapshot, 10 daqiqa expiry; sender nomi yoki URI saqlanmaydi. Forward oldidan SHA-256 qayta tekshiriladi, expiry/generation/current settings yana tekshiriladi. Cancel snapshotlarni bekor qiladi. Faqat o‘z cache nusxalari o‘chiriladi. Process o‘lsa tokenlar amal qilmaydi; orphan cache keyingi cleanup’da tozalanadi, bu diskdagi qoldiqni aniq vaqtda o‘chirish kafolati emas.
+`InstallProtectionCoordinator` faqat foreground file-open/share yo‘lida skanerlangan byte’lardan private snapshot oladi; original URI qayta ochilib boshqa byte’lar forward qilinmaydi. Random token, ko‘pi bilan 8 snapshot; har biri 256 MiB, jami 512 MiB cache, 10 daqiqa expiry; sender nomi yoki URI saqlanmaydi. Forward oldidan SHA-256 qayta tekshiriladi, expiry/generation/current settings yana tekshiriladi. Cancel snapshotlarni bekor qiladi. Faqat o‘z cache nusxalari o‘chiriladi. Process o‘lsa tokenlar amal qilmaydi; orphan cache keyingi cleanup’da tozalanadi, bu diskdagi qoldiqni aniq vaqtda o‘chirish kafolati emas.
 
 4B dalil: 28 discovery/risk/gate assertion, jami 231 + 387 malformed o‘tdi. Blocked callback count=0, user approval bo‘lmasa count=0, benign explicit approval’da count=1. Bu mock callback launch dalili, haqiqiy Android installer E2E emas. Native Android kod debug build’da kompilyatsiya qilindi. Native gate’ni explicit Flutter tugmasi bilan ochish, dialog va notification 4C’da qo‘shiladi.
 

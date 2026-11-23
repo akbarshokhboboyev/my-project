@@ -14,14 +14,16 @@ internal class NativeFileInspector(private val context: Context, private val sta
     fun inspect(uri: Uri, cancelled: () -> Boolean = { false }): Map<String, Any> {
         require(uri.scheme == "content")
         var oversized = false
-        val displayName = context.contentResolver.query(
+        // Optional provider metadata must not prevent an otherwise authorized stream read.
+        val displayName = runCatching { context.contentResolver.query(
             uri, arrayOf(OpenableColumns.DISPLAY_NAME, OpenableColumns.SIZE), null, null, null
         )?.use {
             if (!it.moveToFirst()) return@use null
             val sizeColumn = it.getColumnIndex(OpenableColumns.SIZE)
             oversized = sizeColumn >= 0 && !it.isNull(sizeColumn) && it.getLong(sizeColumn) > ScanLimits().maxFileBytes
-            it.getString(0)
-        }.orEmpty()
+            val nameColumn = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+            if (nameColumn >= 0 && !it.isNull(nameColumn)) it.getString(nameColumn) else null
+        } }.getOrNull().orEmpty()
         if (oversized) return ApkDiscoveryCoordinator.decorate(SharedFileScanner.error("tooLarge"), displayName)
         val analyzer = FileAnalyzer(File(context.cacheDir, "shield-scans"), cancelled = cancelled,
             inspectPdf = { file ->
